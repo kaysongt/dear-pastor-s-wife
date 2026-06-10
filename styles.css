@@ -730,6 +730,24 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
   .hero-trust { gap: 1.4rem; }
 }
 
+/* ===================== Film-grain texture (depth) ===================== */
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+.site-header, .announce-bar, .scroll-progress { position: relative; z-index: 20; }
+
+/* ===================== Animated heading underline ===================== */
+.section-heading h2 { position: relative; display: inline-block; }
+.section-heading.centered h2::after { left: 50%; transform: translateX(-50%); }
+.section-heading h2::after {
+  content: ""; position: absolute; left: 0; bottom: -0.6rem; height: 3px; width: 0;
+  background: linear-gradient(90deg, var(--gold), var(--rose)); border-radius: 999px;
+  transition: width 0.9s cubic-bezier(.2,.7,.2,1) 0.2s;
+}
+.section-heading.in-view h2::after { width: clamp(3rem, 18%, 6rem); }
+
 /* ===================== Scroll progress bar ===================== */
 .scroll-progress {
   position: fixed; top: 0; left: 0; height: 3px; width: 0%;

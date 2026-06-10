@@ -420,6 +420,15 @@ function magnetic(selector) {
   });
 }
 
+// Gentle hero parallax (copy drifts slower than the page)
+const heroCopy = $(".hero-copy");
+if (heroCopy && !reduceMotion) {
+  window.addEventListener("scroll", () => {
+    const y = window.pageYOffset;
+    if (y < window.innerHeight) heroCopy.style.transform = `translateY(${y * 0.12}px)`;
+  }, { passive: true });
+}
+
 /* ---------- INIT ---------- */
 renderResources();
 renderEvents();
