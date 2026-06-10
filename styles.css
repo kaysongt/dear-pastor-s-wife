@@ -730,11 +730,67 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
   .hero-trust { gap: 1.4rem; }
 }
 
+/* ===================== Scroll progress bar ===================== */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+  background: linear-gradient(90deg, var(--gold), var(--rose), var(--gold));
+  z-index: 50; box-shadow: 0 0 12px rgba(202, 164, 93, 0.7);
+  transition: width 0.1s linear;
+}
+
+/* ===================== Hero aurora (subtle drifting glow) ===================== */
+.hero { position: relative; }
+.hero::before, .hero::after {
+  content: ""; position: absolute; border-radius: 50%; filter: blur(70px);
+  z-index: -1; pointer-events: none; opacity: 0.55;
+}
+.hero::before {
+  width: 26rem; height: 26rem; top: -4rem; left: -6rem;
+  background: radial-gradient(circle, rgba(202,164,93,0.5), transparent 70%);
+  animation: drift1 16s ease-in-out infinite;
+}
+.hero::after {
+  width: 22rem; height: 22rem; bottom: -3rem; right: -4rem;
+  background: radial-gradient(circle, rgba(166,93,84,0.4), transparent 70%);
+  animation: drift2 20s ease-in-out infinite;
+}
+@keyframes drift1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(3rem, 2rem) scale(1.12); } }
+@keyframes drift2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-2.5rem, -2rem) scale(1.15); } }
+
+/* ===================== Animated headline shimmer ===================== */
+h1 {
+  background: linear-gradient(110deg, var(--wine) 0%, #9a5256 30%, var(--gold-deep) 50%, #9a5256 70%, var(--wine) 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  animation: fadeInUp 0.8s ease 0.4s both, shimmer 9s ease-in-out infinite;
+}
+@keyframes shimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+/* ===================== Card spotlight + tilt ===================== */
+.tilt { transform-style: preserve-3d; will-change: transform; transition: transform 0.25s ease, box-shadow 0.3s ease; }
+.spotlight { position: relative; overflow: hidden; }
+.spotlight::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(202,164,93,0.16), transparent 60%);
+  transition: opacity 0.3s ease;
+}
+.spotlight:hover::after { opacity: 1; }
+
+/* ===================== Magnetic buttons ===================== */
+.button { will-change: transform; }
+
+/* Gallery image subtle Ken-Burns on hover */
+.gallery img { will-change: transform; }
+
 /* ===================== Reveal on scroll ===================== */
 @media (prefers-reduced-motion: no-preference) {
-  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
-  .reveal.in-view { opacity: 1; transform: translateY(0); }
+  .reveal { opacity: 0; transform: translateY(34px); transition: opacity 0.7s cubic-bezier(.2,.7,.2,1), transform 0.7s cubic-bezier(.2,.7,.2,1); }
+  .reveal.from-left { transform: translateX(-44px); }
+  .reveal.from-right { transform: translateX(44px); }
+  .reveal.zoom { transform: scale(0.92); }
+  .reveal.in-view { opacity: 1; transform: translate(0,0) scale(1); }
 }
 @media (prefers-reduced-motion: reduce) {
+  .scroll-progress { display: none; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }

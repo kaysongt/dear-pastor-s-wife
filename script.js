@@ -362,6 +362,64 @@ if (bookCover && bookWrapper && !window.matchMedia("(prefers-reduced-motion: red
 /* ---------- LAZY IMAGES ---------- */
 $$("img[src]").forEach(img => { if (!img.loading) img.loading = "lazy"; });
 
+/* ---------- MOTION ENHANCEMENTS ---------- */
+
+// Thin scroll-progress bar
+const progressBar = document.createElement("div");
+progressBar.className = "scroll-progress";
+document.body.appendChild(progressBar);
+function updateProgress() {
+  const el = document.documentElement;
+  const max = el.scrollHeight - el.clientHeight;
+  progressBar.style.width = (max > 0 ? (el.scrollTop / max) * 100 : 0) + "%";
+}
+window.addEventListener("scroll", updateProgress, { passive: true });
+updateProgress();
+
+// Stagger a group's reveal, with optional direction
+function stagger(selector, { dir, step = 80, max = 6 } = {}) {
+  $$(selector).forEach((el, i) => {
+    el.classList.add("reveal");
+    if (dir) el.classList.add(dir);
+    el.style.transitionDelay = (i % max) * step + "ms";
+  });
+}
+
+// Cursor spotlight glow + gentle 3D tilt
+function enhanceCards(selector, { tilt = true } = {}) {
+  if (reduceMotion) return;
+  $$(selector).forEach(card => {
+    card.classList.add("spotlight");
+    if (tilt) card.classList.add("tilt");
+    card.addEventListener("pointermove", (e) => {
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top) / r.height;
+      card.style.setProperty("--mx", px * 100 + "%");
+      card.style.setProperty("--my", py * 100 + "%");
+      if (tilt) {
+        card.style.transform =
+          `perspective(900px) rotateX(${(0.5 - py) * 5}deg) rotateY(${(px - 0.5) * 5}deg) translateY(-4px)`;
+      }
+    });
+    card.addEventListener("pointerleave", () => { card.style.transform = ""; });
+  });
+}
+
+// Magnetic pull toward the cursor (for hero + give CTAs)
+function magnetic(selector) {
+  if (reduceMotion) return;
+  $$(selector).forEach(btn => {
+    btn.addEventListener("pointermove", (e) => {
+      const r = btn.getBoundingClientRect();
+      const x = e.clientX - r.left - r.width / 2;
+      const y = e.clientY - r.top - r.height / 2;
+      btn.style.transform = `translate(${x * 0.18}px, ${y * 0.3}px)`;
+    });
+    btn.addEventListener("pointerleave", () => { btn.style.transform = ""; });
+  });
+}
+
 /* ---------- INIT ---------- */
 renderResources();
 renderEvents();
@@ -369,8 +427,25 @@ renderSpeaking();
 renderAmounts();
 renderTiers();
 animateCounters();
+
 // Mark static sections for reveal
-$$(".section-heading, .track-card, .quote-card, .book-info, .story-copy, .partner-vision").forEach(el => el.classList.add("reveal"));
+$$(".section-heading, .quote-card, .book-info, .story-copy").forEach(el => el.classList.add("reveal"));
+
+// Staggered, directional reveals
+stagger(".track-card", { dir: "zoom", step: 120 });
+stagger(".resource-card");
+stagger(".timeline-item");
+stagger(".speaking-row", { dir: "from-left" });
+stagger(".tier", { dir: "from-right" });
+stagger(".quote-card", { step: 140 });
+stagger(".vision-points li", { dir: "from-right", step: 90 });
+stagger(".youtube-features li", { dir: "from-left", step: 80 });
+
+// Interactive hover effects
+enhanceCards(".resource-card, .tier, .track-card", { tilt: true });
+enhanceCards(".speaking-row", { tilt: false });
+magnetic(".hero-actions .button, .nav-give, .give-btn");
+
 observeReveals();
 
 console.log("✨ Dear Pastor's Wife — resource hub loaded");
