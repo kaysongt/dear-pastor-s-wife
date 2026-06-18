@@ -498,7 +498,7 @@ h3 { font-size: clamp(1.4rem, 2.2vw, 2.1rem); letter-spacing: -0.03em; }
 /* ===================== Give ===================== */
 .give { padding: 7rem 0; }
 .give-layout { display: grid; grid-template-columns: 0.95fr 1.05fr; gap: 2rem; align-items: start; }
-.give-card, .give-tiers { padding: 2.6rem; border-radius: 2rem; }
+.give-card { padding: 2.6rem; border-radius: 2rem; }
 .give-onetime {
   background: linear-gradient(150deg, var(--plum) 0%, var(--wine) 100%);
   color: #fff; box-shadow: var(--shadow-strong); position: relative; overflow: hidden;
@@ -526,31 +526,69 @@ h3 { font-size: clamp(1.4rem, 2.2vw, 2.1rem); letter-spacing: -0.03em; }
 .secure-note { position: relative; margin-top: 1.3rem; color: rgba(255,255,255,0.72); font-size: 0.82rem; line-height: 1.6; }
 .secure-note .lock { margin-right: 0.3rem; }
 
-.give-tiers h3 { margin-bottom: 0.2rem; }
-.give-tiers .give-sub { color: var(--muted); }
-.tier-grid { display: grid; gap: 1rem; }
-.tier {
-  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.3rem;
-  padding: 1.5rem 1.7rem; border-radius: 1.4rem;
-  background: linear-gradient(135deg, rgba(255, 250, 243, 0.9), rgba(255, 255, 255, 0.7));
-  border: 1px solid rgba(202, 164, 93, 0.25); box-shadow: 0 12px 35px rgba(75,45,35,0.07);
-  transition: all 0.3s ease;
+.partner-about .give-sub { color: var(--muted); }
+/* Why a partnership program panel */
+.partner-about {
+  background: linear-gradient(135deg, rgba(255, 250, 243, 0.95), rgba(255, 255, 255, 0.75));
+  border: 1px solid rgba(202, 164, 93, 0.28); box-shadow: 0 12px 35px rgba(75,45,35,0.07);
 }
-.tier:hover { transform: translateY(-4px); box-shadow: 0 22px 55px rgba(75,45,35,0.14); border-color: rgba(202,164,93,0.5); }
-.tier.is-featured { background: linear-gradient(135deg, rgba(202,164,93,0.12), rgba(255,255,255,0.7)); border-color: var(--gold); }
-.tier-amount { text-align: center; }
-.tier-amount strong { display: block; font-family: "Playfair Display", serif; font-size: 1.7rem; color: var(--wine); line-height: 1; }
-.tier-amount span { font-size: 0.72rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
-.tier-info strong { display: block; color: var(--wine); font-weight: 900; font-size: 1.05rem; margin-bottom: 0.2rem; }
-.tier-info span { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+.partner-about h3 { color: var(--wine); }
+.about-objectives { list-style: none; display: grid; gap: 0.7rem; margin-bottom: 1.8rem; }
+.about-objectives li { position: relative; padding-left: 1.7rem; color: var(--ink); font-weight: 600; line-height: 1.5; }
+.about-objectives li::before {
+  content: '✦'; position: absolute; left: 0; top: 0.05rem; color: var(--gold-deep); font-weight: 900;
+}
+.about-partners-label { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.8rem; }
+.partner-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.partner-chips span {
+  font-size: 0.8rem; font-weight: 700; color: var(--wine);
+  background: rgba(202, 164, 93, 0.14); border: 1px solid rgba(202, 164, 93, 0.3);
+  padding: 0.4rem 0.85rem; border-radius: 999px;
+}
+
+/* Multi-tier partnership program */
+.partnership-tiers { margin-top: 3rem; }
+.partnership-tiers .section-heading { margin-bottom: 2.6rem; }
+
+.tier-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; align-items: stretch; }
+.tier {
+  display: flex; flex-direction: column; position: relative;
+  padding: 1.9rem 1.6rem; border-radius: 1.5rem;
+  background: linear-gradient(160deg, rgba(255, 250, 243, 0.95), rgba(255, 255, 255, 0.8));
+  border: 1px solid rgba(202, 164, 93, 0.28); box-shadow: 0 12px 35px rgba(75,45,35,0.07);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.tier:hover { transform: translateY(-6px); box-shadow: 0 26px 60px rgba(75,45,35,0.16); border-color: rgba(202,164,93,0.55); }
+.tier.is-featured { background: linear-gradient(160deg, rgba(202,164,93,0.16), rgba(255,255,255,0.85)); border-color: var(--gold); box-shadow: 0 20px 50px rgba(202,164,93,0.22); }
+.tier-label { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-deep); }
+.tier-name { font-family: "Playfair Display", serif; font-size: 1.25rem; color: var(--wine); margin: 0.3rem 0 0.9rem; line-height: 1.25; }
+.tier-price { display: flex; align-items: baseline; gap: 0.3rem; }
+.tier-price strong { font-family: "Playfair Display", serif; font-size: 1.55rem; color: var(--wine); line-height: 1; }
+.tier-price span { font-size: 0.78rem; color: var(--muted); font-weight: 700; }
+.tier-annual { font-size: 0.82rem; color: var(--muted); margin: 0.35rem 0 1rem; }
+.tier-ideal { font-size: 0.85rem; color: var(--ink); line-height: 1.5; padding: 0.8rem 0; margin-bottom: 1rem; border-top: 1px solid rgba(202,164,93,0.22); border-bottom: 1px solid rgba(202,164,93,0.22); }
+.tier-ideal span { display: block; font-size: 0.64rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.3rem; }
+.tier-benefits { list-style: none; display: grid; gap: 0.65rem; margin-bottom: 1.6rem; flex: 1; }
+.tier-benefits li { position: relative; padding-left: 1.6rem; font-size: 0.86rem; line-height: 1.5; color: var(--ink); }
+.tier-benefits li::before {
+  content: '✓'; position: absolute; left: 0; top: 0.1rem; color: var(--plum); font-weight: 900; font-size: 0.62rem;
+  width: 1.05rem; height: 1.05rem; border-radius: 50%; background: var(--gold);
+  display: inline-flex; align-items: center; justify-content: center;
+}
 .tier-pick {
+  display: block; text-align: center; margin-top: auto;
   font-weight: 900; font-size: 0.82rem; color: var(--plum);
   background: linear-gradient(135deg, var(--gold), var(--accent));
-  padding: 0.65rem 1.1rem; border-radius: 999px; white-space: nowrap;
+  padding: 0.8rem 1.1rem; border-radius: 999px; white-space: nowrap;
   box-shadow: 0 8px 20px rgba(202,164,93,0.35); transition: all 0.25s ease;
 }
 .tier-pick:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(202,164,93,0.5); }
-.tier-badge { display: inline-block; font-size: 0.6rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: var(--plum); background: var(--gold); padding: 0.15rem 0.5rem; border-radius: 999px; margin-left: 0.5rem; vertical-align: middle; }
+.tier-badge {
+  position: absolute; top: -0.7rem; left: 50%; transform: translateX(-50%);
+  font-size: 0.6rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: var(--plum);
+  background: var(--gold); padding: 0.25rem 0.7rem; border-radius: 999px; white-space: nowrap;
+  box-shadow: 0 6px 16px rgba(202,164,93,0.4);
+}
 
 /* Partner vision */
 .partner-vision {
@@ -679,6 +717,7 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
   .resource-grid { grid-template-columns: repeat(2, 1fr); }
   .give-layout { grid-template-columns: 1fr; }
   .partner-vision { grid-template-columns: 1fr; gap: 2rem; }
+  .tier-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 900px) {
@@ -711,8 +750,7 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
   .gallery { grid-template-columns: 1fr; height: auto; }
   .gallery img, .gallery img:nth-child(2) { height: 300px; margin: 0; }
   .amount-grid { grid-template-columns: repeat(2, 1fr); }
-  .tier { grid-template-columns: auto 1fr; }
-  .tier-pick { grid-column: 1 / -1; text-align: center; }
+  .tier-grid { grid-template-columns: 1fr; }
   .resource-controls { flex-direction: column; align-items: stretch; }
   .resource-search input { width: 100%; }
   .timeline-card { flex-direction: column; align-items: flex-start; }

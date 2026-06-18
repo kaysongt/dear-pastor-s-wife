@@ -41,11 +41,71 @@ const SPEAKING = [
 
 // Giving
 const ONE_TIME_AMOUNTS = [25, 50, 100, 250];
+
+// Fundraising Partnership Program — multi-tier structure.
+// `min` is the lower bound of each monthly range, used as the default
+// amount passed to the donation link.
 const TIERS = [
-  { amount: 15, name: "Friend", benefit: "Monthly prayer updates & gratitude.", featured: false },
-  { amount: 35, name: "Sister", benefit: "Vision letter + behind-the-scenes photos.", featured: true },
-  { amount: 75, name: "Patron", benefit: "All of the above + early event invitations.", featured: false },
-  { amount: 150, name: "Visionary", benefit: "All benefits + a direct line to the DPW team.", featured: false },
+  {
+    tier: "Tier 1",
+    name: "Friend of the Ministry",
+    min: 25,
+    monthly: "$25–$50",
+    annual: "$300–$600",
+    idealFor: "Individual supporters & small donors",
+    benefits: [
+      "Monthly email impact updates",
+      "Quarterly prayer guide for pastors' wives",
+      "Early access to select digital resources",
+    ],
+    featured: false,
+  },
+  {
+    tier: "Tier 2",
+    name: "Ministry Partner",
+    min: 51,
+    monthly: "$51–$99",
+    annual: "$600–$1,200",
+    idealFor: "Committed individuals, small churches & businesses",
+    benefits: [
+      "Everything in Friend of the Ministry",
+      "Annual digital resource bundle (devotionals, guides & courses)",
+      "Invitation to the annual Partner Prayer & Vision Call",
+      "Newsletter acknowledgment (optional)",
+    ],
+    featured: true,
+  },
+  {
+    tier: "Tier 3",
+    name: "Impact Partner",
+    min: 100,
+    monthly: "$100–$249",
+    annual: "$1,200–$3,000",
+    idealFor: "Churches, ministry organizations & faith-based brands",
+    benefits: [
+      "Everything in Ministry Partner",
+      "Co-branded acknowledgment (logo on our website)",
+      "Opportunity to sponsor a DPW resource or initiative",
+      "Annual impact report with testimonials & stories",
+    ],
+    featured: false,
+  },
+  {
+    tier: "Tier 4",
+    name: "Legacy Partner",
+    min: 250,
+    monthly: "$250–$499",
+    annual: "$3,000–$6,000",
+    idealFor: "Major donors, foundations, large churches & corporate sponsors",
+    benefits: [
+      "Everything in Impact Partner",
+      "Dedicated relationship manager",
+      "Custom impact opportunities (retreat & content underwriting)",
+      "Private annual vision briefing with leadership",
+      "Prominent recognition (optional)",
+    ],
+    featured: false,
+  },
 ];
 
 // Integration endpoints — replace with live services when ready.
@@ -209,14 +269,18 @@ function renderTiers() {
   const grid = $("#tierGrid");
   if (!grid) return;
   grid.innerHTML = TIERS.map(t => `
-    <div class="tier ${t.featured ? "is-featured" : ""} reveal">
-      <div class="tier-amount"><strong>$${t.amount}</strong><span>/mo</span></div>
-      <div class="tier-info">
-        <strong>${t.name}${t.featured ? '<span class="tier-badge">Most loved</span>' : ""}</strong>
-        <span>${t.benefit}</span>
-      </div>
-      <a class="tier-pick" href="${buildGiveLink(t.amount, true)}" target="_blank" rel="noopener">Partner</a>
-    </div>
+    <article class="tier ${t.featured ? "is-featured" : ""} reveal">
+      ${t.featured ? '<span class="tier-badge">Most chosen</span>' : ""}
+      <span class="tier-label">${t.tier}</span>
+      <h4 class="tier-name">${t.name}</h4>
+      <div class="tier-price"><strong>${t.monthly}</strong><span>/month</span></div>
+      <p class="tier-annual">or ${t.annual} annually</p>
+      <p class="tier-ideal"><span>Ideal for</span>${t.idealFor}</p>
+      <ul class="tier-benefits">
+        ${t.benefits.map(b => `<li>${b}</li>`).join("")}
+      </ul>
+      <a class="tier-pick" href="${buildGiveLink(t.min, true)}" target="_blank" rel="noopener">Partner at this level →</a>
+    </article>
   `).join("");
   observeReveals();
 }
