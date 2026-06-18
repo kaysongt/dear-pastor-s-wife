@@ -1,9 +1,39 @@
 /* ============================================================
    Dear Pastor's Wife — site logic
-   Data-driven sections (resources, events, speaking, giving)
-   are defined here so they're easy to update and ready to be
-   wired to a CMS / CRM later.
+   Data-driven sections (resources, events, giving, forum) live
+   here so they're easy to update and ready to wire to live
+   services (Stripe, systeme.io) later.
    ============================================================ */
+
+/* ---------- CONFIG (fill in when live credentials are ready) ----------
+   Everything that needs a real account/key is centralized here so the
+   client (or a follow-up dev) can flip the site live without hunting
+   through the code.
+
+   PAYMENTS — Stripe:
+     • Create a Stripe-hosted donation/checkout page that accepts an
+       `amount` query param (e.g. Donorbox, a Payment Link, or a small
+       Checkout endpoint). Put its URL in `payments.giveBaseUrl`.
+     • Enable BOTH "Card" and "ACH Direct Debit (US bank account)" as
+       payment methods in your Stripe Dashboard → Settings → Payment
+       methods, so bank transfer shows up at checkout.
+
+   CRM — systeme.io:
+     • In systeme.io, create a form and copy its POST/submission endpoint
+       (or use the systeme.io API via a serverless function) into
+       `crm.endpoint`. When set, form submissions are POSTed there.
+     • Leave it empty to keep forms in "demo" mode (logs + success msg).
+*/
+const CONFIG = {
+  payments: {
+    // Stripe-hosted page that accepts ?amount= & ?recurring=monthly
+    giveBaseUrl: "https://donate.dearpastorswife.org",
+  },
+  crm: {
+    // systeme.io form endpoint. Empty = demo mode (no network call).
+    endpoint: "",
+  },
+};
 
 /* ---------- DATA ---------- */
 
@@ -11,110 +41,45 @@
 const RESOURCES = [
   { type: "book", status: "current", title: "Dear Pastor's Wife (The Book)", desc: "Biblical wisdom and honest encouragement for women in ministry life.", cta: "Get it on Amazon", link: "https://www.amazon.com/Dear-Pastors-Wife-May-Ijisesan-ebook/dp/B09TQ2G8PJ" },
   { type: "video", status: "current", title: "Weekly Encouragement on YouTube", desc: "New teaching, Q&A, and real talk for ministry women every week.", cta: "Watch on YouTube", link: "https://www.youtube.com/@DearPastorsWife" },
-  { type: "download", status: "current", title: "The Soul-Care Reset (PDF)", desc: "A 7-day guided reset to refill your cup when ministry runs you dry.", cta: "Download free", link: "#newsletter" },
-  { type: "download", status: "current", title: "Boundaries for the Fishbowl", desc: "A practical worksheet for protecting your family and identity in ministry.", cta: "Download free", link: "#newsletter" },
-  { type: "article", status: "current", title: "When You Feel Invisible in Ministry", desc: "Encouragement for the seasons no one sees — and why they matter.", cta: "Read the article", link: "https://www.youtube.com/@DearPastorsWife" },
+  { type: "download", status: "current", title: "The 7-Day Guided Reset (PDF)", desc: "A simple 7-day plan to slow down, refill, and reset when ministry has run you dry.", cta: "Download the PDF", link: "assets/dpw-7-day-reset.pdf", download: true },
   { type: "video", status: "current", title: "Leading Without Losing Yourself", desc: "A teaching session on staying rooted while you serve and lead.", cta: "Watch now", link: "https://www.youtube.com/@DearPastorsWife" },
-  { type: "download", status: "current", title: "Ministry Finances Starter Kit", desc: "Simple tools to steward personal and ministry finances with wisdom.", cta: "Download free", link: "#newsletter" },
-  { type: "article", status: "archived", title: "Surviving the Holiday Ministry Rush", desc: "A seasonal guide first shared in 2024 — still full of practical help.", cta: "Read the archive", link: "https://www.youtube.com/@DearPastorsWife" },
   { type: "video", status: "archived", title: "2024 Conference Replay: Thrive", desc: "The full replay of our first leadership conference for ministry women.", cta: "Watch replay", link: "https://www.youtube.com/@DearPastorsWife" },
 ];
 
-// Event timeline (retreats). status: open | soon | past.
+// Events. category: conference | tea-party | retreat. status: open | soon | past.
+// `sort` is an ISO-ish date used only for ordering.
 const EVENTS = [
-  { year: 2026, date: "June 5–7, 2026", location: "United Kingdom", desc: "A restorative weekend retreat for women in ministry.", status: "soon", link: "#newsletter" },
-  { year: 2026, date: "Fall 2026", location: "Lagos, Nigeria", desc: "A restorative retreat for women in ministry.", status: "soon", link: "#newsletter" },
-  { year: 2026, date: "Winter 2026", location: "Abuja, Nigeria", desc: "A peaceful space for renewal and connection.", status: "soon", link: "#newsletter" },
-  { year: 2027, date: "Spring 2027", location: "North America", desc: "Our first North American retreat — dates being finalized.", status: "soon", link: "#newsletter" },
-  { year: 2027, date: "Summer 2027", location: "Ibadan, Nigeria", desc: "A 3-day retreat for rest, reflection, and sisterhood.", status: "soon", link: "#newsletter" },
-  { year: 2025, date: "October 2025", location: "London, U.K.", desc: "Our sold-out gathering of 120 ministry women.", status: "past", link: "" },
+  { category: "conference", year: 2026, date: "Jul 30 – Aug 2, 2026", sort: "2026-07-30", title: "Summer Blast", location: "United States", desc: "Our summer gathering to open the season — worship, teaching, and connection.", status: "soon", link: "#newsletter" },
+  { category: "tea-party", year: 2026, date: "Aug 15, 2026", sort: "2026-08-15", title: "Tea Party — A Day Out", location: "Chicago, USA", desc: "A relaxed day out together: tea, real conversation, and sisterhood.", status: "soon", link: "#newsletter" },
+  { category: "conference", year: 2026, date: "September 2026", sort: "2026-09-01", title: "DPW at KingsWord", location: "Nigeria", desc: "Join us in Nigeria with KingsWord. Firm dates are being confirmed.", status: "soon", link: "#newsletter" },
+  { category: "retreat", year: 2026, date: "Oct 9 – 11, 2026", sort: "2026-10-09", title: "DPW Retreat", location: "United Kingdom", desc: "A restorative weekend retreat for women in ministry.", status: "soon", link: "#newsletter" },
 ];
 
-// Global speaking schedule. status: upcoming | past.
-const SPEAKING = [
-  { date: "Jul 12, 2026", event: "Women in Leadership Summit", place: "Houston, USA", status: "upcoming", link: "#contact" },
-  { date: "Aug 23, 2026", event: "Grace Conference (Keynote)", place: "London, UK", status: "upcoming", link: "#contact" },
-  { date: "Sep 14, 2026", event: "Ministry Wives Fellowship", place: "Lagos, Nigeria", status: "upcoming", link: "#contact" },
-  { date: "Oct 5, 2026", event: "Thrive Online Conference", place: "Virtual", status: "upcoming", link: "#newsletter" },
-  { date: "Mar 2026", event: "Sisterhood Brunch (Guest)", place: "Atlanta, USA", status: "past", link: "" },
-];
+const EVENT_CAT_LABEL = { conference: "Conference", "tea-party": "Tea Party", retreat: "Retreat" };
 
 // Giving
 const ONE_TIME_AMOUNTS = [25, 50, 100, 250];
 
-// Fundraising Partnership Program — multi-tier structure.
-// `min` is the lower bound of each monthly range, used as the default
-// amount passed to the donation link.
+// Fundraising Partnership Program — names + suggested ranges only.
 const TIERS = [
-  {
-    tier: "Tier 1",
-    name: "Friend of the Ministry",
-    min: 25,
-    monthly: "$25–$50",
-    annual: "$300–$600",
-    idealFor: "Individual supporters & small donors",
-    benefits: [
-      "Monthly email impact updates",
-      "Quarterly prayer guide for pastors' wives",
-      "Early access to select digital resources",
-    ],
-    featured: false,
-  },
-  {
-    tier: "Tier 2",
-    name: "Ministry Partner",
-    min: 51,
-    monthly: "$51–$99",
-    annual: "$600–$1,200",
-    idealFor: "Committed individuals, small churches & businesses",
-    benefits: [
-      "Everything in Friend of the Ministry",
-      "Annual digital resource bundle (devotionals, guides & courses)",
-      "Invitation to the annual Partner Prayer & Vision Call",
-      "Newsletter acknowledgment (optional)",
-    ],
-    featured: true,
-  },
-  {
-    tier: "Tier 3",
-    name: "Impact Partner",
-    min: 100,
-    monthly: "$100–$249",
-    annual: "$1,200–$3,000",
-    idealFor: "Churches, ministry organizations & faith-based brands",
-    benefits: [
-      "Everything in Ministry Partner",
-      "Co-branded acknowledgment (logo on our website)",
-      "Opportunity to sponsor a DPW resource or initiative",
-      "Annual impact report with testimonials & stories",
-    ],
-    featured: false,
-  },
-  {
-    tier: "Tier 4",
-    name: "Legacy Partner",
-    min: 250,
-    monthly: "$250–$499",
-    annual: "$3,000–$6,000",
-    idealFor: "Major donors, foundations, large churches & corporate sponsors",
-    benefits: [
-      "Everything in Impact Partner",
-      "Dedicated relationship manager",
-      "Custom impact opportunities (retreat & content underwriting)",
-      "Private annual vision briefing with leadership",
-      "Prominent recognition (optional)",
-    ],
-    featured: false,
-  },
+  { name: "Friend of the Ministry", min: 25, monthly: "$25–$50", annual: "$300–$600" },
+  { name: "Ministry Partner", min: 51, monthly: "$51–$99", annual: "$600–$1,200" },
+  { name: "Impact Partner", min: 100, monthly: "$100–$249", annual: "$1,200–$3,000" },
+  { name: "Legacy Partner", min: 250, monthly: "$250–$499", annual: "$3,000–$6,000" },
 ];
 
-// Integration endpoints — replace with live services when ready.
-const GIVE_BASE_URL = "https://donate.dearpastorswife.org"; // e.g. Donorbox / Stripe payment page
+// Community forum — seed topics.
+const FORUM_TOPICS = [
+  { id: "parenting", title: "Parenting in ministry", desc: "Raising kids in the fishbowl — the joys, the hard days, and everything in between." },
+  { id: "relationships", title: "Relationship management in ministry", desc: "Marriage, boundaries, friendships, and leading people without losing yourself." },
+];
 
 /* ---------- HELPERS ---------- */
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 const TYPE_LABEL = { book: "Book", download: "Download", video: "Video", article: "Article" };
+const escapeHtml = (str) => String(str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
 /* ---------- RESOURCE LIBRARY ---------- */
 const resourceGrid = $("#resourceGrid");
@@ -135,7 +100,10 @@ function renderResources() {
     return true;
   });
 
-  resourceGrid.innerHTML = list.map(r => `
+  resourceGrid.innerHTML = list.map(r => {
+    const isHttp = r.link.startsWith("http");
+    const attrs = r.download ? 'download' : (isHttp ? 'target="_blank" rel="noopener"' : "");
+    return `
     <article class="resource-card reveal">
       <div class="resource-top">
         <span class="resource-type">${TYPE_LABEL[r.type] || r.type}</span>
@@ -143,17 +111,17 @@ function renderResources() {
       </div>
       <h3>${r.title}</h3>
       <p>${r.desc}</p>
-      <a href="${r.link}" ${r.link.startsWith("http") ? 'target="_blank" rel="noopener"' : ""}>${r.cta} →</a>
-    </article>
-  `).join("");
+      <a href="${r.link}" ${attrs}>${r.cta} →</a>
+    </article>`;
+  }).join("");
 
   if (resourceEmpty) resourceEmpty.hidden = list.length !== 0;
   observeReveals();
 }
 
-$$(".filter-chip").forEach(chip => {
+$$(".resource-filters .filter-chip[data-filter]").forEach(chip => {
   chip.addEventListener("click", () => {
-    $$(".filter-chip").forEach(c => c.classList.remove("is-active"));
+    $$(".resource-filters .filter-chip[data-filter]").forEach(c => c.classList.remove("is-active"));
     chip.classList.add("is-active");
     activeFilter = chip.dataset.filter;
     renderResources();
@@ -162,28 +130,35 @@ $$(".filter-chip").forEach(chip => {
 resourceSearch?.addEventListener("input", renderResources);
 archiveToggle?.addEventListener("change", renderResources);
 
-/* ---------- EVENT TIMELINE ---------- */
+/* ---------- EVENTS ---------- */
+let activeEventFilter = "all";
+
 function renderEvents() {
   const tl = $("#eventTimeline");
   if (!tl) return;
+  const empty = $("#eventEmpty");
 
-  // Upcoming years ascending first, then past years descending.
-  const years = [...new Set(EVENTS.map(e => e.year))];
-  const upcomingYears = years.filter(y => EVENTS.some(e => e.year === y && e.status !== "past")).sort((a, b) => a - b);
-  const pastYears = years.filter(y => !upcomingYears.includes(y)).sort((a, b) => b - a);
-  const orderedYears = [...upcomingYears, ...pastYears];
+  const list = EVENTS
+    .filter(e => activeEventFilter === "all" || e.category === activeEventFilter)
+    .sort((a, b) => a.sort.localeCompare(b.sort));
+
+  if (empty) empty.hidden = list.length !== 0;
 
   const statusMap = {
     open: '<span class="tl-status status-open">Registration open</span>',
-    soon: '<span class="tl-status status-soon">Coming soon</span>',
+    soon: '<span class="tl-status status-soon">Save the date</span>',
     past: '<span class="tl-status status-past">Past event</span>',
   };
 
-  tl.innerHTML = orderedYears.map(year => {
-    const items = EVENTS.filter(e => e.year === year).map(e => `
+  // Group by year (currently all 2026, but future-proof).
+  const years = [...new Set(list.map(e => e.year))].sort((a, b) => a - b);
+  tl.innerHTML = years.map(year => {
+    const items = list.filter(e => e.year === year).map(e => `
       <div class="timeline-item ${e.status === "past" ? "is-past" : ""} reveal">
         <div class="timeline-card">
           <div class="timeline-info">
+            <span class="tl-cat tl-cat-${e.category}">${EVENT_CAT_LABEL[e.category] || ""}</span>
+            <span class="tl-title">${e.title}</span>
             <span class="tl-date">${e.date}</span>
             <span class="tl-loc">${e.location}</span>
             <span class="tl-desc">${e.desc}</span>
@@ -201,25 +176,21 @@ function renderEvents() {
   observeReveals();
 }
 
-/* ---------- SPEAKING SCHEDULE ---------- */
-function renderSpeaking() {
-  const list = $("#speakingList");
-  if (!list) return;
-  const ordered = [...SPEAKING].sort((a, b) => (a.status === b.status ? 0 : a.status === "upcoming" ? -1 : 1));
-  list.innerHTML = ordered.map(s => `
-    <div class="speaking-row reveal">
-      <span class="sp-date">${s.date}</span>
-      <div class="sp-main">
-        <strong>${s.event}</strong>
-        <span>${s.place}</span>
-      </div>
-      ${s.status === "upcoming"
-        ? `<a class="sp-status sp-upcoming" href="${s.link}">Details →</a>`
-        : '<span class="sp-status sp-past">Past</span>'}
-    </div>
-  `).join("");
-  observeReveals();
+function setEventFilter(filter) {
+  activeEventFilter = filter;
+  $$(".event-filters .filter-chip").forEach(c =>
+    c.classList.toggle("is-active", c.dataset.eventFilter === filter));
+  renderEvents();
 }
+
+// Filter chips inside the Events section
+$$(".event-filters .filter-chip").forEach(chip => {
+  chip.addEventListener("click", () => setEventFilter(chip.dataset.eventFilter));
+});
+// Dropdown links in the nav also drive the filter (and anchor-scroll to #events)
+$$(".nav-dropdown-menu a[data-event-filter]").forEach(link => {
+  link.addEventListener("click", () => setEventFilter(link.dataset.eventFilter));
+});
 
 /* ---------- GIVING ---------- */
 const amountGrid = $("#amountGrid");
@@ -228,7 +199,7 @@ const giveBtn = $("#giveOnceBtn");
 let selectedAmount = ONE_TIME_AMOUNTS[2]; // default $100
 
 function buildGiveLink(amount, recurring) {
-  const base = giveBtn?.dataset.base || GIVE_BASE_URL;
+  const base = giveBtn?.dataset.base || CONFIG.payments.giveBaseUrl;
   const params = new URLSearchParams({ amount: String(amount || 0) });
   if (recurring) params.set("recurring", "monthly");
   return `${base}?${params.toString()}`;
@@ -269,46 +240,229 @@ function renderTiers() {
   const grid = $("#tierGrid");
   if (!grid) return;
   grid.innerHTML = TIERS.map(t => `
-    <article class="tier ${t.featured ? "is-featured" : ""} reveal">
-      ${t.featured ? '<span class="tier-badge">Most chosen</span>' : ""}
-      <span class="tier-label">${t.tier}</span>
+    <article class="tier reveal">
       <h4 class="tier-name">${t.name}</h4>
       <div class="tier-price"><strong>${t.monthly}</strong><span>/month</span></div>
       <p class="tier-annual">or ${t.annual} annually</p>
-      <p class="tier-ideal"><span>Ideal for</span>${t.idealFor}</p>
-      <ul class="tier-benefits">
-        ${t.benefits.map(b => `<li>${b}</li>`).join("")}
-      </ul>
       <a class="tier-pick" href="${buildGiveLink(t.min, true)}" target="_blank" rel="noopener">Partner at this level →</a>
     </article>
   `).join("");
   observeReveals();
 }
 
-/* ---------- FORMS (integration-ready) ---------- */
+/* ---------- FORMS (integration-ready: systeme.io) ---------- */
+async function sendToCrm(formId, data) {
+  if (!CONFIG.crm.endpoint) {
+    // Demo mode — no CRM endpoint configured yet.
+    console.log(`[${formId}] submission (demo, no CRM endpoint set)`, data);
+    return true;
+  }
+  try {
+    await fetch(CONFIG.crm.endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ form: formId, ...data }),
+    });
+    return true;
+  } catch (err) {
+    console.error(`[${formId}] CRM submission failed`, err);
+    return false;
+  }
+}
+
 function handleForm(formId, statusId, successMsg) {
   const form = $("#" + formId);
   const status = $("#" + statusId);
   if (!form) return;
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!form.checkValidity()) { form.reportValidity(); return; }
 
     const data = Object.fromEntries(new FormData(form).entries());
-    // TODO: POST `data` to your CRM / email service (e.g. Mailchimp, HubSpot, Formspree).
-    // The `track` field on the newsletter form segments ministry vs. partner audiences.
-    console.log(`[${formId}] submission`, data);
+    if (status) status.textContent = "Sending…";
+    const ok = await sendToCrm(formId, data);
 
-    if (status) status.textContent = successMsg;
-    form.reset();
-    // Re-check default radio after reset (newsletter)
-    const defaultRadio = $('input[name="track"][value="ministry"]', form);
-    if (defaultRadio) defaultRadio.checked = true;
+    if (status) status.textContent = ok ? successMsg : "Something went wrong — please email us directly.";
+    if (ok) {
+      form.reset();
+      const defaultRadio = $('input[name="track"][value="ministry"]', form);
+      if (defaultRadio) defaultRadio.checked = true;
+    }
   });
 }
 
 handleForm("newsletterForm", "newsletterStatus", "You're in! Watch your inbox for a welcome note. 💛");
 handleForm("contactForm", "contactStatus", "Thank you — your message is on its way. We'll be in touch soon.");
+handleForm("bookingForm", "bookingStatus", "Thank you! Your booking request is in — the team will follow up by email.");
+
+/* ---------- COMMUNITY FORUM (localStorage MVP) ----------
+   This is a front-end MVP so the community is functional from day one.
+   Threads/replies persist in the visitor's browser. For shared,
+   multi-user discussions in production, point these read/write
+   functions at a backend (accounts + moderation). */
+const FORUM_KEY = "dpwForum";
+const FORUM_NAME_KEY = "dpwForumName";
+let activeTopic = FORUM_TOPICS[0].id;
+
+function seedForum() {
+  const now = Date.now();
+  return {
+    parenting: [{
+      id: uid(), title: "How do you protect your kids' privacy online?",
+      body: "Our church loves to post photos of everything. I want to celebrate my kids without putting their whole lives on the internet. How do you handle this with your leadership?",
+      author: "May (DPW)", ts: now - 1000 * 60 * 60 * 26, replies: [],
+    }],
+    relationships: [{
+      id: uid(), title: "Boundaries with people who only see 'the pastor's wife'",
+      body: "Some days it feels like everyone wants something. How do you stay warm and available without burning out? Looking for honest, practical wisdom.",
+      author: "May (DPW)", ts: now - 1000 * 60 * 60 * 50, replies: [],
+    }],
+  };
+}
+
+function loadForum() {
+  try {
+    const raw = localStorage.getItem(FORUM_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (_) {}
+  const seeded = seedForum();
+  saveForum(seeded);
+  return seeded;
+}
+
+function saveForum(data) {
+  try { localStorage.setItem(FORUM_KEY, JSON.stringify(data)); } catch (_) {}
+}
+
+function forumAuthor() {
+  const input = $("#forumName");
+  const name = (input?.value || "").trim();
+  return name || "Anonymous sister";
+}
+
+function timeAgo(ts) {
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 60) return "just now";
+  const m = Math.floor(s / 60); if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60); if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24); if (d < 7) return `${d}d ago`;
+  return new Date(ts).toLocaleDateString();
+}
+
+function renderForumTopics() {
+  const list = $("#forumTopicList");
+  if (!list) return;
+  list.innerHTML = FORUM_TOPICS.map(t => `
+    <button type="button" class="forum-topic ${t.id === activeTopic ? "is-active" : ""}" role="tab" data-topic="${t.id}">
+      ${escapeHtml(t.title)}
+    </button>
+  `).join("");
+  $$(".forum-topic", list).forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeTopic = btn.dataset.topic;
+      renderForumTopics();
+      renderThreads();
+      const form = $("#forumNewForm");
+      if (form) form.hidden = true;
+    });
+  });
+  const topic = FORUM_TOPICS.find(t => t.id === activeTopic);
+  if (topic) {
+    const title = $("#forumTopicTitle");
+    const desc = $("#forumTopicDesc");
+    if (title) title.textContent = topic.title;
+    if (desc) desc.textContent = topic.desc;
+  }
+}
+
+function renderThreads() {
+  const wrap = $("#forumThreads");
+  const empty = $("#forumEmpty");
+  if (!wrap) return;
+  const data = loadForum();
+  const threads = (data[activeTopic] || []).slice().sort((a, b) => b.ts - a.ts);
+
+  if (empty) empty.hidden = threads.length !== 0;
+
+  wrap.innerHTML = threads.map(th => `
+    <article class="forum-thread" data-thread="${th.id}">
+      <div class="forum-thread-head">
+        <h4>${escapeHtml(th.title)}</h4>
+        <span class="forum-meta">${escapeHtml(th.author)} · ${timeAgo(th.ts)}</span>
+      </div>
+      <p class="forum-thread-body">${escapeHtml(th.body)}</p>
+      <div class="forum-replies">
+        ${(th.replies || []).map(r => `
+          <div class="forum-reply">
+            <p>${escapeHtml(r.body)}</p>
+            <span class="forum-meta">${escapeHtml(r.author)} · ${timeAgo(r.ts)}</span>
+          </div>
+        `).join("")}
+      </div>
+      <form class="forum-reply-form" data-thread="${th.id}">
+        <input type="text" placeholder="Write a reply…" aria-label="Reply" required />
+        <button class="button ghost" type="submit">Reply</button>
+      </form>
+    </article>
+  `).join("");
+
+  $$(".forum-reply-form", wrap).forEach(form => {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const input = form.querySelector("input");
+      const text = input.value.trim();
+      if (!text) return;
+      const store = loadForum();
+      const thread = (store[activeTopic] || []).find(t => t.id === form.dataset.thread);
+      if (!thread) return;
+      thread.replies = thread.replies || [];
+      thread.replies.push({ id: uid(), body: text, author: forumAuthor(), ts: Date.now() });
+      saveForum(store);
+      renderThreads();
+    });
+  });
+
+  observeReveals();
+}
+
+function initForum() {
+  if (!$("#forum")) return;
+
+  // Restore saved display name
+  const nameInput = $("#forumName");
+  if (nameInput) {
+    try { nameInput.value = localStorage.getItem(FORUM_NAME_KEY) || ""; } catch (_) {}
+    nameInput.addEventListener("input", () => {
+      try { localStorage.setItem(FORUM_NAME_KEY, nameInput.value.trim()); } catch (_) {}
+    });
+  }
+
+  const newBtn = $("#forumNewBtn");
+  const newForm = $("#forumNewForm");
+  const cancelBtn = $("#forumCancelBtn");
+
+  newBtn?.addEventListener("click", () => {
+    if (newForm) { newForm.hidden = !newForm.hidden; if (!newForm.hidden) $("#forumThreadTitle")?.focus(); }
+  });
+  cancelBtn?.addEventListener("click", () => { if (newForm) newForm.hidden = true; });
+
+  newForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const title = $("#forumThreadTitle").value.trim();
+    const body = $("#forumThreadBody").value.trim();
+    if (!title || !body) return;
+    const store = loadForum();
+    store[activeTopic] = store[activeTopic] || [];
+    store[activeTopic].push({ id: uid(), title, body, author: forumAuthor(), ts: Date.now(), replies: [] });
+    saveForum(store);
+    newForm.reset();
+    newForm.hidden = true;
+    renderThreads();
+  });
+
+  renderForumTopics();
+  renderThreads();
+}
 
 /* ---------- HEADER / ANNOUNCE / NAV ---------- */
 const header = $("#siteHeader");
@@ -325,6 +479,18 @@ $(".announce-close")?.addEventListener("click", () => {
 });
 try { if (sessionStorage.getItem("dpwAnnounceClosed")) announceBar?.classList.add("hidden"); } catch (_) {}
 
+// Nav dropdown (Events) — click toggle on touch, hover handled by CSS
+const dropdown = $(".nav-dropdown");
+const dropdownToggle = $(".nav-dropdown-toggle");
+dropdownToggle?.addEventListener("click", (e) => {
+  // On small screens (stacked nav), tapping the label opens the submenu
+  if (window.innerWidth <= 900) {
+    e.preventDefault();
+    const open = dropdown.classList.toggle("open");
+    dropdownToggle.setAttribute("aria-expanded", String(open));
+  }
+});
+
 // Mobile menu
 const menuButton = $(".menu-toggle");
 const navLinks = $(".nav-links");
@@ -337,6 +503,7 @@ if (menuButton && navLinks) {
   navLinks.querySelectorAll("a").forEach(link => {
     link.addEventListener("click", () => {
       navLinks.classList.remove("open");
+      dropdown?.classList.remove("open");
       menuButton.setAttribute("aria-expanded", "false");
       menuButton.textContent = "Menu";
     });
@@ -381,7 +548,6 @@ function observeReveals() {
     revealListenerAttached = true;
     window.addEventListener("scroll", revealInViewport, { passive: true });
     window.addEventListener("resize", revealInViewport, { passive: true });
-    // Safety net: nothing stays hidden longer than 4s no matter what.
     setTimeout(() => $$(".reveal:not(.in-view)").forEach(el => el.classList.add("in-view")), 4000);
   }
 }
@@ -496,27 +662,24 @@ if (heroCopy && !reduceMotion) {
 /* ---------- INIT ---------- */
 renderResources();
 renderEvents();
-renderSpeaking();
 renderAmounts();
 renderTiers();
+initForum();
 animateCounters();
 
 // Mark static sections for reveal
-$$(".section-heading, .quote-card, .book-info, .story-copy").forEach(el => el.classList.add("reveal"));
+$$(".section-heading, .book-info, .story-copy").forEach(el => el.classList.add("reveal"));
 
 // Staggered, directional reveals
 stagger(".track-card", { dir: "zoom", step: 120 });
 stagger(".resource-card");
 stagger(".timeline-item");
-stagger(".speaking-row", { dir: "from-left" });
 stagger(".tier", { dir: "from-right" });
-stagger(".quote-card", { step: 140 });
 stagger(".vision-points li", { dir: "from-right", step: 90 });
 stagger(".youtube-features li", { dir: "from-left", step: 80 });
 
 // Interactive hover effects
 enhanceCards(".resource-card, .tier, .track-card", { tilt: true });
-enhanceCards(".speaking-row", { tilt: false });
 magnetic(".hero-actions .button, .nav-give, .give-btn");
 
 observeReveals();

@@ -850,3 +850,173 @@ h1 {
   .scroll-progress { display: none; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ============================================================
+   Week 1 sync additions — nav dropdown, events, bookings,
+   community forum, social, branding placeholder
+   ============================================================ */
+
+/* ----- Brand / footer wordmark fallback (until logo is delivered) ----- */
+.brand-wordmark {
+  font-family: "Playfair Display", serif; font-weight: 800;
+  font-size: 1.4rem; color: var(--wine); letter-spacing: -0.01em;
+}
+.footer-wordmark {
+  font-family: "Playfair Display", serif; font-weight: 800;
+  font-size: 1.5rem; color: var(--wine); margin-bottom: 1.2rem;
+}
+
+/* ----- Nav dropdown (Events) ----- */
+.nav-dropdown { position: relative; display: inline-flex; align-items: center; }
+.nav-dropdown-toggle { display: inline-flex; align-items: center; gap: 0.3rem; }
+.nav-dropdown .caret { font-size: 0.7rem; transition: transform 0.25s ease; }
+.nav-dropdown-menu {
+  position: absolute; top: calc(100% + 0.6rem); left: 50%; transform: translateX(-50%) translateY(8px);
+  min-width: 200px; padding: 0.6rem; display: flex; flex-direction: column; gap: 0.2rem;
+  background: rgba(255, 250, 243, 0.98); backdrop-filter: blur(20px);
+  border: 1px solid var(--line); border-radius: 1rem; box-shadow: var(--shadow);
+  opacity: 0; visibility: hidden; transition: all 0.25s ease; z-index: 40;
+}
+.nav-dropdown:hover .nav-dropdown-menu,
+.nav-dropdown:focus-within .nav-dropdown-menu,
+.nav-dropdown.open .nav-dropdown-menu {
+  opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0);
+}
+.nav-dropdown:hover .caret { transform: rotate(180deg); }
+.nav-dropdown-menu a {
+  padding: 0.7rem 0.9rem !important; border-radius: 0.7rem;
+  text-transform: none; letter-spacing: normal; font-size: 0.92rem; color: var(--ink);
+}
+.nav-dropdown-menu a::after { display: none; }
+.nav-dropdown-menu a:hover { background: rgba(93, 47, 49, 0.06); color: var(--wine); }
+
+/* ----- Event filters + category badge ----- */
+.event-filters { margin-bottom: 2.2rem; }
+.tl-cat {
+  display: inline-block; font-size: 0.62rem; font-weight: 900; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 0.3rem 0.7rem; border-radius: 999px;
+  background: rgba(202, 164, 93, 0.9); color: var(--plum); margin-bottom: 0.6rem;
+}
+.timeline-info .tl-title {
+  display: block; margin-top: 0.1rem; font-family: "Playfair Display", serif;
+  font-size: 1.55rem; font-weight: 800; line-height: 1.15;
+}
+.timeline-info .tl-date { display: block; margin-top: 0.5rem; }
+.timeline-info .tl-loc {
+  display: block; margin-top: 0.2rem; font-family: Inter, sans-serif;
+  font-size: 0.95rem; font-weight: 700; color: rgba(255,255,255,0.92);
+}
+.timeline-item.is-past .tl-loc { color: var(--wine); }
+
+/* ----- Bookings ----- */
+.bookings { padding: 6rem 0; }
+.bookings-card {
+  display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 3rem;
+  background: linear-gradient(135deg, var(--wine) 0%, #7a3f42 100%); color: white;
+  border-radius: 2.5rem; padding: clamp(2rem, 5vw, 4rem); box-shadow: var(--shadow-strong);
+  position: relative; overflow: hidden;
+}
+.bookings-card::before {
+  content: ''; position: absolute; top: -50%; right: -30%; width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(202,164,93,0.15) 0%, transparent 70%); border-radius: 50%;
+}
+.bookings-intro h2 { color: white; }
+.bookings-intro p { color: rgba(255,255,255,0.85); line-height: 1.7; margin-top: 0.8rem; }
+.bookings form { display: grid; gap: 1.1rem; position: relative; z-index: 1; }
+.bookings label { display: grid; gap: 0.5rem; color: rgba(255,255,255,0.9); font-weight: 800; font-size: 0.9rem; }
+.bookings .primary { background: white; color: var(--wine); justify-self: start; border: 2px solid white; }
+.bookings .primary:hover { background: var(--gold); color: white; border-color: var(--gold); }
+.bookings .form-status { color: var(--gold); font-weight: 700; }
+
+/* ----- Give: payment methods line ----- */
+.give-methods { margin-top: 1.1rem; color: rgba(255,255,255,0.82); font-size: 0.84rem; font-weight: 600; }
+.give-methods span { color: var(--gold); font-weight: 800; }
+
+/* ----- Bio placeholder (About Us) ----- */
+.bio-placeholder {
+  border-left: 3px solid var(--gold); padding: 0.4rem 0 0.4rem 1.1rem;
+  color: var(--muted) !important;
+}
+
+/* ----- Community forum ----- */
+.forum {
+  display: grid; grid-template-columns: 270px 1fr; gap: 1.6rem; align-items: start;
+}
+.forum-topics {
+  position: sticky; top: 110px; padding: 1.5rem; border-radius: 1.6rem;
+  background: linear-gradient(135deg, rgba(255,250,243,0.9), rgba(255,255,255,0.7));
+  border: 1px solid rgba(202,164,93,0.22); box-shadow: 0 14px 40px rgba(75,45,35,0.07);
+}
+.forum-topics-title { font-size: 1.05rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-deep); margin-bottom: 1rem; }
+.forum-topic-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.forum-topic {
+  text-align: left; padding: 0.8rem 1rem; border-radius: 0.9rem; cursor: pointer;
+  border: 1px solid transparent; background: transparent; color: var(--ink);
+  font: inherit; font-weight: 700; font-size: 0.95rem; transition: all 0.2s ease;
+}
+.forum-topic:hover { background: rgba(93,47,49,0.05); }
+.forum-topic.is-active { background: var(--wine); color: #fff; box-shadow: 0 10px 24px rgba(93,47,49,0.25); }
+.forum-identity { margin-top: 1.3rem; padding-top: 1.2rem; border-top: 1px solid var(--line); }
+.forum-identity label { display: grid; gap: 0.4rem; font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.forum-identity input {
+  width: 100%; border: 1px solid var(--line); background: rgba(255,255,255,0.8);
+  color: var(--ink); padding: 0.7rem 0.9rem; border-radius: 0.8rem; font: inherit;
+}
+.forum-identity input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(202,164,93,0.18); }
+
+.forum-main-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.4rem; }
+.forum-main-head h3 { margin-bottom: 0.3rem; }
+.forum-topic-desc { color: var(--muted); font-size: 0.95rem; line-height: 1.6; max-width: 560px; }
+.forum-new-btn { min-height: 3rem; padding: 0 1.4rem; flex-shrink: 0; }
+
+.forum-new-form { display: grid; gap: 0.9rem; padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 1.4rem; background: rgba(255,255,255,0.7); border: 1px solid rgba(202,164,93,0.3); }
+.forum-new-form input, .forum-new-form textarea { border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 0.9rem; padding: 0.9rem 1rem; }
+.forum-new-form input::placeholder, .forum-new-form textarea::placeholder { color: var(--muted); }
+.forum-new-form textarea { min-height: 110px; resize: vertical; }
+.forum-new-actions { display: flex; gap: 0.8rem; }
+.forum-new-actions .button { min-height: 3rem; padding: 0 1.5rem; }
+
+.forum-threads { display: grid; gap: 1.1rem; }
+.forum-thread {
+  padding: 1.5rem 1.6rem; border-radius: 1.4rem;
+  background: linear-gradient(135deg, rgba(255,250,243,0.95), rgba(255,255,255,0.8));
+  border: 1px solid rgba(202,164,93,0.22); box-shadow: 0 12px 34px rgba(75,45,35,0.07);
+}
+.forum-thread-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.forum-thread-head h4 { font-family: "Playfair Display", serif; font-size: 1.25rem; color: var(--wine); }
+.forum-meta { font-size: 0.78rem; color: var(--muted); font-weight: 700; white-space: nowrap; }
+.forum-thread-body { margin-top: 0.6rem; color: var(--ink); line-height: 1.7; font-size: 0.98rem; }
+.forum-replies { display: grid; gap: 0.7rem; margin-top: 1rem; }
+.forum-reply { padding: 0.8rem 1rem; border-radius: 0.9rem; background: rgba(93,47,49,0.04); border-left: 3px solid rgba(202,164,93,0.5); }
+.forum-reply p { color: var(--ink); font-size: 0.93rem; line-height: 1.6; }
+.forum-reply .forum-meta { display: block; margin-top: 0.4rem; }
+.forum-reply-form { display: flex; gap: 0.6rem; margin-top: 1rem; }
+.forum-reply-form input { flex: 1; border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 999px; padding: 0.7rem 1.1rem; }
+.forum-reply-form input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(202,164,93,0.18); }
+.forum-reply-form .button { min-height: 2.8rem; padding: 0 1.3rem; }
+.forum-empty { text-align: center; color: var(--muted); padding: 2rem; }
+
+/* ----- Footer social ----- */
+.footer-social { display: flex; gap: 0.7rem; margin-top: 1.3rem; }
+.footer-social a {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; border-radius: 50%; color: var(--wine);
+  background: rgba(93,47,49,0.07); transition: all 0.25s ease;
+}
+.footer-social a:hover { background: var(--wine); color: #fff; transform: translateY(-3px); }
+
+/* ----- Responsive ----- */
+@media (max-width: 900px) {
+  .forum { grid-template-columns: 1fr; }
+  .forum-topics { position: static; }
+  .forum-topic-list { flex-direction: row; flex-wrap: wrap; }
+  .bookings-card { grid-template-columns: 1fr; }
+  .nav-dropdown { flex-direction: column; align-items: stretch; }
+  .nav-dropdown-menu {
+    position: static; transform: none; opacity: 1; visibility: visible;
+    box-shadow: none; border: none; background: transparent; min-width: 0;
+    max-height: 0; overflow: hidden; padding: 0; transition: max-height 0.25s ease;
+  }
+  .nav-dropdown.open .nav-dropdown-menu { max-height: 300px; padding: 0.3rem 0 0.3rem 1rem; }
+  .nav-dropdown-menu a { padding: 0.8rem 1rem !important; }
+}
