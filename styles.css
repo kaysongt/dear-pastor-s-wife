@@ -357,11 +357,8 @@ h3 { font-size: clamp(1.4rem, 2.2vw, 2.1rem); letter-spacing: -0.03em; }
 @keyframes bookFloat { 0%, 100% { transform: rotateY(-15deg) translateY(0px); } 50% { transform: rotateY(-15deg) translateY(-15px); } }
 .book-cover-wrapper:hover .book-cover { transform: rotateY(-25deg) scale(1.05); }
 .book-spine { position: absolute; left: 0; top: 0; width: 40px; height: 100%; background: linear-gradient(90deg, #4a2628 0%, #5d2f31 50%, #4a2628 100%); transform: rotateY(-90deg); transform-origin: left; border-radius: 8px 0 0 8px; }
-.book-front { position: relative; width: 100%; height: 100%; background: linear-gradient(135deg, #7a3f42 0%, #5d2f31 50%, #4a2628 100%); border-radius: 0 12px 12px 0; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4), inset 0 0 80px rgba(202, 164, 93, 0.1); border: 1px solid rgba(202, 164, 93, 0.3); }
-.cover-content { position: absolute; inset: 0; padding: 3rem 2.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white; }
-.cover-eyebrow { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); font-weight: 800; margin-bottom: 2rem; opacity: 0.9; }
-.cover-title { font-family: "Playfair Display", serif; font-size: 2.8rem; line-height: 1.1; font-weight: 900; margin-bottom: 1rem; color: white; text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); letter-spacing: -0.02em; }
-.cover-author { font-size: 1.1rem; font-weight: 600; color: var(--gold); letter-spacing: 0.1em; margin-top: auto; padding-top: 2rem; border-top: 1px solid rgba(202, 164, 93, 0.3); width: 100%; }
+.book-front { position: relative; width: 100%; height: 100%; border-radius: 0 12px 12px 0; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4); overflow: hidden; }
+.book-front img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .book-info { animation: fadeInUp 0.8s ease 0.2s both; }
 .book-description { color: var(--muted); line-height: 1.8; font-size: 1.05rem; margin-bottom: 1.3rem; }
 .book-highlights { display: grid; gap: 1.2rem; margin: 2.5rem 0; padding: 2rem; background: rgba(255, 255, 255, 0.5); border-radius: 1.5rem; border: 1px solid rgba(202, 164, 93, 0.2); }
@@ -469,13 +466,33 @@ h3 { font-size: clamp(1.4rem, 2.2vw, 2.1rem); letter-spacing: -0.03em; }
   transition: all 0.3s ease;
 }
 .conference-card:hover { transform: translateY(-5px); box-shadow: 0 35px 110px rgba(60, 37, 30, 0.3); }
-.conference-card img { height: 100%; min-height: 480px; width: 100%; object-fit: cover; border-radius: 2rem; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2); }
+.conference-card img { height: 100%; min-height: 480px; width: 100%; object-fit: cover; object-position: center 30%; border-radius: 2rem; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2); align-self: center; }
 .conference-copy { padding: clamp(1rem, 3vw, 2rem); }
-.focus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 2rem 0; }
+.focus-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
 .focus-grid div { border-left: 4px solid var(--gold); padding-left: 1.2rem; transition: all 0.3s ease; }
 .focus-grid div:hover { border-left-color: var(--wine); padding-left: 1.5rem; }
 .focus-grid h3 { font-size: 1.4rem; margin-bottom: 0.5rem; }
 .focus-grid p { color: var(--muted); line-height: 1.7; }
+.summit-close { font-style: italic; color: var(--wine); line-height: 1.7; margin: 0.5rem 0 1.8rem; padding-left: 1.1rem; border-left: 3px solid var(--gold); }
+
+/* ===================== Ways we gather (tea parties + retreats) ===================== */
+.gather { padding: 5rem 0; }
+.gather-card {
+  display: grid; grid-template-columns: 0.95fr 1.05fr; gap: 3rem; align-items: center;
+  margin-top: 3rem;
+}
+.gather-card.reverse .gather-photo { order: 2; }
+.gather-photo { position: relative; }
+.gather-photo img {
+  width: 100%; height: 100%; max-height: 520px; min-height: 360px; object-fit: cover;
+  border-radius: 2rem; box-shadow: var(--shadow-strong);
+}
+.gather-copy h3 {
+  font-family: "Playfair Display", serif; font-size: clamp(1.6rem, 3vw, 2.2rem);
+  line-height: 1.2; margin: 0.4rem 0 1rem; color: var(--wine);
+}
+.gather-copy p { color: var(--muted); line-height: 1.8; margin-bottom: 1rem; }
+.gather-copy .button { margin-top: 0.6rem; }
 
 /* ===================== Community ===================== */
 .community { padding: 6rem 0; }
@@ -733,10 +750,12 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
   .nav-links a:hover { background: rgba(93, 47, 49, 0.05); }
   .nav-give { text-align: center; }
 
-  .hero, .split, .story, .conference-card, .contact-card, .footer-content, .track-grid { grid-template-columns: 1fr; }
+  .hero, .split, .story, .conference-card, .contact-card, .footer-content, .track-grid, .gather-card { grid-template-columns: 1fr; }
   .hero { min-height: auto; padding-top: 3.5rem; }
   .hero-card { transform: none; }
   .conference-card img { min-height: 360px; }
+  .gather-card.reverse .gather-photo { order: 0; }
+  .gather-photo img { max-height: 420px; }
   .story-portrait img { height: 480px; }
   .speaking-row { grid-template-columns: 1fr auto; }
   .speaking-row .sp-date { grid-column: 1 / -1; }
@@ -761,7 +780,6 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
   h1 { font-size: clamp(2.6rem, 13vw, 4.4rem); }
   .book-card, .youtube-card { padding: 2rem 1.5rem; }
   .book-cover { width: 240px; height: 360px; }
-  .cover-title { font-size: 2.2rem; }
   .book-actions { flex-direction: column; }
   .book-actions .button { width: 100%; }
   .eyebrow::before { display: none; }
@@ -921,6 +939,11 @@ h1 {
   background: radial-gradient(circle, rgba(202,164,93,0.15) 0%, transparent 70%); border-radius: 50%;
 }
 .bookings-intro h2 { color: white; }
+.bookings-photo {
+  width: 100%; max-height: 320px; object-fit: cover; object-position: center 18%;
+  border-radius: 1.5rem; margin: 1.4rem 0 0.4rem; display: block;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.28); position: relative; z-index: 1;
+}
 .bookings-intro p { color: rgba(255,255,255,0.85); line-height: 1.7; margin-top: 0.8rem; }
 .bookings form { display: grid; gap: 1.1rem; position: relative; z-index: 1; }
 .bookings label { display: grid; gap: 0.5rem; color: rgba(255,255,255,0.9); font-weight: 800; font-size: 0.9rem; }
@@ -931,12 +954,6 @@ h1 {
 /* ----- Give: payment methods line ----- */
 .give-methods { margin-top: 1.1rem; color: rgba(255,255,255,0.82); font-size: 0.84rem; font-weight: 600; }
 .give-methods span { color: var(--gold); font-weight: 800; }
-
-/* ----- Bio placeholder (About Us) ----- */
-.bio-placeholder {
-  border-left: 3px solid var(--gold); padding: 0.4rem 0 0.4rem 1.1rem;
-  color: var(--muted) !important;
-}
 
 /* ----- Community forum ----- */
 .forum {

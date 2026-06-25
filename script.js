@@ -49,10 +49,10 @@ const RESOURCES = [
 // Events. category: conference | tea-party | retreat. status: open | soon | past.
 // `sort` is an ISO-ish date used only for ordering.
 const EVENTS = [
-  { category: "conference", year: 2026, date: "Jul 30 – Aug 2, 2026", sort: "2026-07-30", title: "Summer Blast", location: "United States", desc: "Our summer gathering to open the season — worship, teaching, and connection.", status: "soon", link: "#newsletter" },
-  { category: "tea-party", year: 2026, date: "Aug 15, 2026", sort: "2026-08-15", title: "Tea Party — A Day Out", location: "Chicago, USA", desc: "A relaxed day out together: tea, real conversation, and sisterhood.", status: "soon", link: "#newsletter" },
+  { category: "conference", year: 2026, date: "Jul 30 – Aug 2, 2026", sort: "2026-07-30", title: "Summer Blast", location: "United States", desc: "Our summer gathering to open the season — worship, teaching, and connection for women in ministry.", status: "soon", link: "#newsletter" },
+  { category: "tea-party", year: 2026, date: "Aug 15, 2026", sort: "2026-08-15", title: "DPW Tea Party", location: "Chicago, USA", desc: "An intimate two-hour gathering with icebreakers and table topics — the kind of conversation that quickly feels like a reunion. Free and open to pastors' wives, ministers' wives, and women in Christian leadership.", status: "soon", link: "#newsletter" },
   { category: "conference", year: 2026, date: "September 2026", sort: "2026-09-01", title: "DPW at KingsWord", location: "Nigeria", desc: "Join us in Nigeria with KingsWord. Firm dates are being confirmed.", status: "soon", link: "#newsletter" },
-  { category: "retreat", year: 2026, date: "Oct 9 – 11, 2026", sort: "2026-10-09", title: "DPW Retreat", location: "United Kingdom", desc: "A restorative weekend retreat for women in ministry.", status: "soon", link: "#newsletter" },
+  { category: "retreat", year: 2026, date: "Oct 9 – 11, 2026", sort: "2026-10-09", title: "DPW Retreat", location: "United Kingdom", desc: "A multi-day, immersive weekend away — teaching, worship, prayer, and honest table conversations. Women arrive carrying the weight of their call and leave lighter, clearer, and more equipped.", status: "soon", link: "#newsletter" },
 ];
 
 const EVENT_CAT_LABEL = { conference: "Conference", "tea-party": "Tea Party", retreat: "Retreat" };
