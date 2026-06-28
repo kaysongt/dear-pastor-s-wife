@@ -1,53 +1,79 @@
-# Dear Pastor's Wife Website Draft
+# Dear Pastor's Wife Website
 
-This is a static website refresh for Dear Pastor's Wife using content from the current site at https://dearpastorswife.org and a simple, bold landing-page structure inspired by the compact landonnorris.com layout.
+A static, multi-page website for Dear Pastor's Wife, founded by May Ijisesan. Built with plain HTML, CSS, and JavaScript (no build step), so it can be hosted anywhere.
 
-## Files
+## Pages
 
-- `index.html` — main one-page website
-- `styles.css` — full responsive styling
-- `script.js` — mobile menu behavior
-- `assets/` — copied public images/logo from the current site
+| File | Page |
+| --- | --- |
+| `index.html` | Landing (scrollable hub with "However you arrived" routing + teasers) |
+| `resources.html` | Resource library (searchable, filterable) |
+| `events.html` | Events (conferences, tea parties, retreats) + ways we gather + Summit |
+| `booking.html` | Bookings (invite May to speak) |
+| `about.html` | About Us (DPW story + founder + book + contact) |
+| `community.html` | Community forum |
+| `partnership.html` | Partnership (warm intro, impact stories, share, partner sign-up → Stripe) |
+
+## Shared chrome (one source of truth)
+
+The header, announcement bar, and footer are **injected by JavaScript** from
+`buildChrome()` in `script.js`, so they are identical across every page. Each
+page only needs:
+
+- `<body data-page="...">` — drives the active nav state (e.g. `data-page="events"`).
+- `<div data-chrome="top"></div>` — where the announce bar + header render.
+- `<div data-chrome="footer"></div>` — where the footer renders.
+
+Edit nav links once in `NAV_ITEMS`, and social URLs once in `SOCIAL`, both at the
+top of `script.js`.
+
+## Brand identity
+
+- **Logo:** "vessel" mark (inline SVG) + wordmark, defined in `script.js` (`VESSEL_SVG`).
+- **Palette:** purple (primary), off-white surfaces, clay/brown neutrals. All set
+  via CSS variables in `:root` of `styles.css` (the whole site re-skins from there).
+- **Fonts:** Fraunces (display/headings) + Inter (body/UI).
 
 ## Local preview
 
-From this folder:
-
 ```bash
 python3 -m http.server 4173
+# then open http://localhost:4173
 ```
-
-Then open:
-
-```text
-http://localhost:4173
-```
-
-## Deployment note
-
-Because this is static HTML/CSS/JS, it can be deployed on Netlify, Vercel, Cloudflare Pages, GitHub Pages, or any normal web host. Static hosting is the most reliable option for client demos because there is no local dev server required to keep the site online.
-
-## Week 1 sync — what changed
-
-- **Navigation:** Retreats → **Events** (dropdown: Conferences, Tea Parties, Retreats), Speaking → **Bookings** (with a request form), Pastor May → **About Us** (DPW history + founder journey on one page), and **Community** is now a forum.
-- **Events loaded:** Summer Blast (Jul 30–Aug 2), Tea Party / A Day Out in Chicago (Aug 15), Nigeria – KingsWord (Sept 2026), UK – DPW Retreat (Oct 9–11). Edit them in `script.js` → `EVENTS`.
-- **Partnership tiers:** simplified to tier names + suggested price ranges only.
-- **Resources:** book + YouTube kept; added the **7-Day Guided Reset** PDF download.
-- **Community forum:** topic threads with posting/replies (parenting, relationship management in ministry). Front-end MVP — data persists in the visitor's browser via `localStorage`. **Production needs a backend** (accounts + moderation); see `initForum`/`loadForum` in `script.js`.
 
 ## Configuration before go-live (`script.js` → `CONFIG`)
 
-- **Stripe (payments + ACH):** set `CONFIG.payments.giveBaseUrl` to your Stripe-hosted donation/checkout page (accepts `?amount=` and `?recurring=monthly`). In the Stripe Dashboard, enable **Card** and **ACH Direct Debit** as payment methods so bank transfer appears at checkout.
-- **systeme.io (CRM):** set `CONFIG.crm.endpoint` to your systeme.io form/submission endpoint. While empty, forms run in demo mode (log + success message, no network call). The newsletter, contact, and booking forms all post through this.
+Both integrations run in **demo mode** until the client provides credentials
+(forms log to the console and show a success message; payment shows the redirect step).
 
-## Blocked / waiting on client
+- **systeme.io (CRM):** set `CONFIG.crm.endpoint` to the systeme.io form/submission
+  endpoint. When set, all form submissions (newsletter, contact, booking, and the
+  partner sign-up) are POSTed there automatically. **Endpoint URL pending from client.**
+- **Stripe (payments + ACH):** set `CONFIG.payments.giveBaseUrl` to the Stripe-hosted
+  checkout / Payment Link URL (accepts `?amount=`, `?recurring=monthly`, and
+  `?prefilled_email=`). Enable **Card** and **ACH Direct Debit** in the Stripe
+  Dashboard so bank transfer appears at checkout. **Stripe details pending from client.**
 
-These are wired with placeholders — search the code for `data-pending` / the noted spots and drop in the real assets:
+### Partner flow (partnership.html)
 
-- **Pastor May's detailed bio** — `index.html`, About Us section (`.bio-placeholder`).
-- **Logo file** — `assets/logo.png`. A wordmark fallback shows automatically if the file is missing.
-- **Professional photos** — real photos only, no AI imagery (permissions handled client-side).
-- **Official social URLs** — Instagram / Facebook links are placeholders (`data-pending` in header social + footer). YouTube is live.
-- **Final 7-Day Reset PDF** — `assets/dpw-7-day-reset.pdf` is a placeholder; replace with the designed PDF.
+The partner sign-up captures **name, email, phone, country, and mailing address**,
+records them to the CRM **first**, and only then redirects to Stripe for payment
+(see `initPartnerForm()` in `script.js`). This keeps the contact even if someone
+drops off at the payment step.
+
+## Email
+
+Email is handled by **Google Workspace**. No dev action is required unless DNS/MX
+setup is assigned to us.
+
+## Still pending / placeholders
+
+- **Social URLs** — Instagram and Facebook are placeholders (`data-pending` + `SOCIAL`
+  in `script.js`). YouTube is live.
+- **Logo file** — `assets/logo.png` is still used for the favicon; the header/footer
+  now use the inline vessel mark.
+- **Final 7-Day Reset PDF** — `assets/dpw-7-day-reset.pdf` is a placeholder.
+- **Community forum** — front-end MVP; threads/replies persist in the visitor's
+  browser (localStorage). Production needs a backend (accounts + moderation).
 
 **Launch deadline: July 29, 2026** (must be live before Summer Blast on July 30).

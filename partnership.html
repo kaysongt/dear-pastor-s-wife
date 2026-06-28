@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Partner with Dear Pastor's Wife. Your giving keeps resources free for women in ministry the world over. Give once or partner month to month." />
+  <meta name="theme-color" content="#573a6f" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Partner with Dear Pastor's Wife" />
+  <meta property="og:description" content="Your partnership keeps Dear Pastor's Wife free for the women who need it, and reaches women the world over." />
+  <meta property="og:image" content="assets/featured-laughing.jpg" />
+  <meta property="og:url" content="https://dearpastorswife.org/partnership.html" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <title>Partnership | Dear Pastor's Wife</title>
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800;9..144,900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="partnership">
+  <div data-chrome="top"></div>
+
+  <main id="top">
+    <section class="page-hero section-shell">
+      <p class="eyebrow">Partner &amp; Give</p>
+      <h1>Your partnership reaches women the world over.</h1>
+    </section>
+
+    <!-- Warm intro -->
+    <section class="section-shell">
+      <div class="partner-intro">
+        <p>When you partner with Dear Pastor's Wife, you do something quietly powerful: you make sure a pastor's wife on the other side of the world can find help the moment she needs it, for free. You help a tired woman get away to a retreat. You put a book in the hands of someone who feels unseen. None of this happens on its own. It happens because people like you decide it should.</p>
+        <p>Give once, or walk with us month to month. Either way, thank you for believing the women who hold ministry together are worth investing in.</p>
+      </div>
+      <div class="share-row">
+        <span style="color:var(--muted);font-weight:700">Know someone who'd love this?</span>
+        <button class="share-btn" type="button" data-share="https://dearpastorswife.org/partnership.html">
+          <span aria-hidden="true">↗</span> <span class="share-label">Share this page</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Impact stories -->
+    <section class="section-shell page-section">
+      <div class="section-heading centered">
+        <p class="eyebrow">The impact</p>
+        <h2>What your partnership makes possible.</h2>
+      </div>
+      <div class="impact-grid">
+        <article class="impact-card">
+          <p class="impact-quote">"I came to the retreat empty and ready to quit. I left remembering why I said yes to this calling in the first place."</p>
+          <p class="impact-by">A pastor's wife, United Kingdom</p>
+        </article>
+        <article class="impact-card">
+          <p class="impact-quote">"For the first time, someone talked to me about money and leadership like I mattered. That changed something in me."</p>
+          <p class="impact-by">Summit attendee, Nigeria</p>
+        </article>
+        <article class="impact-card">
+          <div class="impact-stat">3</div>
+          <span>continents reached through branches and online resources</span>
+          <p class="impact-quote" style="margin-top:1rem;font-size:1rem">Free teaching, retreats, and tea parties, kept free because partners step in.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Partner sign-up (capture details before Stripe) -->
+    <section class="section-shell page-section">
+      <div class="partner-form-card">
+        <h2>Become a partner</h2>
+        <p class="form-note">We'll record your details so we can stay in touch and send your partner updates, then take you to secure checkout to set up your gift.</p>
+        <form class="partner-form" id="partnerForm" novalidate>
+          <div class="field-row">
+            <label>Full name <input name="name" type="text" placeholder="First and last name" required /></label>
+            <label>Email <input name="email" type="email" placeholder="you@example.com" required /></label>
+          </div>
+          <div class="field-row">
+            <label>Phone <input name="phone" type="tel" placeholder="+1 555 123 4567" required /></label>
+            <label>Country <input name="country" type="text" placeholder="Country" required /></label>
+          </div>
+          <label>Mailing address <input name="address" type="text" placeholder="Street, city, state/region, postal code" required /></label>
+
+          <fieldset style="border:0;padding:0;margin:0">
+            <legend style="font-weight:700;color:var(--wine);font-size:0.85rem;margin-bottom:0.5rem">How would you like to partner?</legend>
+            <div class="partner-tier-pills">
+              <label><input type="radio" name="frequency" value="monthly" checked /> Monthly</label>
+              <label><input type="radio" name="frequency" value="once" /> One time</label>
+            </div>
+          </fieldset>
+
+          <fieldset style="border:0;padding:0;margin:0">
+            <legend style="font-weight:700;color:var(--wine);font-size:0.85rem;margin-bottom:0.5rem">Choose an amount</legend>
+            <div class="partner-tier-pills">
+              <label><input type="radio" name="amount" value="25" /> $25</label>
+              <label><input type="radio" name="amount" value="50" /> $50</label>
+              <label><input type="radio" name="amount" value="100" checked /> $100</label>
+              <label><input type="radio" name="amount" value="250" /> $250</label>
+            </div>
+            <label style="margin-top:0.8rem">Or another amount
+              <input name="customAmount" type="number" min="1" step="1" placeholder="Custom amount in USD" />
+            </label>
+          </fieldset>
+
+          <button class="button gold" type="submit">Continue to secure checkout →</button>
+          <p class="form-status" id="partnerStatus" role="status" aria-live="polite"></p>
+          <p class="secure-note inline">
+            <span class="lock">🔒</span> Payments are processed by Stripe, a PCI-compliant provider. Your card and bank details are encrypted and never stored on our servers.
+          </p>
+        </form>
+      </div>
+    </section>
+
+    <!-- One-time quick give -->
+    <section class="give section-shell page-section" id="give">
+      <div class="give-layout">
+        <div class="give-card give-onetime">
+          <h3>Prefer to give a one-time gift?</h3>
+          <p class="give-sub">Every amount makes room for another woman to be poured into.</p>
+          <div class="amount-grid" id="amountGrid"></div>
+          <label class="custom-amount">
+            <span>Other amount</span>
+            <div class="custom-input">
+              <span class="currency">$</span>
+              <input type="number" id="customAmount" min="1" step="1" placeholder="100" />
+            </div>
+          </label>
+          <a class="button gold give-btn" id="giveOnceBtn" href="#" data-base="https://donate.dearpastorswife.org">Give securely →</a>
+          <p class="give-methods"><span>Pay by</span> card, Apple Pay, Google Pay, or bank transfer (ACH)</p>
+        </div>
+        <div class="give-card partner-about">
+          <h3>Why a partnership program?</h3>
+          <p class="give-sub">A one-time gift helps today. Partnership lets us plan for tomorrow.</p>
+          <ul class="about-objectives">
+            <li>Support we can count on, month to month</li>
+            <li>Real relationships with people who share the heart for this</li>
+            <li>Room to reach further, more women, in more places</li>
+            <li>Less time chasing funds, more time serving women</li>
+          </ul>
+          <p class="about-partners-label">Our partners include</p>
+          <div class="partner-chips">
+            <span>Individuals</span>
+            <span>Churches &amp; denominations</span>
+            <span>Faith-based brands</span>
+            <span>Foundations</span>
+            <span>Ministry leaders</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tiers -->
+      <div class="partnership-tiers">
+        <div class="section-heading centered">
+          <p class="eyebrow">Multi-tier partnership</p>
+          <h3>Choose the partnership that fits you.</h3>
+          <p>Each tier builds on the one before it. Amounts are flexible ranges, so partner at the level that's right for your season.</p>
+        </div>
+        <div class="tier-grid" id="tierGrid"></div>
+      </div>
+
+      <!-- Vision -->
+      <div class="partner-vision">
+        <div>
+          <p class="eyebrow">For partners &amp; donors</p>
+          <h3>See the vision you're building.</h3>
+          <p>Partners get a quarterly vision letter, impact numbers, and behind-the-scenes photos and video from retreats and outreach, so you can see exactly where your generosity goes.</p>
+          <a class="button ghost" href="index.html#newsletter">Join the partner newsletter</a>
+        </div>
+        <ul class="vision-points">
+          <li><span>✓</span> Quarterly vision and impact letter</li>
+          <li><span>✓</span> Behind-the-scenes retreat photos and video</li>
+          <li><span>✓</span> Early invitations to partner gatherings</li>
+          <li><span>✓</span> A direct line to the DPW team</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <div data-chrome="footer"></div>
+  <script src="script.js"></script>
+</body>
+</html>

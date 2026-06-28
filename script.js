@@ -1,16 +1,157 @@
 /* ============================================================
-   Dear Pastor's Wife — site logic
+   Dear Pastor's Wife site logic
    Data-driven sections (resources, events, giving, forum) live
    here so they're easy to update and ready to wire to live
    services (Stripe, systeme.io) later.
+
+   The site is now MULTI-PAGE. The shared header, announcement bar,
+   and footer are injected by buildChrome() below so there is a
+   single source of truth across every page. Each page sets
+   <body data-page="..."> to drive the active nav state, and drops
+   <div data-chrome="top"></div> / <div data-chrome="footer"></div>
+   where the chrome should render.
    ============================================================ */
+
+/* ---------- SOCIAL LINKS (placeholders until client provides URLs) ---------- */
+const SOCIAL = {
+  instagram: "https://www.instagram.com/dearpastorswife", // data-pending: confirm URL
+  facebook: "https://www.facebook.com/dearpastorswife",   // data-pending: confirm URL
+  youtube: "https://www.youtube.com/@DearPastorsWife",
+};
+
+/* ---------- SHARED CHROME (header + footer) ---------- */
+const NAV_ITEMS = [
+  { page: "resources", label: "Resources", href: "resources.html" },
+  { page: "events", label: "Events", href: "events.html", dropdown: [
+    { label: "Conferences", href: "events.html?filter=conference" },
+    { label: "Tea Parties", href: "events.html?filter=tea-party" },
+    { label: "Retreats", href: "events.html?filter=retreat" },
+  ]},
+  { page: "booking", label: "Bookings", href: "booking.html" },
+  { page: "about", label: "About Us", href: "about.html" },
+  { page: "community", label: "Community", href: "community.html" },
+];
+
+const VESSEL_SVG = `
+  <svg class="brand-vessel" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+    <path d="M16 6h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M18 6c0 6-6 8-6 18 0 9 5 18 12 18s12-9 12-18c0-10-6-12-6-18"
+      stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M14 24c4 3 16 3 20 0" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+  </svg>`;
+
+const IG_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.8.25 2.23.42.56.22.96.48 1.38.9.42.42.68.82.9 1.38.17.42.37 1.06.42 2.23.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.05 1.17-.25 1.8-.42 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.17-1.06.37-2.23.42-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.05-1.8-.25-2.23-.42a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.17-.42-.37-1.06-.42-2.23C2.21 15.58 2.2 15.2 2.2 12s0-3.58.07-4.85c.05-1.17.25-1.8.42-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.17 1.06-.37 2.23-.42C8.42 2.21 8.8 2.2 12 2.2zm0 4.86A4.94 4.94 0 1 0 12 16.94 4.94 4.94 0 0 0 12 7.06zm0 8.14A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4zm6.3-8.34a1.15 1.15 0 1 1-2.3 0 1.15 1.15 0 0 1 2.3 0z"/></svg>`;
+const FB_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z"/></svg>`;
+const YT_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.5a3 3 0 0 0-2.1-2.1C19.6 4 12 4 12 4s-7.6 0-9.4.4A3 3 0 0 0 .5 6.5C.1 8.3.1 12 .1 12s0 3.7.4 5.5a3 3 0 0 0 2.1 2.1c1.8.4 9.4.4 9.4.4s7.6 0 9.4-.4a3 3 0 0 0 2.1-2.1c.4-1.8.4-5.5.4-5.5s0-3.7-.4-5.5zM9.5 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>`;
+
+function buildChrome() {
+  const current = document.body.dataset.page || "";
+  const homeHref = current === "home" ? "#top" : "index.html";
+
+  const navLinksHtml = NAV_ITEMS.map(item => {
+    const active = item.page === current ? " is-current" : "";
+    if (item.dropdown) {
+      const sub = item.dropdown.map(d => `<a href="${d.href}" role="menuitem">${d.label}</a>`).join("");
+      return `
+        <div class="nav-dropdown">
+          <a href="${item.href}" class="nav-dropdown-toggle${active}" aria-haspopup="true" aria-expanded="false">${item.label} <span class="caret" aria-hidden="true">▾</span></a>
+          <div class="nav-dropdown-menu" role="menu">${sub}</div>
+        </div>`;
+    }
+    return `<a href="${item.href}" class="${active.trim()}">${item.label}</a>`;
+  }).join("");
+
+  const partnerActive = current === "partnership" ? " is-current" : "";
+
+  const topHtml = `
+    <div class="announce-bar" id="announceBar">
+      <div class="announce-inner">
+        <span class="announce-tag">Next up</span>
+        <p>Summer Blast, <strong>July 30 to Aug 2, 2026.</strong> Save the date.</p>
+        <a href="events.html">See all events →</a>
+      </div>
+      <button class="announce-close" aria-label="Dismiss announcement">×</button>
+    </div>
+
+    <header class="site-header" id="siteHeader">
+      <a class="brand" href="${homeHref}" aria-label="Dear Pastor's Wife home">
+        ${VESSEL_SVG}
+        <span class="brand-wordmark">
+          <span class="bw-main">Dear Pastor's Wife</span>
+          <span class="bw-sub">Vessel</span>
+        </span>
+      </a>
+      <button class="menu-toggle" aria-label="Open navigation" aria-expanded="false">Menu</button>
+      <nav class="nav-links" aria-label="Primary navigation">
+        ${navLinksHtml}
+        <a class="nav-give${partnerActive}" href="partnership.html">♥ Partner</a>
+        <span class="nav-social" aria-label="Social media">
+          <a href="${SOCIAL.instagram}" target="_blank" rel="noopener" aria-label="Instagram" data-pending="instagram-url">${IG_SVG}</a>
+          <a href="${SOCIAL.facebook}" target="_blank" rel="noopener" aria-label="Facebook" data-pending="facebook-url">${FB_SVG}</a>
+          <a href="${SOCIAL.youtube}" target="_blank" rel="noopener" aria-label="YouTube">${YT_SVG}</a>
+        </span>
+      </nav>
+    </header>`;
+
+  const footerHtml = `
+    <footer class="site-footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <a class="brand" href="${homeHref}" aria-label="Dear Pastor's Wife home" style="margin-bottom:0.6rem">
+            ${VESSEL_SVG}
+            <span class="brand-wordmark"><span class="bw-main">Dear Pastor's Wife</span><span class="bw-sub">Vessel</span></span>
+          </a>
+          <p class="footer-tagline">A global resource hub and community for women in ministry. Clarity, confidence, and real support.</p>
+          <div class="footer-social" aria-label="Social media">
+            <a href="${SOCIAL.instagram}" target="_blank" rel="noopener" aria-label="Instagram" data-pending="instagram-url">${IG_SVG}</a>
+            <a href="${SOCIAL.facebook}" target="_blank" rel="noopener" aria-label="Facebook" data-pending="facebook-url">${FB_SVG}</a>
+            <a href="${SOCIAL.youtube}" target="_blank" rel="noopener" aria-label="YouTube">${YT_SVG}</a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <div>
+            <strong>Explore</strong>
+            <a href="resources.html">Resources</a>
+            <a href="events.html">Events</a>
+            <a href="booking.html">Bookings</a>
+            <a href="about.html">About Us</a>
+            <a href="community.html">Community</a>
+          </div>
+          <div>
+            <strong>Get Involved</strong>
+            <a href="partnership.html">Partner &amp; Give</a>
+            <a href="index.html#newsletter">Newsletter</a>
+            <a href="community.html">Community</a>
+            <a href="booking.html">Invite May to speak</a>
+          </div>
+          <div>
+            <strong>Connect</strong>
+            <a href="${SOCIAL.youtube}" target="_blank" rel="noopener">YouTube</a>
+            <a href="${SOCIAL.instagram}" target="_blank" rel="noopener" data-pending="instagram-url">Instagram</a>
+            <a href="${SOCIAL.facebook}" target="_blank" rel="noopener" data-pending="facebook-url">Facebook</a>
+            <a href="https://www.amazon.com/Dear-Pastors-Wife-May-Ijisesan-ebook/dp/B09TQ2G8PJ" target="_blank" rel="noopener">Amazon</a>
+            <a href="mailto:connect@dearpastorswife.org">Email</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Dear Pastor's Wife by May Ijisesan. All rights reserved.</p>
+      </div>
+    </footer>`;
+
+  const topSlot = document.querySelector('[data-chrome="top"]');
+  if (topSlot) topSlot.outerHTML = topHtml;
+  const footSlot = document.querySelector('[data-chrome="footer"]');
+  if (footSlot) footSlot.outerHTML = footerHtml;
+}
+buildChrome();
 
 /* ---------- CONFIG (fill in when live credentials are ready) ----------
    Everything that needs a real account/key is centralized here so the
    client (or a follow-up dev) can flip the site live without hunting
    through the code.
 
-   PAYMENTS — Stripe:
+   PAYMENTS (Stripe):
      • Create a Stripe-hosted donation/checkout page that accepts an
        `amount` query param (e.g. Donorbox, a Payment Link, or a small
        Checkout endpoint). Put its URL in `payments.giveBaseUrl`.
@@ -18,7 +159,7 @@
        payment methods in your Stripe Dashboard → Settings → Payment
        methods, so bank transfer shows up at checkout.
 
-   CRM — systeme.io:
+   CRM (systeme.io):
      • In systeme.io, create a form and copy its POST/submission endpoint
        (or use the systeme.io API via a serverless function) into
        `crm.endpoint`. When set, form submissions are POSTed there.
@@ -49,10 +190,10 @@ const RESOURCES = [
 // Events. category: conference | tea-party | retreat. status: open | soon | past.
 // `sort` is an ISO-ish date used only for ordering.
 const EVENTS = [
-  { category: "conference", year: 2026, date: "Jul 30 – Aug 2, 2026", sort: "2026-07-30", title: "Summer Blast", location: "United States", desc: "Our summer gathering to open the season — worship, teaching, and connection for women in ministry.", status: "soon", link: "#newsletter" },
-  { category: "tea-party", year: 2026, date: "Aug 15, 2026", sort: "2026-08-15", title: "DPW Tea Party", location: "Chicago, USA", desc: "An intimate two-hour gathering with icebreakers and table topics — the kind of conversation that quickly feels like a reunion. Free and open to pastors' wives, ministers' wives, and women in Christian leadership.", status: "soon", link: "#newsletter" },
-  { category: "conference", year: 2026, date: "September 2026", sort: "2026-09-01", title: "DPW at KingsWord", location: "Nigeria", desc: "Join us in Nigeria with KingsWord. Firm dates are being confirmed.", status: "soon", link: "#newsletter" },
-  { category: "retreat", year: 2026, date: "Oct 9 – 11, 2026", sort: "2026-10-09", title: "DPW Retreat", location: "United Kingdom", desc: "A multi-day, immersive weekend away — teaching, worship, prayer, and honest table conversations. Women arrive carrying the weight of their call and leave lighter, clearer, and more equipped.", status: "soon", link: "#newsletter" },
+  { category: "conference", year: 2026, date: "Jul 30 to Aug 2, 2026", sort: "2026-07-30", title: "Summer Blast", location: "United States", desc: "Our summer gathering to open the season, with worship, teaching, and connection for women in ministry.", status: "soon", link: "index.html#newsletter" },
+  { category: "tea-party", year: 2026, date: "Aug 15, 2026", sort: "2026-08-15", title: "DPW Tea Party", location: "Chicago, USA", desc: "An intimate two-hour gathering with icebreakers and table topics, the kind of conversation that quickly feels like a reunion. Free and open to pastors' wives, ministers' wives, and women in Christian leadership.", status: "soon", link: "index.html#newsletter" },
+  { category: "conference", year: 2026, date: "September 2026", sort: "2026-09-01", title: "DPW at KingsWord", location: "Nigeria", desc: "Join us in Nigeria with KingsWord. Firm dates are being confirmed.", status: "soon", link: "index.html#newsletter" },
+  { category: "retreat", year: 2026, date: "Oct 9 to 11, 2026", sort: "2026-10-09", title: "DPW Retreat", location: "United Kingdom", desc: "A multi-day, immersive weekend away, with teaching, worship, prayer, and honest table conversations. Women arrive carrying the weight of their call and leave lighter, clearer, and more equipped.", status: "soon", link: "index.html#newsletter" },
 ];
 
 const EVENT_CAT_LABEL = { conference: "Conference", "tea-party": "Tea Party", retreat: "Retreat" };
@@ -60,24 +201,24 @@ const EVENT_CAT_LABEL = { conference: "Conference", "tea-party": "Tea Party", re
 // Giving
 const ONE_TIME_AMOUNTS = [25, 50, 100, 250];
 
-// Fundraising Partnership Program — names + suggested ranges only.
+// Fundraising Partnership Program: names + suggested ranges only.
 const TIERS = [
-  { name: "Friend of the Ministry", min: 25, monthly: "$25–$50", annual: "$300–$600" },
-  { name: "Ministry Partner", min: 51, monthly: "$51–$99", annual: "$600–$1,200" },
-  { name: "Impact Partner", min: 100, monthly: "$100–$249", annual: "$1,200–$3,000" },
-  { name: "Legacy Partner", min: 250, monthly: "$250–$499", annual: "$3,000–$6,000" },
+  { name: "Friend of the Ministry", min: 25, monthly: "$25 to $50", annual: "$300 to $600" },
+  { name: "Ministry Partner", min: 51, monthly: "$51 to $99", annual: "$600 to $1,200" },
+  { name: "Impact Partner", min: 100, monthly: "$100 to $249", annual: "$1,200 to $3,000" },
+  { name: "Legacy Partner", min: 250, monthly: "$250 to $499", annual: "$3,000 to $6,000" },
 ];
 
-// Community forum — seed topics.
+// Community forum: seed topics.
 const FORUM_TOPICS = [
-  { id: "parenting", title: "Parenting in ministry", desc: "Raising kids in the fishbowl — the joys, the hard days, and everything in between." },
+  { id: "parenting", title: "Parenting in ministry", desc: "Raising kids in the fishbowl: the joys, the hard days, and everything in between." },
   { id: "relationships", title: "Relationship management in ministry", desc: "Marriage, boundaries, friendships, and leading people without losing yourself." },
 ];
 
 /* ---------- HELPERS ---------- */
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
-const TYPE_LABEL = { book: "Book", download: "Download", video: "Video", article: "Article" };
+const TYPE_LABEL = { book: "Book", download: "Downloadable", video: "Video", article: "Article" };
 const escapeHtml = (str) => String(str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
@@ -187,10 +328,14 @@ function setEventFilter(filter) {
 $$(".event-filters .filter-chip").forEach(chip => {
   chip.addEventListener("click", () => setEventFilter(chip.dataset.eventFilter));
 });
-// Dropdown links in the nav also drive the filter (and anchor-scroll to #events)
-$$(".nav-dropdown-menu a[data-event-filter]").forEach(link => {
-  link.addEventListener("click", () => setEventFilter(link.dataset.eventFilter));
-});
+
+// On the Events page, honor a ?filter= query param (set by the nav dropdown).
+(function applyEventFilterFromQuery() {
+  if (!$("#eventTimeline")) return;
+  const wanted = new URLSearchParams(window.location.search).get("filter");
+  const allowed = ["conference", "tea-party", "retreat"];
+  if (wanted && allowed.includes(wanted)) setEventFilter(wanted);
+})();
 
 /* ---------- GIVING ---------- */
 const amountGrid = $("#amountGrid");
@@ -198,10 +343,11 @@ const customAmount = $("#customAmount");
 const giveBtn = $("#giveOnceBtn");
 let selectedAmount = ONE_TIME_AMOUNTS[2]; // default $100
 
-function buildGiveLink(amount, recurring) {
+function buildGiveLink(amount, recurring, email) {
   const base = giveBtn?.dataset.base || CONFIG.payments.giveBaseUrl;
   const params = new URLSearchParams({ amount: String(amount || 0) });
   if (recurring) params.set("recurring", "monthly");
+  if (email) params.set("prefilled_email", email); // Stripe Checkout / Payment Link param
   return `${base}?${params.toString()}`;
 }
 
@@ -253,7 +399,7 @@ function renderTiers() {
 /* ---------- FORMS (integration-ready: systeme.io) ---------- */
 async function sendToCrm(formId, data) {
   if (!CONFIG.crm.endpoint) {
-    // Demo mode — no CRM endpoint configured yet.
+    // Demo mode: no CRM endpoint configured yet.
     console.log(`[${formId}] submission (demo, no CRM endpoint set)`, data);
     return true;
   }
@@ -282,7 +428,7 @@ function handleForm(formId, statusId, successMsg) {
     if (status) status.textContent = "Sending…";
     const ok = await sendToCrm(formId, data);
 
-    if (status) status.textContent = ok ? successMsg : "Something went wrong — please email us directly.";
+    if (status) status.textContent = ok ? successMsg : "Something went wrong. Please email us directly.";
     if (ok) {
       form.reset();
       const defaultRadio = $('input[name="track"][value="ministry"]', form);
@@ -292,8 +438,76 @@ function handleForm(formId, statusId, successMsg) {
 }
 
 handleForm("newsletterForm", "newsletterStatus", "You're in! Watch your inbox for a welcome note. 💛");
-handleForm("contactForm", "contactStatus", "Thank you — your message is on its way. We'll be in touch soon.");
-handleForm("bookingForm", "bookingStatus", "Thank you! Your booking request is in — the team will follow up by email.");
+handleForm("contactForm", "contactStatus", "Thank you. Your message is on its way and we'll be in touch soon.");
+handleForm("bookingForm", "bookingStatus", "Thank you! Your booking request is in and the team will follow up by email.");
+
+/* ---------- PARTNER SIGN-UP → STRIPE ----------
+   Captures partner contact details (name, email, address, phone) and
+   records them to the CRM (systeme.io) BEFORE handing the partner off to
+   Stripe for payment. Stripe checkout URL + CRM endpoint are pending from
+   the client (see CONFIG); until they're set this runs in demo mode and
+   still shows the redirect step so the flow can be reviewed. */
+function initPartnerForm() {
+  const form = $("#partnerForm");
+  if (!form) return;
+  const status = $("#partnerStatus");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+
+    const data = Object.fromEntries(new FormData(form).entries());
+    const amount = Number(data.amount) || Number(data.customAmount) || 0;
+    const recurring = data.frequency === "monthly";
+
+    if (status) status.textContent = "Saving your details…";
+
+    // 1) Record the partner in the CRM first (so we keep the contact even
+    //    if they drop off at the payment step).
+    const ok = await sendToCrm("partnerForm", data);
+    if (!ok) {
+      if (status) status.textContent = "We couldn't save your details. Please email partner@dearpastorswife.org.";
+      return;
+    }
+
+    // 2) Hand off to Stripe with the amount, frequency, and prefilled email.
+    const checkoutUrl = buildGiveLink(amount, recurring, data.email);
+    if (!CONFIG.payments.giveBaseUrl || CONFIG.payments.giveBaseUrl.includes("donate.dearpastorswife.org")) {
+      // Demo mode: Stripe link not finalized yet.
+      if (status) status.textContent = "Details saved. Payment checkout opens here once Stripe is connected.";
+      console.log("[partnerForm] would redirect to Stripe:", checkoutUrl, data);
+      return;
+    }
+    if (status) status.textContent = "Details saved. Redirecting you to secure checkout…";
+    window.location.href = checkoutUrl;
+  });
+}
+initPartnerForm();
+
+/* ---------- SHARE BUTTON ----------
+   Uses the native share sheet where available (mobile), and falls back
+   to copying the link to the clipboard on desktop. */
+function initShare() {
+  $$("[data-share]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const shareData = {
+        title: "Dear Pastor's Wife",
+        text: "Partner with Dear Pastor's Wife to keep resources free for women in ministry the world over.",
+        url: btn.dataset.share || window.location.href,
+      };
+      const label = btn.querySelector(".share-label");
+      try {
+        if (navigator.share) {
+          await navigator.share(shareData);
+        } else if (navigator.clipboard) {
+          await navigator.clipboard.writeText(shareData.url);
+          if (label) { const prev = label.textContent; label.textContent = "Link copied!"; setTimeout(() => label.textContent = prev, 2200); }
+        }
+      } catch (_) { /* user dismissed the share sheet */ }
+    });
+  });
+}
+initShare();
 
 /* ---------- COMMUNITY FORUM (localStorage MVP) ----------
    This is a front-end MVP so the community is functional from day one.
@@ -479,7 +693,7 @@ $(".announce-close")?.addEventListener("click", () => {
 });
 try { if (sessionStorage.getItem("dpwAnnounceClosed")) announceBar?.classList.add("hidden"); } catch (_) {}
 
-// Nav dropdown (Events) — click toggle on touch, hover handled by CSS
+// Nav dropdown (Events): click toggle on touch, hover handled by CSS
 const dropdown = $(".nav-dropdown");
 const dropdownToggle = $(".nav-dropdown-toggle");
 dropdownToggle?.addEventListener("click", (e) => {
@@ -684,4 +898,4 @@ magnetic(".hero-actions .button, .nav-give, .give-btn");
 
 observeReveals();
 
-console.log("✨ Dear Pastor's Wife — resource hub loaded");
+console.log("Dear Pastor's Wife: resource hub loaded");

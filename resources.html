@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Free teaching, downloadables, and videos for women in ministry, from Dear Pastor's Wife. Current and archived resources you can find the moment you need them." />
+  <meta name="theme-color" content="#573a6f" />
+  <title>Resources | Dear Pastor's Wife</title>
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800;9..144,900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="resources">
+  <div data-chrome="top"></div>
+
+  <main id="top">
+    <section class="page-hero section-shell">
+      <p class="eyebrow">Resource Library</p>
+      <h1>Everything you need, freely given.</h1>
+      <p>A growing, searchable library of teaching, downloadables, and videos, both current and archived, so you can find help the moment you need it.</p>
+    </section>
+
+    <section class="resources section-shell page-section" id="resources">
+      <div class="resource-controls">
+        <div class="resource-filters" role="tablist" aria-label="Filter resources">
+          <button class="filter-chip is-active" data-filter="all">All</button>
+          <button class="filter-chip" data-filter="book">Book</button>
+          <button class="filter-chip" data-filter="download">Downloadables</button>
+          <button class="filter-chip" data-filter="video">Videos</button>
+          <button class="filter-chip" data-filter="article">Articles</button>
+        </div>
+        <label class="resource-search">
+          <span class="visually-hidden">Search resources</span>
+          <input type="search" id="resourceSearch" placeholder="Search resources…" />
+        </label>
+      </div>
+
+      <div class="resource-grid" id="resourceGrid" aria-live="polite"></div>
+      <p class="resource-empty" id="resourceEmpty" hidden>No resources match your search yet. Try another term.</p>
+
+      <label class="archive-toggle">
+        <input type="checkbox" id="archiveToggle" />
+        <span>Include archived resources</span>
+      </label>
+    </section>
+
+    <section class="give section-shell page-section">
+      <div class="section-heading centered">
+        <p class="eyebrow">Keep it free</p>
+        <h2>These resources stay free because partners make it possible.</h2>
+        <p>If they have served you, consider helping the next woman find them too.</p>
+      </div>
+      <div class="hero-actions" style="justify-content:center">
+        <a class="button primary" href="partnership.html">Partner with the mission</a>
+        <a class="button ghost" href="https://www.youtube.com/@DearPastorsWife" target="_blank" rel="noopener">Watch on YouTube</a>
+      </div>
+    </section>
+  </main>
+
+  <div data-chrome="footer"></div>
+  <script src="script.js"></script>
+</body>
+</html>

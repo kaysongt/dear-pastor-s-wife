@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Invite May Ijisesan to speak at your women's conference, retreat, gathering, or church event. Send the details and the Dear Pastor's Wife team will follow up." />
+  <meta name="theme-color" content="#573a6f" />
+  <title>Bookings | Dear Pastor's Wife</title>
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800;9..144,900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="booking">
+  <div data-chrome="top"></div>
+
+  <main id="top">
+    <section class="page-hero section-shell">
+      <p class="eyebrow">Bookings</p>
+      <h1>Invite Pastor May to speak.</h1>
+      <p>Hosting a conference, retreat, women's gathering, or church event? Send the details and the DPW team will follow up about availability and next steps.</p>
+    </section>
+
+    <section class="bookings section-shell page-section" id="bookings">
+      <div class="bookings-card">
+        <div class="bookings-intro">
+          <p class="eyebrow">About May on stage</p>
+          <h2>She doesn't stay on the surface.</h2>
+          <img class="bookings-photo" src="assets/speaking.jpg" alt="May Ijisesan speaking at a ministry gathering" loading="lazy" />
+          <p>May is a sought-after speaker at women's conferences and ministry gatherings, and those who have heard her will tell you: she doesn't stay on the surface. With disarming honesty, she makes room for women to face the fears and insecurities they've carried in silence, then challenges them to move. Not just to feel something, but to do something: to confront what's held them back and step into who God has called them to be. Women leave not just inspired, but changed.</p>
+          <p class="email-line">bookings@dearpastorswife.org</p>
+        </div>
+        <form id="bookingForm" novalidate>
+          <label>Your name <input name="name" type="text" placeholder="Full name" required /></label>
+          <label>Organization / church <input name="organization" type="text" placeholder="Where you're inviting her" required /></label>
+          <label>Event name <input name="event" type="text" placeholder="What's the event called?" required /></label>
+          <label>Event date <input name="date" type="date" required /></label>
+          <label>Message <textarea name="message" placeholder="Tell us about the event, audience, location, and what you have in mind." required></textarea></label>
+          <button class="button primary" type="submit">Send booking request</button>
+          <p class="form-status" id="bookingStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <div data-chrome="footer"></div>
+  <script src="script.js"></script>
+</body>
+</html>

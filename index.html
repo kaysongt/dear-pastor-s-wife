@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Dear Pastor's Wife is a global resource hub and sisterhood founded by May Ijisesan — free resources, retreats, conferences, and community for women in ministry leadership. Partner with the mission." />
-  <meta name="theme-color" content="#5d2f31" />
+  <meta name="description" content="Dear Pastor's Wife is a global resource hub and sisterhood founded by May Ijisesan. Free resources, retreats, conferences, and community for women in ministry leadership. Partner with the mission." />
+  <meta name="theme-color" content="#573a6f" />
 
   <!-- Open Graph / social sharing -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Dear Pastor's Wife | A Global Resource Hub for Women in Ministry" />
-  <meta property="og:description" content="Free resources, retreats, conferences, and a global sisterhood for women in ministry leadership — founded by May Ijisesan." />
-  <meta property="og:image" content="assets/hero.jpg" />
+  <meta property="og:description" content="Free resources, retreats, conferences, and a global sisterhood for women in ministry leadership, founded by May Ijisesan." />
+  <meta property="og:image" content="assets/featured-laughing.jpg" />
   <meta property="og:url" content="https://dearpastorswife.org" />
   <meta name="twitter:card" content="summary_large_image" />
 
@@ -19,10 +19,9 @@
   <link rel="icon" type="image/png" href="assets/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800;9..144,900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Structured data for SEO -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -36,42 +35,8 @@
   }
   </script>
 </head>
-<body>
-  <!-- Announcement bar -->
-  <div class="announce-bar" id="announceBar">
-    <div class="announce-inner">
-      <span class="announce-tag">Next up</span>
-      <p>Summer Blast — <strong>July 30–Aug 2, 2026.</strong> Save the date.</p>
-      <a href="#events">See all events →</a>
-    </div>
-    <button class="announce-close" aria-label="Dismiss announcement">×</button>
-  </div>
-
-  <!-- Header -->
-  <header class="site-header" id="siteHeader">
-    <a class="brand" href="#top" aria-label="Dear Pastor's Wife home">
-      <!-- Logo placeholder — drop assets/logo.png in once the final file is delivered.
-           Wordmark shows as a fallback so the header is never empty. -->
-      <img src="assets/logo.png" alt="Dear Pastor's Wife logo" onerror="this.style.display='none';this.nextElementSibling.style.display='inline'" />
-      <span class="brand-wordmark" style="display:none">Dear Pastor's Wife</span>
-    </a>
-    <button class="menu-toggle" aria-label="Open navigation" aria-expanded="false">Menu</button>
-    <nav class="nav-links" aria-label="Primary navigation">
-      <a href="#resources">Resources</a>
-      <div class="nav-dropdown">
-        <a href="#events" class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">Events <span class="caret" aria-hidden="true">▾</span></a>
-        <div class="nav-dropdown-menu" role="menu">
-          <a href="#events" data-event-filter="conference" role="menuitem">Conferences</a>
-          <a href="#events" data-event-filter="tea-party" role="menuitem">Tea Parties</a>
-          <a href="#events" data-event-filter="retreat" role="menuitem">Retreats</a>
-        </div>
-      </div>
-      <a href="#bookings">Bookings</a>
-      <a href="#about">About Us</a>
-      <a href="#community">Community</a>
-      <a class="nav-give" href="#give">♥ Give</a>
-    </nav>
-  </header>
+<body data-page="home">
+  <div data-chrome="top"></div>
 
   <main id="top">
     <!-- ===================== HERO ===================== -->
@@ -81,8 +46,8 @@
         <h1>Resources to help you lead, rest, and thrive.</h1>
         <p class="lead">Free teaching, real gatherings, and women who actually understand ministry life. Wherever you are in it, you're welcome here.</p>
         <div class="hero-actions">
-          <a class="button primary" href="#resources">Explore Free Resources</a>
-          <a class="button ghost" href="#give">Partner With the Mission</a>
+          <a class="button primary" href="resources.html">Explore Free Resources</a>
+          <a class="button ghost" href="partnership.html">Partner With the Mission</a>
         </div>
         <div class="hero-trust">
           <div><strong data-count="23">23+</strong><span>Years in ministry</span></div>
@@ -90,70 +55,109 @@
           <div><strong>Free</strong><span>Resources for everyone</span></div>
         </div>
       </div>
-      <div class="hero-card" aria-label="Dear Pastor's Wife community photo">
-        <img src="assets/hero.jpg" alt="Women gathered for Dear Pastor's Wife" />
+      <div class="hero-card" aria-label="May Ijisesan, founder of Dear Pastor's Wife">
+        <img src="assets/featured-laughing.jpg" alt="May Ijisesan, founder of Dear Pastor's Wife, smiling warmly" />
         <div class="floating-note">
-          <span>Retreats • Conferences • Resources</span>
+          <span>Resources • Retreats • Community</span>
           <strong>Rest, grow, and lead well.</strong>
         </div>
       </div>
     </section>
 
-    <!-- ===================== DUAL TRACK ===================== -->
-    <section class="tracks section-shell" id="tracks">
+    <!-- ===================== HOWEVER YOU ARRIVED ===================== -->
+    <section class="arrived section-shell" id="arrived">
       <div class="section-heading centered">
-        <p class="eyebrow">Find your path</p>
-        <h2>However you arrived, there's a place for you here.</h2>
+        <p class="eyebrow">Find your place</p>
+        <h2>However you arrived, there is a place for you here.</h2>
+        <p>Tell us where you are, and we'll point you to what serves you best.</p>
       </div>
-      <div class="track-grid">
-        <article class="track-card track-ministry">
-          <span class="track-icon">✦</span>
+      <div class="arrived-grid">
+        <a class="arrived-card" href="resources.html">
+          <span class="arrived-icon">✦</span>
           <h3>I'm a woman in ministry</h3>
-          <p>Step in freely — teaching, downloads, retreats, and a sisterhood that gets both the weight and the joy of ministry life.</p>
-          <a class="button primary" href="#resources">Browse the resource library</a>
-        </article>
-        <article class="track-card track-partner">
-          <span class="track-icon">♥</span>
-          <h3>I want to partner &amp; give</h3>
-          <p>Give once, or partner with us month to month. No funnels — just a clear picture of where it goes and a real look behind the scenes.</p>
-          <a class="button gold" href="#give">See partnership &amp; giving</a>
-        </article>
+          <p>Teaching, downloadables, and videos to help you lead and stay rooted.</p>
+          <span class="arrived-go">Browse the resource library →</span>
+        </a>
+        <a class="arrived-card" href="events.html">
+          <span class="arrived-icon">✿</span>
+          <h3>I want to gather in person</h3>
+          <p>Conferences, tea parties, and retreats across the U.S., U.K., and Nigeria.</p>
+          <span class="arrived-go">See upcoming events →</span>
+        </a>
+        <a class="arrived-card" href="community.html">
+          <span class="arrived-icon">❀</span>
+          <h3>I need a sisterhood</h3>
+          <p>Honest conversation with women who understand ministry life, no judgment.</p>
+          <span class="arrived-go">Join the community →</span>
+        </a>
+        <a class="arrived-card" href="booking.html">
+          <span class="arrived-icon">✺</span>
+          <h3>I'd like to invite May to speak</h3>
+          <p>Conferences, retreats, women's gatherings, and church events.</p>
+          <span class="arrived-go">Send a booking request →</span>
+        </a>
+        <a class="arrived-card" href="partnership.html">
+          <span class="arrived-icon">♥</span>
+          <h3>I want to partner and give</h3>
+          <p>Help keep these resources free and reaching women the world over.</p>
+          <span class="arrived-go">See partnership and giving →</span>
+        </a>
+        <a class="arrived-card" href="about.html">
+          <span class="arrived-icon">☼</span>
+          <h3>I'm just getting to know you</h3>
+          <p>The story behind Dear Pastor's Wife and the woman who started it.</p>
+          <span class="arrived-go">Read our story →</span>
+        </a>
       </div>
     </section>
 
-    <!-- ===================== RESOURCE LIBRARY ===================== -->
+    <!-- ===================== RESOURCE TEASER ===================== -->
     <section class="resources section-shell" id="resources">
       <div class="section-heading split">
         <div>
           <p class="eyebrow">Resource Library</p>
           <h2>Everything you need, freely given.</h2>
         </div>
-        <p>A growing, searchable library of teaching, downloads, and videos — current and archived — so you can find help the moment you need it.</p>
+        <p>A growing, searchable library of teaching, downloadables, and videos, both current and archived, so you can find help the moment you need it.</p>
       </div>
+      <div class="resource-grid">
+        <article class="resource-card reveal">
+          <div class="resource-top"><span class="resource-type">Book</span></div>
+          <h3>Dear Pastor's Wife (The Book)</h3>
+          <p>Biblical wisdom and honest encouragement for women in ministry life.</p>
+          <a href="https://www.amazon.com/Dear-Pastors-Wife-May-Ijisesan-ebook/dp/B09TQ2G8PJ" target="_blank" rel="noopener">Get it on Amazon →</a>
+        </article>
+        <article class="resource-card reveal">
+          <div class="resource-top"><span class="resource-type">Downloadable</span></div>
+          <h3>The 7-Day Guided Reset (PDF)</h3>
+          <p>A simple 7-day plan to slow down, refill, and reset when ministry has run you dry.</p>
+          <a href="assets/dpw-7-day-reset.pdf" download>Download the PDF →</a>
+        </article>
+        <article class="resource-card reveal">
+          <div class="resource-top"><span class="resource-type">Video</span></div>
+          <h3>Weekly Encouragement on YouTube</h3>
+          <p>New teaching, Q&amp;A, and real talk for ministry women every week.</p>
+          <a href="https://www.youtube.com/@DearPastorsWife" target="_blank" rel="noopener">Watch on YouTube →</a>
+        </article>
+      </div>
+      <div class="hero-actions" style="margin-top:2rem">
+        <a class="button primary" href="resources.html">Open the full library</a>
+      </div>
+    </section>
 
-      <div class="resource-controls">
-        <div class="resource-filters" role="tablist" aria-label="Filter resources">
-          <button class="filter-chip is-active" data-filter="all">All</button>
-          <button class="filter-chip" data-filter="book">Book</button>
-          <button class="filter-chip" data-filter="download">Downloads</button>
-          <button class="filter-chip" data-filter="video">Videos</button>
-          <button class="filter-chip" data-filter="article">Articles</button>
+    <!-- ===================== EVENTS TEASER ===================== -->
+    <section class="retreats section-shell" id="events">
+      <div class="section-heading split">
+        <div>
+          <p class="eyebrow">Events</p>
+          <h2>Conferences, tea parties, and retreats.</h2>
         </div>
-        <label class="resource-search">
-          <span class="visually-hidden">Search resources</span>
-          <input type="search" id="resourceSearch" placeholder="Search resources…" />
-        </label>
+        <p>Where we're gathering this year, across the U.S., the U.K., and Nigeria. Pick the date and place that fit your season, and bring a friend.</p>
       </div>
-
-      <div class="resource-grid" id="resourceGrid" aria-live="polite">
-        <!-- Rendered by script.js -->
+      <div class="timeline" id="eventTimeline" aria-live="polite"></div>
+      <div class="hero-actions" style="margin-top:2rem">
+        <a class="button primary" href="events.html">See all events</a>
       </div>
-      <p class="resource-empty" id="resourceEmpty" hidden>No resources match your search yet — try another term.</p>
-
-      <label class="archive-toggle">
-        <input type="checkbox" id="archiveToggle" />
-        <span>Include archived resources</span>
-      </label>
     </section>
 
     <!-- ===================== BOOK ===================== -->
@@ -164,15 +168,15 @@
           <div class="book-cover">
             <div class="book-spine"></div>
             <div class="book-front">
-              <img src="assets/book-cover.jpg" alt="Dear Pastor's Wife — A Memoir by May Ijisesan (book cover)" />
+              <img src="assets/book-cover.jpg" alt="Dear Pastor's Wife, a memoir by May Ijisesan (book cover)" />
             </div>
           </div>
         </div>
         <div class="book-info">
           <p class="eyebrow">The Book</p>
           <h2>Words of Encouragement, Wisdom, and Hope</h2>
-          <p class="book-description">Part memoir, part handbook — May's honest account of more than twenty years of ministry life, written so that no pastor's wife would feel she's walking it alone.</p>
-          <p class="book-description">The fishbowl, balancing family and church, finding your own identity in ministry — May writes about it plainly, from experience, with grace and truth.</p>
+          <p class="book-description">Part memoir, part handbook. May's honest account of more than twenty years of ministry life, written so that no pastor's wife would feel she's walking it alone.</p>
+          <p class="book-description">The fishbowl, balancing family and church, finding your own identity in ministry. May writes about it plainly, from experience, with grace and truth.</p>
           <div class="book-highlights">
             <div class="highlight-item">
               <span class="highlight-icon">✦</span>
@@ -195,192 +199,31 @@
       </div>
     </section>
 
-    <!-- ===================== ABOUT US (DPW history + Pastor May) ===================== -->
-    <section class="story section-shell" id="about">
-      <div class="story-portrait">
-        <img src="assets/portrait.jpg" alt="May Ijisesan, founder of Dear Pastor's Wife" />
-        <div class="story-badge">
-          <span>Founder</span>
-          <strong>May Ijisesan</strong>
-        </div>
-      </div>
-      <div class="story-copy">
-        <p class="eyebrow">About Us</p>
-        <h2>Dear Pastor's Wife — and the woman behind it.</h2>
-        <p>Dear Pastor's Wife began with one woman's honesty. After more than twenty years as a pastor's wife, May Ijisesan sat down to write about the journey — the pressures, the quiet sacrifices, the longing to be seen and truly equipped — so that no pastor's wife would feel she was walking it alone.</p>
-        <p>Out of that experience came a book, and then a movement. <em>Dear Pastor's Wife</em> became a handbook for the modern-day pastor's wife and found women in ministry across the globe. Soon May was speaking, mentoring, and building — and a ministry was born, for pastors' wives, women in ministry, and women in Christian leadership who carry the weight of a call and deserve to walk it out with strength and freedom.</p>
-        <p>May has served faithfully alongside her husband for over twenty-three years, together overseeing a global ministry with branches in North America, Europe, and Nigeria. An author, speaker, and technologist, she has written several books — including <em>Dear Pastor's Wife</em>, <em>Silicon Valley Girl</em>, <em>The Supernatural Woman</em>, and <em>Wisdom for the Workplace</em> — and brings a distinctly modern approach to ministry, believing the Church deserves both timeless truth and contemporary tools. She is the mother of two grown children and lives in Chicago with her husband.</p>
-        <p>Today, DPW equips pastors' wives and women in ministry through conferences, retreats, tea parties, and online resources — to lead well in ministry, in relationships, in understanding themselves, and in building healthy families in the public eye. Because the health of the Church begins with the health of the women who help hold it together. More than a ministry, it's a community — and you belong here.</p>
-        <p class="story-signature">— May Ijisesan</p>
-        <div class="story-actions">
-          <a class="button primary" href="https://www.youtube.com/@DearPastorsWife" target="_blank" rel="noopener">Hear her heart on YouTube</a>
-          <a class="button ghost" href="#contact">Get in touch</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===================== EVENTS (conferences, tea parties, retreats) ===================== -->
-    <section class="retreats section-shell" id="events">
-      <div class="section-heading split">
-        <div>
-          <p class="eyebrow">Events</p>
-          <h2>Conferences, tea parties, and retreats.</h2>
-        </div>
-        <p>Where we're gathering this year — across the U.S., the U.K., and Nigeria. Pick the date and place that fit your season, and bring a friend.</p>
-      </div>
-      <div class="resource-filters event-filters" role="tablist" aria-label="Filter events">
-        <button class="filter-chip is-active" data-event-filter="all">All</button>
-        <button class="filter-chip" data-event-filter="conference">Conferences</button>
-        <button class="filter-chip" data-event-filter="tea-party">Tea Parties</button>
-        <button class="filter-chip" data-event-filter="retreat">Retreats</button>
-      </div>
-      <div class="timeline" id="eventTimeline" aria-live="polite">
-        <!-- Rendered by script.js -->
-      </div>
-      <p class="resource-empty" id="eventEmpty" hidden>No events in this category yet — check back soon.</p>
-    </section>
-
-    <!-- ===================== WAYS WE GATHER (tea parties + retreats) ===================== -->
-    <section class="gather section-shell" id="gather">
-      <div class="section-heading centered">
-        <p class="eyebrow">Ways we gather</p>
-        <h2>Around a table, and away from it all.</h2>
-      </div>
-
-      <article class="gather-card">
-        <div class="gather-photo">
-          <img src="assets/retreat-2.jpeg" alt="Women seated around a long table at a DPW Tea Party" loading="lazy" />
-        </div>
-        <div class="gather-copy">
-          <p class="eyebrow">Tea Parties</p>
-          <h3>Some of the most powerful ministry moments happen around a table.</h3>
-          <p>DPW Tea Parties bring pastors' wives, ministers' wives, and women in Christian leadership together for an intimate two-hour gathering. Icebreakers open hearts, table topics spark conversations too good to cut short, and the room quickly feels like a reunion — even among women meeting for the first time.</p>
-          <p>Guards come down. Stories are shared. Burdens feel lighter. We close every gathering praying for one another. Tea Parties are completely free, and they come to cities as the opportunity arises.</p>
-          <a class="button ghost" href="#contact">Bring a Tea Party to your city →</a>
-        </div>
-      </article>
-
-      <article class="gather-card reverse">
-        <div class="gather-photo">
-          <img src="assets/retreat-1.jpeg" alt="Women worshipping together at a DPW Retreat" loading="lazy" />
-        </div>
-        <div class="gather-copy">
-          <p class="eyebrow">Retreats</p>
-          <h3>Transformation cannot be rushed.</h3>
-          <p>DPW Retreats are multi-day, immersive experiences that give women something they rarely give themselves: time, space, and room to breathe. From Friday afternoon through Sunday morning, we gather at a beautiful location away from the noise — moving from teaching to testimony, worship to prayer, honest table conversations to hands-on workbook sessions.</p>
-          <p>Women arrive carrying the weight of their call. They leave lighter, clearer, and more equipped to walk it out. If your soul has been quietly whispering that it needs more than just another meeting, this is your invitation.</p>
-          <a class="button ghost" href="#newsletter">About the next retreat →</a>
-        </div>
-      </article>
-    </section>
-
-    <!-- ===================== BOOKINGS (invite Pastor May to speak) ===================== -->
-    <section class="bookings section-shell" id="bookings">
-      <div class="bookings-card">
-        <div class="bookings-intro">
-          <p class="eyebrow">Bookings</p>
-          <h2>Invite Pastor May to speak.</h2>
-          <img class="bookings-photo" src="assets/speaking.jpg" alt="May Ijisesan speaking at a ministry gathering" loading="lazy" />
-          <p>May is a sought-after speaker at women's conferences and ministry gatherings, and those who have heard her will tell you: she doesn't stay on the surface. With disarming honesty, she makes room for women to face the fears and insecurities they've carried in silence — and then challenges them to move. Not just to feel something, but to do something: to confront what's held them back and step into who God has called them to be. Women leave not just inspired, but changed.</p>
-          <p>Hosting a conference, retreat, women's gathering, or church event? Send the details and the DPW team will follow up about availability and next steps.</p>
-          <p class="email-line">bookings@dearpastorswife.org</p>
-        </div>
-        <form id="bookingForm" novalidate>
-          <label>Your name <input name="name" type="text" placeholder="Full name" required /></label>
-          <label>Organization / church <input name="organization" type="text" placeholder="Where you're inviting her" required /></label>
-          <label>Event name <input name="event" type="text" placeholder="What's the event called?" required /></label>
-          <label>Event date <input name="date" type="date" required /></label>
-          <label>Message <textarea name="message" placeholder="Tell us about the event, audience, location, and what you have in mind." required></textarea></label>
-          <button class="button primary" type="submit">Send booking request</button>
-          <p class="form-status" id="bookingStatus" role="status" aria-live="polite"></p>
-        </form>
-      </div>
-    </section>
-
-    <!-- ===================== CONFERENCES ===================== -->
-    <section class="conference section-shell" id="conferences">
-      <div class="conference-card">
-        <div class="conference-copy">
-          <p class="eyebrow">Business, Finance &amp; Leadership Summit</p>
-          <h2>Real skills for real challenges — free, virtual, held every year.</h2>
-          <p>Encouragement is not enough. Pity is not enough. The women who hold ministry together deserve something more concrete — and that's what the Summit was built to deliver. It meets ministry women where faith, leadership, business, and financial empowerment intersect, hosted virtually so women anywhere can be part of it.</p>
-          <div class="focus-grid">
-            <div><h3>Leadership</h3><p>Women lead differently, and female leadership is a layered experience rarely addressed with the depth it deserves. The Summit hands women concrete tools to lead with confidence, clarity, and effectiveness.</p></div>
-            <div><h3>Business</h3><p>The pastor's wife is a woman with potential. These sessions help her explore entrepreneurial and income-generating opportunities — not piling more onto a full plate, but widening the vision of what's possible, without burning out.</p></div>
-            <div><h3>Finance</h3><p>Too many pastors' wives have never had access to financial education — not for lack of need, but because ministry can be its own bubble. DPW brings it to them directly, in a way that's accessible and relevant.</p></div>
-          </div>
-          <p class="summit-close">The Summit is more than an event. It's a statement: the pastor's wife and the woman in ministry are capable, and deserve every tool, skill, and opportunity to walk in the fullness of that.</p>
-          <a class="button primary" href="#newsletter">Get Summit updates</a>
-        </div>
-        <img src="assets/conference.jpg" alt="Women gathered at a Dear Pastor's Wife Summit" />
-      </div>
-    </section>
-
-    <!-- ===================== COMMUNITY FORUM ===================== -->
-    <section class="community section-shell" id="community">
+    <!-- ===================== COMMUNITY TEASER ===================== -->
+    <section class="gather section-shell">
       <div class="section-heading centered">
         <p class="eyebrow">Community</p>
-        <h2>A place to talk, ask, and encourage.</h2>
-        <p>Join the conversation with women who understand ministry life. Pick a topic, start a thread, and reply to others — honest support, no judgment.</p>
+        <h2>You were never meant to do this alone.</h2>
+        <p>Join honest conversations with women who understand ministry life. Pick a topic, start a thread, and encourage one another.</p>
       </div>
-
-      <!-- Forum MVP: threads and replies persist in this browser (localStorage).
-           Production needs a backend with accounts/moderation — see script.js CONFIG. -->
-      <div class="forum" id="forum">
-        <aside class="forum-topics" aria-label="Topics">
-          <h3 class="forum-topics-title">Topics</h3>
-          <div class="forum-topic-list" id="forumTopicList" role="tablist">
-            <!-- Rendered by script.js -->
-          </div>
-          <div class="forum-identity">
-            <label>Posting as
-              <input type="text" id="forumName" placeholder="Your first name" maxlength="40" />
-            </label>
-          </div>
-        </aside>
-
-        <div class="forum-main">
-          <div class="forum-main-head">
-            <div>
-              <h3 id="forumTopicTitle">Parenting in ministry</h3>
-              <p id="forumTopicDesc" class="forum-topic-desc"></p>
-            </div>
-            <button class="button primary forum-new-btn" id="forumNewBtn" type="button">+ New thread</button>
-          </div>
-
-          <form class="forum-new-form" id="forumNewForm" hidden>
-            <input type="text" id="forumThreadTitle" placeholder="Thread title" maxlength="120" required />
-            <textarea id="forumThreadBody" placeholder="Share what's on your heart…" required></textarea>
-            <div class="forum-new-actions">
-              <button class="button primary" type="submit">Post thread</button>
-              <button class="button ghost" type="button" id="forumCancelBtn">Cancel</button>
-            </div>
-          </form>
-
-          <div class="forum-threads" id="forumThreads" aria-live="polite">
-            <!-- Rendered by script.js -->
-          </div>
-          <p class="forum-empty" id="forumEmpty" hidden>No threads here yet — be the first to start the conversation.</p>
-        </div>
+      <div class="hero-actions" style="justify-content:center">
+        <a class="button primary" href="community.html">Visit the community</a>
+        <a class="button ghost" href="about.html">Meet the founder</a>
       </div>
     </section>
 
-    <!-- ===================== GIVE ===================== -->
+    <!-- ===================== PARTNER TEASER ===================== -->
     <section class="give section-shell" id="give">
       <div class="section-heading centered">
         <p class="eyebrow">Give &amp; Partner</p>
         <h2>Your partnership reaches women the world over.</h2>
-        <p>Your giving keeps Dear Pastor's Wife free for the women who need it. Partners — individuals, churches, faith-based brands, and organizations — help us reach further and plan ahead, instead of leaning on one-time gifts alone. Give once, or partner with us month to month.</p>
+        <p>Your giving keeps Dear Pastor's Wife free for the women who need it. Give once below, or become a monthly partner.</p>
       </div>
-
       <div class="give-layout">
-        <!-- One-time -->
         <div class="give-card give-onetime">
           <h3>Give a one-time gift</h3>
           <p class="give-sub">Every amount makes room for another woman to be poured into.</p>
-          <div class="amount-grid" id="amountGrid">
-            <!-- Rendered by script.js -->
-          </div>
+          <div class="amount-grid" id="amountGrid"></div>
           <label class="custom-amount">
             <span>Other amount</span>
             <div class="custom-input">
@@ -389,80 +232,40 @@
             </div>
           </label>
           <a class="button gold give-btn" id="giveOnceBtn" href="#" data-base="https://donate.dearpastorswife.org">Give securely →</a>
-          <p class="give-methods"><span>Pay by</span> card · Apple Pay · Google Pay · bank transfer (ACH)</p>
-          <p class="secure-note">
-            <span class="lock">🔒</span> Payments are processed by Stripe, a PCI-compliant provider. Your card and bank details are encrypted and never stored on our servers.
-          </p>
+          <p class="give-methods"><span>Pay by</span> card, Apple Pay, Google Pay, or bank transfer (ACH)</p>
         </div>
-
-        <!-- Why a partnership program -->
         <div class="give-card partner-about">
-          <h3>Why a partnership program?</h3>
+          <h3>Become a monthly partner</h3>
           <p class="give-sub">A one-time gift helps today. Partnership lets us plan for tomorrow.</p>
           <ul class="about-objectives">
             <li>Support we can count on, month to month</li>
-            <li>Real relationships with people who share the heart for this</li>
-            <li>Room to reach further — more women, in more places</li>
-            <li>Less time chasing funds, more time serving women</li>
+            <li>Quarterly vision and impact updates</li>
+            <li>Behind-the-scenes photos and video from retreats</li>
+            <li>Early invitations to partner gatherings</li>
           </ul>
-          <p class="about-partners-label">Our partners include</p>
-          <div class="partner-chips">
-            <span>Individuals</span>
-            <span>Churches &amp; denominations</span>
-            <span>Faith-based brands</span>
-            <span>Foundations</span>
-            <span>Ministry leaders</span>
-          </div>
+          <a class="button primary" href="partnership.html">See partnership tiers</a>
         </div>
-      </div>
-
-      <!-- Multi-tier partnership program -->
-      <div class="partnership-tiers">
-        <div class="section-heading centered">
-          <p class="eyebrow">Multi-tier partnership</p>
-          <h3>Choose the partnership that fits you.</h3>
-          <p>Each tier builds on the one before it. Amounts are flexible ranges — partner at the level that's right for your season.</p>
-        </div>
-        <div class="tier-grid" id="tierGrid">
-          <!-- Rendered by script.js -->
-        </div>
-      </div>
-
-      <!-- Partner vision / behind the scenes -->
-      <div class="partner-vision">
-        <div>
-          <p class="eyebrow">For partners &amp; donors</p>
-          <h3>See the vision you're building.</h3>
-          <p>Partners get a quarterly vision letter, impact numbers, and behind-the-scenes photos and video from retreats and outreach — so you can see exactly where your generosity goes.</p>
-          <a class="button ghost" href="#newsletter">Join the partner newsletter</a>
-        </div>
-        <ul class="vision-points">
-          <li><span>✓</span> Quarterly vision &amp; impact letter</li>
-          <li><span>✓</span> Behind-the-scenes retreat photos &amp; video</li>
-          <li><span>✓</span> Early invitations to partner gatherings</li>
-          <li><span>✓</span> A direct line to the DPW team</li>
-        </ul>
       </div>
     </section>
 
-    <!-- ===================== NEWSLETTER (SEGMENTED) ===================== -->
+    <!-- ===================== NEWSLETTER ===================== -->
     <section class="newsletter section-shell" id="newsletter">
       <div class="newsletter-card">
         <div class="newsletter-copy">
           <p class="eyebrow">Stay connected</p>
           <h2>Get the right updates for you.</h2>
-          <p>Choose your track and we'll send what actually serves you — nothing more.</p>
+          <p>Choose your track and we'll send what actually serves you, nothing more.</p>
         </div>
         <form class="newsletter-form" id="newsletterForm" novalidate>
           <fieldset class="track-select">
             <legend>I'd like to receive…</legend>
             <label class="radio-pill">
               <input type="radio" name="track" value="ministry" checked />
-              <span><strong>Heart-to-heart</strong><small>Encouragement &amp; resources for ministry</small></span>
+              <span><strong>Heart-to-heart</strong><small>Encouragement and resources for ministry</small></span>
             </label>
             <label class="radio-pill">
               <input type="radio" name="track" value="partner" />
-              <span><strong>Vision &amp; events</strong><small>Updates &amp; photos for partners</small></span>
+              <span><strong>Vision and events</strong><small>Updates and photos for partners</small></span>
             </label>
           </fieldset>
           <div class="newsletter-inputs">
@@ -486,7 +289,7 @@
       <div class="youtube-card">
         <div class="youtube-content">
           <p class="eyebrow">Join Us on YouTube</p>
-          <h2>Weekly Encouragement &amp; Practical Wisdom</h2>
+          <h2>Weekly Encouragement and Practical Wisdom</h2>
           <p>Subscribe for weekly messages, practical teaching, and encouragement specifically for women in ministry leadership.</p>
           <ul class="youtube-features">
             <li><span>✓</span> Weekly devotionals and teaching</li>
@@ -514,94 +317,17 @@
         <h2>Common questions</h2>
       </div>
       <div class="faq-grid">
-        <details open><summary>Are the resources really free?</summary><p>Yes. The resource library is free and open to everyone — the heart of DPW is to serve first.</p></details>
+        <details open><summary>Are the resources really free?</summary><p>Yes. The resource library is free and open to everyone. The heart of DPW is to serve first.</p></details>
         <details><summary>Who can join?</summary><p>Any woman in church leadership or ministry life is welcome, anywhere in the world.</p></details>
         <details><summary>Is my donation secure?</summary><p>Absolutely. Payments are handled by a PCI-compliant, encrypted provider. We never store your card or bank details.</p></details>
         <details><summary>What do monthly partners receive?</summary><p>Vision updates, behind-the-scenes photos and video, early invitations, and clear benefits at every tier.</p></details>
-        <details><summary>How do I register for an event?</summary><p>Find your event under the Events tab and follow the link, or join the newsletter to be notified the moment registration opens.</p></details>
-        <details><summary>Can Pastor May speak at my event?</summary><p>Yes — fill out the booking request form under Bookings with your event details and the team will follow up.</p></details>
-      </div>
-    </section>
-
-    <!-- ===================== CONTACT ===================== -->
-    <section class="contact section-shell" id="contact">
-      <div class="contact-card">
-        <div>
-          <p class="eyebrow">Connect with us</p>
-          <h2>Have a question, or just want to reach out?</h2>
-          <p>Send a note to connect, collaborate, request a speaking engagement, or ask about the next retreat or conference. A real person on the DPW team will read it.</p>
-          <p class="email-line">connect@dearpastorswife.org</p>
-        </div>
-        <form id="contactForm" novalidate>
-          <label>Name <input name="name" type="text" placeholder="Your name" required /></label>
-          <label>Email <input name="email" type="email" placeholder="you@example.com" required /></label>
-          <label>Reason
-            <select name="reason">
-              <option>General inquiry</option>
-              <option>Booking / speaking request</option>
-              <option>Partnership &amp; giving</option>
-              <option>Event question</option>
-            </select>
-          </label>
-          <label>Message <textarea name="message" placeholder="How can we help?" required></textarea></label>
-          <button class="button primary" type="submit">Submit</button>
-          <p class="form-status" id="contactStatus" role="status" aria-live="polite"></p>
-        </form>
+        <details><summary>How do I register for an event?</summary><p>Find your event on the Events page and follow the link, or join the newsletter to be notified the moment registration opens.</p></details>
+        <details><summary>Can Pastor May speak at my event?</summary><p>Yes. Fill out the booking request form on the Bookings page with your event details and the team will follow up.</p></details>
       </div>
     </section>
   </main>
 
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="footer-content">
-      <div class="footer-brand">
-        <img src="assets/logo.png" alt="Dear Pastor's Wife logo" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
-        <span class="footer-wordmark" style="display:none">Dear Pastor's Wife</span>
-        <p class="footer-tagline">A global resource hub and community for women in ministry — clarity, confidence, and real support.</p>
-        <!-- Social: YouTube is live; Instagram & Facebook URLs pending from client. -->
-        <div class="footer-social" aria-label="Social media">
-          <a href="https://www.instagram.com/dearpastorswife" target="_blank" rel="noopener" aria-label="Instagram" data-pending="instagram-url">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.8.25 2.23.42.56.22.96.48 1.38.9.42.42.68.82.9 1.38.17.42.37 1.06.42 2.23.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.05 1.17-.25 1.8-.42 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.17-1.06.37-2.23.42-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.05-1.8-.25-2.23-.42a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.17-.42-.37-1.06-.42-2.23C2.21 15.58 2.2 15.2 2.2 12s0-3.58.07-4.85c.05-1.17.25-1.8.42-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.17 1.06-.37 2.23-.42C8.42 2.21 8.8 2.2 12 2.2zm0 1.8c-3.15 0-3.5 0-4.74.07-.9.04-1.38.19-1.7.32-.43.16-.74.36-1.06.68-.32.32-.52.63-.68 1.06-.13.32-.28.8-.32 1.7C3.43 9.07 3.42 9.42 3.42 12s0 2.93.08 4.17c.04.9.19 1.38.32 1.7.16.43.36.74.68 1.06.32.32.63.52 1.06.68.32.13.8.28 1.7.32 1.24.07 1.59.08 4.74.08s3.5 0 4.74-.08c.9-.04 1.38-.19 1.7-.32.43-.16.74-.36 1.06-.68.32-.32.52-.63.68-1.06.13-.32.28-.8.32-1.7.07-1.24.08-1.59.08-4.17s0-2.93-.08-4.17c-.04-.9-.19-1.38-.32-1.7a2.85 2.85 0 0 0-.68-1.06 2.85 2.85 0 0 0-1.06-.68c-.32-.13-.8-.28-1.7-.32C15.5 4 15.15 4 12 4zm0 3.06A4.94 4.94 0 1 1 12 16.94 4.94 4.94 0 0 1 12 7.06zm0 8.14A3.2 3.2 0 1 0 12 8.8a3.2 3.2 0 0 0 0 6.4zm6.3-8.34a1.15 1.15 0 1 1-2.3 0 1.15 1.15 0 0 1 2.3 0z"/></svg>
-          </a>
-          <a href="https://www.facebook.com/dearpastorswife" target="_blank" rel="noopener" aria-label="Facebook" data-pending="facebook-url">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z"/></svg>
-          </a>
-          <a href="https://www.youtube.com/@DearPastorsWife" target="_blank" rel="noopener" aria-label="YouTube">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.5a3 3 0 0 0-2.1-2.1C19.6 4 12 4 12 4s-7.6 0-9.4.4A3 3 0 0 0 .5 6.5C.1 8.3.1 12 .1 12s0 3.7.4 5.5a3 3 0 0 0 2.1 2.1c1.8.4 9.4.4 9.4.4s7.6 0 9.4-.4a3 3 0 0 0 2.1-2.1c.4-1.8.4-5.5.4-5.5s0-3.7-.4-5.5zM9.5 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>
-          </a>
-        </div>
-      </div>
-      <div class="footer-links">
-        <div>
-          <strong>Explore</strong>
-          <a href="#resources">Resources</a>
-          <a href="#book">Book</a>
-          <a href="#events">Events</a>
-          <a href="#bookings">Bookings</a>
-          <a href="#about">About Us</a>
-        </div>
-        <div>
-          <strong>Get Involved</strong>
-          <a href="#give">Give</a>
-          <a href="#newsletter">Newsletter</a>
-          <a href="#community">Community</a>
-          <a href="#contact">Contact</a>
-        </div>
-        <div>
-          <strong>Connect</strong>
-          <a href="https://www.youtube.com/@DearPastorsWife" target="_blank" rel="noopener">YouTube</a>
-          <a href="https://www.instagram.com/dearpastorswife" target="_blank" rel="noopener" data-pending="instagram-url">Instagram</a>
-          <a href="https://www.facebook.com/dearpastorswife" target="_blank" rel="noopener" data-pending="facebook-url">Facebook</a>
-          <a href="https://www.amazon.com/Dear-Pastors-Wife-May-Ijisesan-ebook/dp/B09TQ2G8PJ" target="_blank" rel="noopener">Amazon</a>
-          <a href="mailto:connect@dearpastorswife.org">Email</a>
-        </div>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2026 Dear Pastor's Wife by May Ijisesan. All rights reserved.</p>
-    </div>
-  </footer>
-
+  <div data-chrome="footer"></div>
   <script src="script.js"></script>
 </body>
 </html>
