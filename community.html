@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="The Dear Pastor's Wife community: honest conversation with women who understand ministry life. Pick a topic, start a thread, and encourage one another." />
+  <meta name="description" content="The Dear Pastor's Wife community: a space for pastors' wives to connect, coming soon. Join the list to be the first to know when it opens." />
   <meta name="theme-color" content="#573a6f" />
   <title>Community | Dear Pastor's Wife</title>
-  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="alternate icon" type="image/png" href="assets/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800;9..144,900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -18,43 +19,35 @@
   <main id="top">
     <section class="page-hero section-shell">
       <p class="eyebrow">Community</p>
-      <h1>A place to talk, ask, and encourage.</h1>
-      <p>Join the conversation with women who understand ministry life. Pick a topic, start a thread, and reply to others. Honest support, no judgment.</p>
+      <h1>Something good is on the way.</h1>
     </section>
 
     <section class="community section-shell page-section" id="community">
-      <div class="forum" id="forum">
-        <aside class="forum-topics" aria-label="Topics">
-          <h3 class="forum-topics-title">Topics</h3>
-          <div class="forum-topic-list" id="forumTopicList" role="tablist"></div>
-          <div class="forum-identity">
-            <label>Posting as
-              <input type="text" id="forumName" placeholder="Your first name" maxlength="40" />
-            </label>
-          </div>
-        </aside>
-
-        <div class="forum-main">
-          <div class="forum-main-head">
-            <div>
-              <h3 id="forumTopicTitle">Parenting in ministry</h3>
-              <p id="forumTopicDesc" class="forum-topic-desc"></p>
-            </div>
-            <button class="button primary forum-new-btn" id="forumNewBtn" type="button">+ New thread</button>
-          </div>
-
-          <form class="forum-new-form" id="forumNewForm" hidden>
-            <input type="text" id="forumThreadTitle" placeholder="Thread title" maxlength="120" required />
-            <textarea id="forumThreadBody" placeholder="Share what's on your heart…" required></textarea>
-            <div class="forum-new-actions">
-              <button class="button primary" type="submit">Post thread</button>
-              <button class="button ghost" type="button" id="forumCancelBtn">Cancel</button>
-            </div>
-          </form>
-
-          <div class="forum-threads" id="forumThreads" aria-live="polite"></div>
-          <p class="forum-empty" id="forumEmpty" hidden>No threads here yet. Be the first to start the conversation.</p>
+      <div class="coming-soon-card">
+        <div class="coming-soon-mark" aria-hidden="true">
+          <svg class="brand-vessel" viewBox="0 0 48 48" fill="none">
+            <path d="M16 6h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+            <path d="M18 6c0 6-6 8-6 18 0 9 5 18 12 18s12-9 12-18c0-10-6-12-6-18"
+              stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M14 24c4 3 16 3 20 0" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
         </div>
+        <span class="coming-soon-tag">Coming soon</span>
+        <h2>A space for pastors' wives to connect, coming soon.</h2>
+        <p class="coming-soon-sub">We're building it with care. Leave your email and you'll be the first to know when the doors open.</p>
+        <form class="coming-soon-form" id="communityForm" novalidate>
+          <label>
+            <span class="visually-hidden">First name</span>
+            <input type="text" name="firstName" placeholder="First name" required />
+          </label>
+          <label>
+            <span class="visually-hidden">Email</span>
+            <input type="email" name="email" placeholder="you@example.com" required />
+          </label>
+          <button class="button primary" type="submit">Notify me</button>
+          <p class="form-status" id="communityStatus" role="status" aria-live="polite"></p>
+        </form>
+        <p class="coming-soon-meanwhile">In the meantime, the <a href="resources.html">resource library</a> is open, and we'd love to see you at an <a href="events.html">upcoming event</a>.</p>
       </div>
     </section>
   </main>

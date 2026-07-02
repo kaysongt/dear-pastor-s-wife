@@ -1,6 +1,6 @@
 /* ============================================================
    Dear Pastor's Wife site logic
-   Data-driven sections (resources, events, giving, forum) live
+   Data-driven sections (resources, events, giving) live
    here so they're easy to update and ready to wire to live
    services (Stripe, systeme.io) later.
 
@@ -12,12 +12,21 @@
    where the chrome should render.
    ============================================================ */
 
-/* ---------- SOCIAL LINKS (placeholders until client provides URLs) ---------- */
+/* ---------- SOCIAL LINKS ---------- */
+// Facebook URL not confirmed by the client yet: keep the icon visible but
+// point it at "#" with a "link coming soon" title so nothing 404s.
 const SOCIAL = {
-  instagram: "https://www.instagram.com/dearpastorswife", // data-pending: confirm URL
-  facebook: "https://www.facebook.com/dearpastorswife",   // data-pending: confirm URL
+  instagram: "https://www.instagram.com/dearpastorswife",
+  facebook: "#",
   youtube: "https://www.youtube.com/@DearPastorsWife",
 };
+
+function socialLink(href, label, svg) {
+  if (href === "#") {
+    return `<a href="#" title="link coming soon" aria-label="${label} (link coming soon)" data-pending="url">${svg}</a>`;
+  }
+  return `<a href="${href}" target="_blank" rel="noopener" aria-label="${label}">${svg}</a>`;
+}
 
 /* ---------- SHARED CHROME (header + footer) ---------- */
 const NAV_ITEMS = [
@@ -27,7 +36,7 @@ const NAV_ITEMS = [
     { label: "Tea Parties", href: "events.html?filter=tea-party" },
     { label: "Retreats", href: "events.html?filter=retreat" },
   ]},
-  { page: "booking", label: "Bookings", href: "booking.html" },
+  { page: "booking", label: "Booking", href: "booking.html" },
   { page: "about", label: "About Us", href: "about.html" },
   { page: "community", label: "Community", href: "community.html" },
 ];
@@ -74,21 +83,21 @@ function buildChrome() {
     </div>
 
     <header class="site-header" id="siteHeader">
-      <a class="brand" href="${homeHref}" aria-label="Dear Pastor's Wife home">
+      <a class="brand" href="${homeHref}">
         ${VESSEL_SVG}
         <span class="brand-wordmark">
           <span class="bw-main">Dear Pastor's Wife</span>
           <span class="bw-sub">Vessel</span>
         </span>
       </a>
-      <button class="menu-toggle" aria-label="Open navigation" aria-expanded="false">Menu</button>
+      <button class="menu-toggle" aria-expanded="false">Menu</button>
       <nav class="nav-links" aria-label="Primary navigation">
         ${navLinksHtml}
         <a class="nav-give${partnerActive}" href="partnership.html">♥ Partner</a>
         <span class="nav-social" aria-label="Social media">
-          <a href="${SOCIAL.instagram}" target="_blank" rel="noopener" aria-label="Instagram" data-pending="instagram-url">${IG_SVG}</a>
-          <a href="${SOCIAL.facebook}" target="_blank" rel="noopener" aria-label="Facebook" data-pending="facebook-url">${FB_SVG}</a>
-          <a href="${SOCIAL.youtube}" target="_blank" rel="noopener" aria-label="YouTube">${YT_SVG}</a>
+          ${socialLink(SOCIAL.instagram, "Instagram", IG_SVG)}
+          ${socialLink(SOCIAL.facebook, "Facebook", FB_SVG)}
+          ${socialLink(SOCIAL.youtube, "YouTube", YT_SVG)}
         </span>
       </nav>
     </header>`;
@@ -97,15 +106,15 @@ function buildChrome() {
     <footer class="site-footer">
       <div class="footer-content">
         <div class="footer-brand">
-          <a class="brand" href="${homeHref}" aria-label="Dear Pastor's Wife home" style="margin-bottom:0.6rem">
+          <a class="brand" href="${homeHref}" style="margin-bottom:0.6rem">
             ${VESSEL_SVG}
             <span class="brand-wordmark"><span class="bw-main">Dear Pastor's Wife</span><span class="bw-sub">Vessel</span></span>
           </a>
           <p class="footer-tagline">A global resource hub and community for women in ministry. Clarity, confidence, and real support.</p>
           <div class="footer-social" aria-label="Social media">
-            <a href="${SOCIAL.instagram}" target="_blank" rel="noopener" aria-label="Instagram" data-pending="instagram-url">${IG_SVG}</a>
-            <a href="${SOCIAL.facebook}" target="_blank" rel="noopener" aria-label="Facebook" data-pending="facebook-url">${FB_SVG}</a>
-            <a href="${SOCIAL.youtube}" target="_blank" rel="noopener" aria-label="YouTube">${YT_SVG}</a>
+            ${socialLink(SOCIAL.instagram, "Instagram", IG_SVG)}
+            ${socialLink(SOCIAL.facebook, "Facebook", FB_SVG)}
+            ${socialLink(SOCIAL.youtube, "YouTube", YT_SVG)}
           </div>
         </div>
         <div class="footer-links">
@@ -113,7 +122,7 @@ function buildChrome() {
             <strong>Explore</strong>
             <a href="resources.html">Resources</a>
             <a href="events.html">Events</a>
-            <a href="booking.html">Bookings</a>
+            <a href="booking.html">Booking</a>
             <a href="about.html">About Us</a>
             <a href="community.html">Community</a>
           </div>
@@ -127,8 +136,8 @@ function buildChrome() {
           <div>
             <strong>Connect</strong>
             <a href="${SOCIAL.youtube}" target="_blank" rel="noopener">YouTube</a>
-            <a href="${SOCIAL.instagram}" target="_blank" rel="noopener" data-pending="instagram-url">Instagram</a>
-            <a href="${SOCIAL.facebook}" target="_blank" rel="noopener" data-pending="facebook-url">Facebook</a>
+            <a href="${SOCIAL.instagram}" target="_blank" rel="noopener">Instagram</a>
+            <a href="#" title="link coming soon" data-pending="url">Facebook</a>
             <a href="https://www.amazon.com/Dear-Pastors-Wife-May-Ijisesan-ebook/dp/B09TQ2G8PJ" target="_blank" rel="noopener">Amazon</a>
             <a href="mailto:connect@dearpastorswife.org">Email</a>
           </div>
@@ -189,9 +198,12 @@ const RESOURCES = [
 
 // Events. category: conference | tea-party | retreat. status: open | soon | past.
 // `sort` is an ISO-ish date used only for ordering.
+// `featured` events render as large cards at the top of the Events page.
+// `art` picks the brand-palette placeholder block (no stock photos until
+// the client's event photos arrive).
 const EVENTS = [
-  { category: "conference", year: 2026, date: "Jul 30 to Aug 2, 2026", sort: "2026-07-30", title: "Summer Blast", location: "United States", desc: "Our summer gathering to open the season, with worship, teaching, and connection for women in ministry.", status: "soon", link: "index.html#newsletter" },
-  { category: "tea-party", year: 2026, date: "Aug 15, 2026", sort: "2026-08-15", title: "DPW Tea Party", location: "Chicago, USA", desc: "An intimate two-hour gathering with icebreakers and table topics, the kind of conversation that quickly feels like a reunion. Free and open to pastors' wives, ministers' wives, and women in Christian leadership.", status: "soon", link: "index.html#newsletter" },
+  { category: "conference", year: 2026, date: "Jul 30 to Aug 2, 2026", sort: "2026-07-30", title: "Summer Blast", location: "United States", desc: "Our summer gathering to open the season, with worship, teaching, and connection for women in ministry.", status: "soon", link: "index.html#newsletter", featured: true, art: "plum" },
+  { category: "tea-party", year: 2026, date: "Aug 15, 2026", sort: "2026-08-15", title: "DPW Tea Party", location: "Chicago, USA", desc: "An intimate two-hour gathering with icebreakers and table topics, the kind of conversation that quickly feels like a reunion. Free and open to pastors' wives, ministers' wives, and women in Christian leadership.", status: "soon", link: "index.html#newsletter", featured: true, art: "clay" },
   { category: "conference", year: 2026, date: "September 2026", sort: "2026-09-01", title: "DPW at KingsWord", location: "Nigeria", desc: "Join us in Nigeria with KingsWord. Firm dates are being confirmed.", status: "soon", link: "index.html#newsletter" },
   { category: "retreat", year: 2026, date: "Oct 9 to 11, 2026", sort: "2026-10-09", title: "DPW Retreat", location: "United Kingdom", desc: "A multi-day, immersive weekend away, with teaching, worship, prayer, and honest table conversations. Women arrive carrying the weight of their call and leave lighter, clearer, and more equipped.", status: "soon", link: "index.html#newsletter" },
 ];
@@ -207,12 +219,6 @@ const TIERS = [
   { name: "Ministry Partner", min: 51, monthly: "$51 to $99", annual: "$600 to $1,200" },
   { name: "Impact Partner", min: 100, monthly: "$100 to $249", annual: "$1,200 to $3,000" },
   { name: "Legacy Partner", min: 250, monthly: "$250 to $499", annual: "$3,000 to $6,000" },
-];
-
-// Community forum: seed topics.
-const FORUM_TOPICS = [
-  { id: "parenting", title: "Parenting in ministry", desc: "Raising kids in the fishbowl: the joys, the hard days, and everything in between." },
-  { id: "relationships", title: "Relationship management in ministry", desc: "Marriage, boundaries, friendships, and leading people without losing yourself." },
 ];
 
 /* ---------- HELPERS ---------- */
@@ -274,6 +280,40 @@ archiveToggle?.addEventListener("change", renderResources);
 /* ---------- EVENTS ---------- */
 let activeEventFilter = "all";
 
+// Large feature cards for headline events (Events page only). The visual
+// block is a brand-palette gradient with the vessel mark, standing in
+// until real event photos arrive.
+function renderFeaturedEvents() {
+  const wrap = $("#eventFeatured");
+  if (!wrap) return;
+
+  const statusLabel = { open: "Registration open", soon: "Save the date", past: "Past event" };
+  const list = EVENTS.filter(e => e.featured &&
+    (activeEventFilter === "all" || e.category === activeEventFilter));
+  wrap.hidden = list.length === 0;
+
+  wrap.innerHTML = list.map(e => `
+    <article class="featured-event reveal">
+      <div class="featured-event-art art-${e.art || "plum"}" aria-hidden="true">
+        ${VESSEL_SVG}
+        <span class="featured-flag">Featured</span>
+      </div>
+      <div class="featured-event-body">
+        <span class="tl-cat tl-cat-${e.category}">${EVENT_CAT_LABEL[e.category] || ""}</span>
+        <h3>${e.title}</h3>
+        <p class="featured-event-date">${e.date} · ${e.location}</p>
+        <p class="featured-event-desc">${e.desc}</p>
+        <div class="featured-event-action">
+          <span class="tl-status status-${e.status}">${statusLabel[e.status] || ""}</span>
+          ${e.link ? `<a class="button primary" href="${e.link}">${e.status === "open" ? "Register" : "Notify me"} →</a>` : ""}
+        </div>
+      </div>
+    </article>
+  `).join("");
+
+  observeReveals();
+}
+
 function renderEvents() {
   const tl = $("#eventTimeline");
   if (!tl) return;
@@ -321,6 +361,7 @@ function setEventFilter(filter) {
   activeEventFilter = filter;
   $$(".event-filters .filter-chip").forEach(c =>
     c.classList.toggle("is-active", c.dataset.eventFilter === filter));
+  renderFeaturedEvents();
   renderEvents();
 }
 
@@ -343,8 +384,14 @@ const customAmount = $("#customAmount");
 const giveBtn = $("#giveOnceBtn");
 let selectedAmount = ONE_TIME_AMOUNTS[2]; // default $100
 
+// True once a real Stripe checkout URL replaces the placeholder domain.
+function paymentsConfigured() {
+  const base = CONFIG.payments.giveBaseUrl || "";
+  return base !== "" && !base.includes("donate.dearpastorswife.org");
+}
+
 function buildGiveLink(amount, recurring, email) {
-  const base = giveBtn?.dataset.base || CONFIG.payments.giveBaseUrl;
+  const base = CONFIG.payments.giveBaseUrl;
   const params = new URLSearchParams({ amount: String(amount || 0) });
   if (recurring) params.set("recurring", "monthly");
   if (email) params.set("prefilled_email", email); // Stripe Checkout / Payment Link param
@@ -352,8 +399,25 @@ function buildGiveLink(amount, recurring, email) {
 }
 
 function updateGiveBtn() {
-  if (giveBtn) giveBtn.href = buildGiveLink(selectedAmount, false);
+  if (!giveBtn) return;
+  // Until Stripe is connected, don't navigate to the placeholder domain:
+  // keep the button visible but explain checkout is coming.
+  giveBtn.href = paymentsConfigured() ? buildGiveLink(selectedAmount, false) : "#";
 }
+
+giveBtn?.addEventListener("click", (e) => {
+  if (paymentsConfigured()) return;
+  e.preventDefault();
+  let note = $("#giveDemoNote");
+  if (!note) {
+    note = document.createElement("p");
+    note.id = "giveDemoNote";
+    note.className = "form-status";
+    note.setAttribute("role", "status");
+    giveBtn.insertAdjacentElement("afterend", note);
+  }
+  note.textContent = "Secure checkout opens here once Stripe is connected. Thank you for your heart to give!";
+});
 
 function renderAmounts() {
   if (!amountGrid) return;
@@ -385,14 +449,19 @@ customAmount?.addEventListener("input", () => {
 function renderTiers() {
   const grid = $("#tierGrid");
   if (!grid) return;
-  grid.innerHTML = TIERS.map(t => `
+  // Until Stripe is connected, tier buttons send people to the partner
+  // sign-up form on the same page instead of a dead checkout domain.
+  grid.innerHTML = TIERS.map(t => {
+    const href = paymentsConfigured() ? buildGiveLink(t.min, true) : "#partnerForm";
+    const attrs = paymentsConfigured() ? 'target="_blank" rel="noopener"' : "";
+    return `
     <article class="tier reveal">
       <h4 class="tier-name">${t.name}</h4>
       <div class="tier-price"><strong>${t.monthly}</strong><span>/month</span></div>
       <p class="tier-annual">or ${t.annual} annually</p>
-      <a class="tier-pick" href="${buildGiveLink(t.min, true)}" target="_blank" rel="noopener">Partner at this level →</a>
-    </article>
-  `).join("");
+      <a class="tier-pick" href="${href}" ${attrs}>Partner at this level →</a>
+    </article>`;
+  }).join("");
   observeReveals();
 }
 
@@ -472,7 +541,7 @@ function initPartnerForm() {
 
     // 2) Hand off to Stripe with the amount, frequency, and prefilled email.
     const checkoutUrl = buildGiveLink(amount, recurring, data.email);
-    if (!CONFIG.payments.giveBaseUrl || CONFIG.payments.giveBaseUrl.includes("donate.dearpastorswife.org")) {
+    if (!paymentsConfigured()) {
       // Demo mode: Stripe link not finalized yet.
       if (status) status.textContent = "Details saved. Payment checkout opens here once Stripe is connected.";
       console.log("[partnerForm] would redirect to Stripe:", checkoutUrl, data);
@@ -509,175 +578,12 @@ function initShare() {
 }
 initShare();
 
-/* ---------- COMMUNITY FORUM (localStorage MVP) ----------
-   This is a front-end MVP so the community is functional from day one.
-   Threads/replies persist in the visitor's browser. For shared,
-   multi-user discussions in production, point these read/write
-   functions at a backend (accounts + moderation). */
-const FORUM_KEY = "dpwForum";
-const FORUM_NAME_KEY = "dpwForumName";
-let activeTopic = FORUM_TOPICS[0].id;
-
-function seedForum() {
-  const now = Date.now();
-  return {
-    parenting: [{
-      id: uid(), title: "How do you protect your kids' privacy online?",
-      body: "Our church loves to post photos of everything. I want to celebrate my kids without putting their whole lives on the internet. How do you handle this with your leadership?",
-      author: "May (DPW)", ts: now - 1000 * 60 * 60 * 26, replies: [],
-    }],
-    relationships: [{
-      id: uid(), title: "Boundaries with people who only see 'the pastor's wife'",
-      body: "Some days it feels like everyone wants something. How do you stay warm and available without burning out? Looking for honest, practical wisdom.",
-      author: "May (DPW)", ts: now - 1000 * 60 * 60 * 50, replies: [],
-    }],
-  };
-}
-
-function loadForum() {
-  try {
-    const raw = localStorage.getItem(FORUM_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch (_) {}
-  const seeded = seedForum();
-  saveForum(seeded);
-  return seeded;
-}
-
-function saveForum(data) {
-  try { localStorage.setItem(FORUM_KEY, JSON.stringify(data)); } catch (_) {}
-}
-
-function forumAuthor() {
-  const input = $("#forumName");
-  const name = (input?.value || "").trim();
-  return name || "Anonymous sister";
-}
-
-function timeAgo(ts) {
-  const s = Math.floor((Date.now() - ts) / 1000);
-  if (s < 60) return "just now";
-  const m = Math.floor(s / 60); if (m < 60) return `${m}m ago`;
-  const h = Math.floor(m / 60); if (h < 24) return `${h}h ago`;
-  const d = Math.floor(h / 24); if (d < 7) return `${d}d ago`;
-  return new Date(ts).toLocaleDateString();
-}
-
-function renderForumTopics() {
-  const list = $("#forumTopicList");
-  if (!list) return;
-  list.innerHTML = FORUM_TOPICS.map(t => `
-    <button type="button" class="forum-topic ${t.id === activeTopic ? "is-active" : ""}" role="tab" data-topic="${t.id}">
-      ${escapeHtml(t.title)}
-    </button>
-  `).join("");
-  $$(".forum-topic", list).forEach(btn => {
-    btn.addEventListener("click", () => {
-      activeTopic = btn.dataset.topic;
-      renderForumTopics();
-      renderThreads();
-      const form = $("#forumNewForm");
-      if (form) form.hidden = true;
-    });
-  });
-  const topic = FORUM_TOPICS.find(t => t.id === activeTopic);
-  if (topic) {
-    const title = $("#forumTopicTitle");
-    const desc = $("#forumTopicDesc");
-    if (title) title.textContent = topic.title;
-    if (desc) desc.textContent = topic.desc;
-  }
-}
-
-function renderThreads() {
-  const wrap = $("#forumThreads");
-  const empty = $("#forumEmpty");
-  if (!wrap) return;
-  const data = loadForum();
-  const threads = (data[activeTopic] || []).slice().sort((a, b) => b.ts - a.ts);
-
-  if (empty) empty.hidden = threads.length !== 0;
-
-  wrap.innerHTML = threads.map(th => `
-    <article class="forum-thread" data-thread="${th.id}">
-      <div class="forum-thread-head">
-        <h4>${escapeHtml(th.title)}</h4>
-        <span class="forum-meta">${escapeHtml(th.author)} · ${timeAgo(th.ts)}</span>
-      </div>
-      <p class="forum-thread-body">${escapeHtml(th.body)}</p>
-      <div class="forum-replies">
-        ${(th.replies || []).map(r => `
-          <div class="forum-reply">
-            <p>${escapeHtml(r.body)}</p>
-            <span class="forum-meta">${escapeHtml(r.author)} · ${timeAgo(r.ts)}</span>
-          </div>
-        `).join("")}
-      </div>
-      <form class="forum-reply-form" data-thread="${th.id}">
-        <input type="text" placeholder="Write a reply…" aria-label="Reply" required />
-        <button class="button ghost" type="submit">Reply</button>
-      </form>
-    </article>
-  `).join("");
-
-  $$(".forum-reply-form", wrap).forEach(form => {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const input = form.querySelector("input");
-      const text = input.value.trim();
-      if (!text) return;
-      const store = loadForum();
-      const thread = (store[activeTopic] || []).find(t => t.id === form.dataset.thread);
-      if (!thread) return;
-      thread.replies = thread.replies || [];
-      thread.replies.push({ id: uid(), body: text, author: forumAuthor(), ts: Date.now() });
-      saveForum(store);
-      renderThreads();
-    });
-  });
-
-  observeReveals();
-}
-
-function initForum() {
-  if (!$("#forum")) return;
-
-  // Restore saved display name
-  const nameInput = $("#forumName");
-  if (nameInput) {
-    try { nameInput.value = localStorage.getItem(FORUM_NAME_KEY) || ""; } catch (_) {}
-    nameInput.addEventListener("input", () => {
-      try { localStorage.setItem(FORUM_NAME_KEY, nameInput.value.trim()); } catch (_) {}
-    });
-  }
-
-  const newBtn = $("#forumNewBtn");
-  const newForm = $("#forumNewForm");
-  const cancelBtn = $("#forumCancelBtn");
-
-  newBtn?.addEventListener("click", () => {
-    if (newForm) { newForm.hidden = !newForm.hidden; if (!newForm.hidden) $("#forumThreadTitle")?.focus(); }
-  });
-  cancelBtn?.addEventListener("click", () => { if (newForm) newForm.hidden = true; });
-
-  newForm?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const title = $("#forumThreadTitle").value.trim();
-    const body = $("#forumThreadBody").value.trim();
-    if (!title || !body) return;
-    const store = loadForum();
-    store[activeTopic] = store[activeTopic] || [];
-    store[activeTopic].push({ id: uid(), title, body, author: forumAuthor(), ts: Date.now(), replies: [] });
-    saveForum(store);
-    newForm.reset();
-    newForm.hidden = true;
-    renderThreads();
-  });
-
-  renderForumTopics();
-  renderThreads();
-}
-
+/* ---------- COMMUNITY (Coming Soon) ----------
+   The community forum is post-launch. The Community page is a styled
+   "Coming Soon" card with an email signup that feeds the same
+   systeme.io pipeline as the other forms (demo mode until the CRM
+   endpoint is configured in CONFIG).*/
+handleForm("communityForm", "communityStatus", "You're on the list! We'll let you know the moment the community opens. 💛");
 /* ---------- HEADER / ANNOUNCE / NAV ---------- */
 const header = $("#siteHeader");
 const announceBar = $("#announceBar");
@@ -803,8 +709,11 @@ if (bookCover && bookWrapper && !window.matchMedia("(prefers-reduced-motion: red
   });
 }
 
-/* ---------- LAZY IMAGES ---------- */
-$$("img[src]").forEach(img => { if (!img.loading) img.loading = "lazy"; });
+/* ---------- LAZY IMAGES ----------
+   Skip hero/above-the-fold images so the LCP image isn't lazy-loaded. */
+$$("img[src]").forEach(img => {
+  if (!img.loading && !img.closest(".hero, .page-hero")) img.loading = "lazy";
+});
 
 /* ---------- MOTION ENHANCEMENTS ---------- */
 
@@ -875,10 +784,10 @@ if (heroCopy && !reduceMotion) {
 
 /* ---------- INIT ---------- */
 renderResources();
+renderFeaturedEvents();
 renderEvents();
 renderAmounts();
 renderTiers();
-initForum();
 animateCounters();
 
 // Mark static sections for reveal

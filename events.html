@@ -6,7 +6,8 @@
   <meta name="description" content="Conferences, tea parties, and retreats from Dear Pastor's Wife, gathering across the U.S., U.K., and Nigeria. Find the date and place that fit your season." />
   <meta name="theme-color" content="#573a6f" />
   <title>Events | Dear Pastor's Wife</title>
-  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="alternate icon" type="image/png" href="assets/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800;9..144,900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -29,6 +30,8 @@
         <button class="filter-chip" data-event-filter="tea-party">Tea Parties</button>
         <button class="filter-chip" data-event-filter="retreat">Retreats</button>
       </div>
+      <div class="event-featured-grid" id="eventFeatured" aria-label="Featured events"></div>
+      <h3 class="timeline-heading">All events this year</h3>
       <div class="timeline" id="eventTimeline" aria-live="polite"></div>
       <p class="resource-empty" id="eventEmpty" hidden>No events in this category yet. Check back soon.</p>
     </section>
