@@ -798,15 +798,19 @@ body::after {
 }
 .site-header, .announce-bar, .scroll-progress { position: relative; z-index: 20; }
 
-/* ===================== Animated heading underline ===================== */
-.section-heading h2 { position: relative; display: inline-block; }
+/* ===================== Animated heading underline =====================
+   The dash lives INSIDE the h2 box (padding-bottom + bottom: 0) so the
+   space between heading, dash, and whatever follows is identical on
+   every section, instead of hanging into the next element. */
+.section-heading h2 { position: relative; display: inline-block; padding-bottom: 1rem; }
 .section-heading.centered h2::after { left: 50%; transform: translateX(-50%); }
 .section-heading h2::after {
-  content: ""; position: absolute; left: 0; bottom: -0.6rem; height: 3px; width: 0;
+  content: ""; position: absolute; left: 0; bottom: 0; height: 3px; width: 0;
   background: linear-gradient(90deg, var(--gold), var(--rose)); border-radius: 999px;
   transition: width 0.9s cubic-bezier(.2,.7,.2,1) 0.2s;
 }
 .section-heading.in-view h2::after { width: clamp(3rem, 18%, 6rem); }
+.section-heading h2 + p { margin-top: 0.4rem; }
 
 /* ===================== Scroll progress bar ===================== */
 .scroll-progress {
