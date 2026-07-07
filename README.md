@@ -43,16 +43,25 @@ python3 -m http.server 4173
 
 ## Configuration before go-live (`script.js` → `CONFIG`)
 
-Both integrations run in **demo mode** until the client provides credentials
-(forms log to the console and show a success message; payment shows the redirect step).
-
 - **systeme.io (CRM):** set `CONFIG.crm.endpoint` to the systeme.io form/submission
   endpoint. When set, all form submissions (newsletter, contact, booking, and the
-  partner sign-up) are POSTed there automatically. **Endpoint URL pending from client.**
-- **Stripe (payments + ACH):** set `CONFIG.payments.giveBaseUrl` to the Stripe-hosted
-  checkout / Payment Link URL (accepts `?amount=`, `?recurring=monthly`, and
-  `?prefilled_email=`). Enable **Card** and **ACH Direct Debit** in the Stripe
-  Dashboard so bank transfer appears at checkout. **Stripe details pending from client.**
+  partner sign-up) are POSTed there automatically. **Endpoint URL pending from client** —
+  contact capture runs in demo mode (logs to console) until then.
+- **Stripe (payments + ACH):** Live Payment Links are wired in `CONFIG.payments`, but
+  gated behind a master switch: **`CONFIG.payments.live` is `false`**, so every
+  give/donate button stays in the "checkout opens once Stripe is connected" demo state
+  and charges nobody. Flip it to `true` to arm real payments.
+  - `oneTimeUrl` is a "customers choose what to pay" link (covers every one-time gift);
+    `monthly` maps $25/$50/$100/$250 to fixed recurring-subscription links. One-time
+    amounts are chosen on Stripe's page; custom/off-grid monthly amounts snap to the
+    nearest tier link (Stripe shows the real charge before the giver confirms). Payment
+    Links ignore `?amount=`, which is why one-time uses a single pay-what-you-want link.
+  - **Before arming (`live: true`):** replace the truncated **$25/mo** link (currently
+    404s); optionally add **$75/mo** and **$500/mo** links so the donation widget's
+    those buttons charge exactly (they currently snap to $50/$250 for monthly). Enable
+    **Card** and **ACH Direct Debit** in the Stripe Dashboard so bank transfer appears.
+  - The donation widget lives on `partnership.html` (`#donateBox`); Stripe collects
+    name/email/address at checkout (the old pre-Stripe sign-up form was removed).
 
 ### Partner flow (partnership.html)
 

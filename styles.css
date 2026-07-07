@@ -1105,8 +1105,12 @@ h1 {
 .page-hero { padding: 3.5rem 0 1rem; text-align: center; }
 .page-hero .eyebrow { justify-content: center; }
 .page-hero h1 {
-  font-family: "Fraunces", Georgia, serif; color: var(--wine);
-  font-size: clamp(2.2rem, 5vw, 3.4rem); line-height: 1.05; margin: 0.4rem auto 0.8rem;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(2.2rem, 5vw, 3.4rem); line-height: 1.14; margin: 0.4rem auto 0.9rem;
+  /* Override the animated two-tone shimmer from the global h1 rule: inner-page
+     titles read cleaner as one solid brand colour with a little more leading. */
+  background: none; color: var(--wine); -webkit-text-fill-color: var(--wine);
+  animation: fadeInUp 0.8s ease 0.2s both;
 }
 .page-hero p { max-width: 620px; margin: 0 auto; color: var(--muted); font-size: 1.08rem; }
 .page-section { padding: 2rem 0 4rem; }
@@ -1135,6 +1139,83 @@ h1 {
 .partner-intro { text-align: center; max-width: 720px; margin: 0 auto 1rem; }
 .partner-intro p { color: var(--muted); font-size: 1.1rem; line-height: 1.7; }
 .partner-intro p + p { margin-top: 1rem; }
+
+/* ----- Partner + donation two-column ----- */
+.partner-give {
+  display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.95fr);
+  gap: clamp(2rem, 4vw, 3.5rem); align-items: start;
+  padding-top: 3rem;
+}
+.partner-give .eyebrow { justify-content: flex-start; }
+.partner-give h1 {
+  font-family: "Fraunces", Georgia, serif; color: var(--wine);
+  font-size: clamp(2rem, 4vw, 3rem); line-height: 1.14; margin: 0.4rem 0 1.4rem;
+  -webkit-text-fill-color: var(--wine); background: none;
+}
+.partner-photo { margin: 0 0 1.8rem; border-radius: var(--radius); overflow: hidden; position: relative; box-shadow: var(--shadow); }
+.partner-photo img { width: 100%; height: clamp(240px, 34vw, 340px); object-fit: cover; object-position: 50% 28%; display: block; }
+.partner-photo figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 2.4rem 1.4rem 1.1rem;
+  background: linear-gradient(0deg, rgba(60,39,82,0.82), transparent);
+  color: var(--cream); font-family: "Fraunces", serif; font-style: italic;
+  font-size: 1.25rem; line-height: 1.2;
+}
+.because-lead {
+  font-family: "Fraunces", serif; font-weight: 700; color: var(--wine);
+  font-size: 1.5rem; margin: 0 0 1.2rem;
+}
+.because-item { margin-bottom: 1.3rem; padding-left: 1.1rem; border-left: 3px solid rgba(176, 122, 86, 0.35); }
+.because-item h3 { font-size: 1.12rem; color: var(--wine); margin-bottom: 0.35rem; }
+.because-item p { color: var(--muted); line-height: 1.7; font-size: 1rem; }
+.because-close {
+  margin-top: 1.6rem; color: var(--ink); font-weight: 700; font-size: 1.08rem;
+  line-height: 1.6;
+}
+
+/* ----- Donation widget ----- */
+.donate-box {
+  position: sticky; top: 96px;
+  background: linear-gradient(160deg, #fff, rgba(244,237,227,0.7));
+  border: 1px solid rgba(176, 122, 86, 0.25); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 1.6rem;
+}
+.donate-head { display: flex; align-items: center; gap: 0.5rem; font-weight: 800; color: var(--wine); font-size: 1.05rem; margin-bottom: 1.1rem; }
+.donate-head .lock { color: var(--gold-deep); }
+.donate-freq { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.9rem; }
+.donate-freq-btn {
+  border: 1.5px solid var(--line); background: #fff; color: var(--muted);
+  font: inherit; font-weight: 800; font-size: 0.95rem; padding: 0.75rem 0.5rem;
+  border-radius: 0.9rem; cursor: pointer; transition: all 0.2s ease;
+}
+.donate-freq-btn:hover { border-color: var(--wine-2); color: var(--wine); }
+.donate-freq-btn.is-active { border-color: var(--wine); background: var(--wine); color: #fff; }
+.donate-amounts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 0.7rem; }
+.donate-amt {
+  border: 1.5px solid var(--line); background: #fff; color: var(--wine);
+  font: inherit; font-weight: 800; font-size: 1rem; padding: 0.8rem 0.4rem;
+  border-radius: 0.9rem; cursor: pointer; transition: all 0.2s ease;
+}
+.donate-amt:hover { border-color: var(--wine-2); }
+.donate-amt.is-active { border-color: var(--wine); background: rgba(87, 58, 111, 0.08); box-shadow: 0 0 0 1px var(--wine) inset; }
+.donate-custom { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; border: 1.5px solid var(--line); border-radius: 0.9rem; padding: 0 1rem; background: #fff; }
+.donate-custom:focus-within { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(176, 122, 86, 0.18); }
+.donate-custom input { border: 0; background: transparent; padding: 0.85rem 0; color: var(--ink); width: 100%; }
+.donate-custom input::placeholder { color: var(--muted); }
+.donate-custom input:focus { outline: none; box-shadow: none; }
+.donate-cur { color: var(--muted); font-weight: 800; font-size: 0.85rem; }
+.donate-go { width: 100%; }
+.donate-box .form-status { margin-top: 0.7rem; color: var(--gold-deep); }
+.donate-note { margin-top: 1rem; color: var(--muted); font-size: 0.8rem; line-height: 1.5; display: flex; gap: 0.4rem; }
+.donate-note .lock { color: var(--gold-deep); flex-shrink: 0; }
+
+@media (max-width: 900px) {
+  .partner-give { grid-template-columns: 1fr; }
+  .partner-give .eyebrow { justify-content: center; }
+  .partner-give h1 { text-align: center; }
+  /* Donation box comes first on mobile so giving is one tap away. */
+  .donate-box { position: static; order: -1; }
+}
 
 .impact-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));

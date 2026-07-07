@@ -160,13 +160,19 @@ buildChrome();
    client (or a follow-up dev) can flip the site live without hunting
    through the code.
 
-   PAYMENTS (Stripe):
-     • Create a Stripe-hosted donation/checkout page that accepts an
-       `amount` query param (e.g. Donorbox, a Payment Link, or a small
-       Checkout endpoint). Put its URL in `payments.giveBaseUrl`.
-     • Enable BOTH "Card" and "ACH Direct Debit (US bank account)" as
-       payment methods in your Stripe Dashboard → Settings → Payment
-       methods, so bank transfer shows up at checkout.
+   PAYMENTS (Stripe Payment Links):
+     • `oneTimeUrl` is a "Customers choose what to pay" link — the giver
+       sets the amount on Stripe's page, so it covers every one-time gift
+       (give card + partner form "one time"). NOTE: Stripe Payment Links
+       ignore any ?amount= we append, which is why one-time uses a single
+       pay-what-you-want link instead of one link per preset.
+     • `monthly` maps a USD amount to a FIXED recurring subscription link.
+       Custom monthly amounts snap to the nearest of these; Stripe always
+       shows the real charge before the giver confirms.
+     • Enable "Card" and "ACH Direct Debit" in the Stripe Dashboard so
+       bank transfer shows at checkout.
+     • These are LIVE-mode links (buy.stripe.com/... ; test links carry a
+       /test_ segment). Real cards are charged.
 
    CRM (systeme.io):
      • In systeme.io, create a form and copy its POST/submission endpoint
@@ -176,8 +182,21 @@ buildChrome();
 */
 const CONFIG = {
   payments: {
-    // Stripe-hosted page that accepts ?amount= & ?recurring=monthly
-    giveBaseUrl: "https://donate.dearpastorswife.org",
+    // MASTER SWITCH. Keep false until every link below is verified AND the
+    // client has confirmed go-live. While false, all give/donate buttons stay
+    // in the friendly "checkout opens once Stripe is connected" demo state and
+    // charge nobody. Flip to true to arm real payments.
+    // TODO: still needed before arming — a working $25/mo link (current one
+    // 404s) and, for the widget's $75/$500 monthly buttons, matching links
+    // (they currently snap down to $50/$250).
+    live: false,
+    oneTimeUrl: "https://buy.stripe.com/9B6eVd4HK0F3awy7qB6Vq07",
+    monthly: {
+      25:  "https://buy.stripe.com/dRmbJ15LO2Nb3a16Vq08",
+      50:  "https://buy.stripe.com/aFaaEX8Y0bjHbAC9yJ6Vq09",
+      100: "https://buy.stripe.com/14AfZh2zC0F3awyeT36Vq0a",
+      250: "https://buy.stripe.com/7sY28ra24gE18oq9yJ6Vq0b",
+    },
   },
   crm: {
     // systeme.io form endpoint. Empty = demo mode (no network call).
@@ -216,7 +235,7 @@ const ONE_TIME_AMOUNTS = [25, 50, 100, 250];
 // Fundraising Partnership Program: names + suggested ranges only.
 const TIERS = [
   { name: "Friend of the Ministry", min: 25, monthly: "$25 to $50", annual: "$300 to $600" },
-  { name: "Ministry Partner", min: 51, monthly: "$51 to $99", annual: "$600 to $1,200" },
+  { name: "Ministry Partner", min: 50, monthly: "$50 to $99", annual: "$600 to $1,200" },
   { name: "Impact Partner", min: 100, monthly: "$100 to $249", annual: "$1,200 to $3,000" },
   { name: "Legacy Partner", min: 250, monthly: "$250 to $499", annual: "$3,000 to $6,000" },
 ];
@@ -384,25 +403,37 @@ const customAmount = $("#customAmount");
 const giveBtn = $("#giveOnceBtn");
 let selectedAmount = ONE_TIME_AMOUNTS[2]; // default $100
 
-// True once a real Stripe checkout URL replaces the placeholder domain.
+// True only when payments are armed (CONFIG.payments.live) AND a real
+// one-time Stripe link is set. Until then, buttons stay in demo mode.
 function paymentsConfigured() {
-  const base = CONFIG.payments.giveBaseUrl || "";
-  return base !== "" && !base.includes("donate.dearpastorswife.org");
+  return CONFIG.payments.live === true &&
+    /^https:\/\/buy\.stripe\.com\//.test(CONFIG.payments.oneTimeUrl || "");
 }
 
-function buildGiveLink(amount, recurring, email) {
-  const base = CONFIG.payments.giveBaseUrl;
-  const params = new URLSearchParams({ amount: String(amount || 0) });
-  if (recurring) params.set("recurring", "monthly");
-  if (email) params.set("prefilled_email", email); // Stripe Checkout / Payment Link param
-  return `${base}?${params.toString()}`;
+// Attach ?prefilled_email= to a Stripe Payment Link when we know the giver.
+function withEmail(url, email) {
+  if (!email) return url;
+  const sep = url.includes("?") ? "&" : "?";
+  return `${url}${sep}prefilled_email=${encodeURIComponent(email)}`;
+}
+
+// One-time gift: single "choose what you pay" link (amount set on Stripe).
+function oneTimeLink(email) {
+  return withEmail(CONFIG.payments.oneTimeUrl, email);
+}
+
+// Monthly gift: snap the requested amount to the nearest fixed tier link.
+function monthlyLink(amount, email) {
+  const tiers = Object.keys(CONFIG.payments.monthly).map(Number).sort((a, b) => a - b);
+  const want = Number(amount) || tiers[0];
+  const nearest = tiers.reduce((best, t) =>
+    Math.abs(t - want) < Math.abs(best - want) ? t : best, tiers[0]);
+  return withEmail(CONFIG.payments.monthly[nearest], email);
 }
 
 function updateGiveBtn() {
   if (!giveBtn) return;
-  // Until Stripe is connected, don't navigate to the placeholder domain:
-  // keep the button visible but explain checkout is coming.
-  giveBtn.href = paymentsConfigured() ? buildGiveLink(selectedAmount, false) : "#";
+  giveBtn.href = paymentsConfigured() ? oneTimeLink() : "#";
 }
 
 giveBtn?.addEventListener("click", (e) => {
@@ -446,13 +477,87 @@ customAmount?.addEventListener("input", () => {
   }
 });
 
+/* ---------- DONATION WIDGET (partnership.html) ----------
+   Terri-style box: Give once / Monthly toggle + amount presets + custom.
+   "Give once" routes to the pay-what-you-want link (amount chosen on
+   Stripe); "Monthly" routes to the fixed monthly link nearest the amount. */
+const DONATE_AMOUNTS = [25, 50, 75, 100, 250, 500];
+
+function initDonateWidget() {
+  const box = $("#donateBox");
+  if (!box) return;
+  const amountsWrap = $("#donateAmounts", box);
+  const customInput = $("#donateCustom", box);
+  const goBtn = $("#donateGo", box);
+  const status = $("#donateStatus", box);
+
+  let freq = "monthly";            // matches the default-active toggle
+  let amount = 100;                // matches the default-active preset
+
+  amountsWrap.innerHTML = DONATE_AMOUNTS.map(a =>
+    `<button type="button" class="donate-amt${a === amount ? " is-active" : ""}" data-amount="${a}">$${a}</button>`
+  ).join("");
+
+  const paintAmounts = () => $$(".donate-amt", box).forEach(b =>
+    b.classList.toggle("is-active", Number(b.dataset.amount) === amount && !customInput.value));
+
+  const refresh = () => {
+    goBtn.textContent = freq === "monthly" ? "Donate monthly" : "Donate";
+    goBtn.href = paymentsConfigured()
+      ? (freq === "monthly" ? monthlyLink(amount) : oneTimeLink())
+      : "#";
+    if (status) status.textContent = "";
+  };
+
+  // Frequency toggle
+  $$(".donate-freq-btn", box).forEach(btn => {
+    btn.addEventListener("click", () => {
+      freq = btn.dataset.freq;
+      $$(".donate-freq-btn", box).forEach(b => {
+        const on = b === btn;
+        b.classList.toggle("is-active", on);
+        b.setAttribute("aria-selected", String(on));
+      });
+      refresh();
+    });
+  });
+
+  // Amount presets
+  amountsWrap.addEventListener("click", (e) => {
+    const btn = e.target.closest(".donate-amt");
+    if (!btn) return;
+    amount = Number(btn.dataset.amount);
+    customInput.value = "";
+    paintAmounts();
+    refresh();
+  });
+
+  // Custom amount
+  customInput.addEventListener("input", () => {
+    const val = Number(customInput.value);
+    if (val > 0) amount = val;
+    paintAmounts();
+    refresh();
+  });
+
+  // Demo mode: don't navigate to a "#" placeholder — explain instead.
+  goBtn.addEventListener("click", (e) => {
+    if (paymentsConfigured()) return;
+    e.preventDefault();
+    if (status) status.textContent = "Secure checkout opens here once Stripe is connected. Thank you for your heart to give!";
+  });
+
+  refresh();
+}
+initDonateWidget();
+
 function renderTiers() {
   const grid = $("#tierGrid");
   if (!grid) return;
-  // Until Stripe is connected, tier buttons send people to the partner
-  // sign-up form on the same page instead of a dead checkout domain.
+  // Until payments are armed, tier buttons scroll up to the donation widget
+  // instead of opening a checkout.
   grid.innerHTML = TIERS.map(t => {
-    const href = paymentsConfigured() ? buildGiveLink(t.min, true) : "#partnerForm";
+    const href = paymentsConfigured() ? monthlyLink(t.min) : "#give";
     const attrs = paymentsConfigured() ? 'target="_blank" rel="noopener"' : "";
     return `
     <article class="tier reveal">
@@ -513,9 +618,9 @@ handleForm("bookingForm", "bookingStatus", "Thank you! Your booking request is i
 /* ---------- PARTNER SIGN-UP → STRIPE ----------
    Captures partner contact details (name, email, address, phone) and
    records them to the CRM (systeme.io) BEFORE handing the partner off to
-   Stripe for payment. Stripe checkout URL + CRM endpoint are pending from
-   the client (see CONFIG); until they're set this runs in demo mode and
-   still shows the redirect step so the flow can be reviewed. */
+   Stripe for payment. Stripe Payment Links are set (see CONFIG); the CRM
+   endpoint is still pending, so contact capture runs in demo mode (logs
+   only) while the payment redirect is live. */
 function initPartnerForm() {
   const form = $("#partnerForm");
   if (!form) return;
@@ -539,8 +644,11 @@ function initPartnerForm() {
       return;
     }
 
-    // 2) Hand off to Stripe with the amount, frequency, and prefilled email.
-    const checkoutUrl = buildGiveLink(amount, recurring, data.email);
+    // 2) Hand off to the matching Stripe Payment Link (monthly = fixed tier
+    //    link nearest the chosen amount; one-time = pay-what-you-want link).
+    const checkoutUrl = recurring
+      ? monthlyLink(amount, data.email)
+      : oneTimeLink(data.email);
     if (!paymentsConfigured()) {
       // Demo mode: Stripe link not finalized yet.
       if (status) status.textContent = "Details saved. Payment checkout opens here once Stripe is connected.";

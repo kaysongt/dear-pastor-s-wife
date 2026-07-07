@@ -25,23 +25,65 @@
   <div data-chrome="top"></div>
 
   <main id="top">
-    <section class="page-hero section-shell">
-      <p class="eyebrow">Partner &amp; Give</p>
-      <h1>Your partnership reaches women the world over.</h1>
-    </section>
+    <!-- Partner + donation widget -->
+    <section class="partner-give section-shell page-section" id="give">
+      <div class="partner-narrative">
+        <p class="eyebrow">Partner &amp; Give</p>
+        <h1>Your partnership reaches women the world over.</h1>
+        <figure class="partner-photo">
+          <img src="assets/featured-laughing.jpg" alt="May Ijisesan, founder of Dear Pastor's Wife" loading="lazy" />
+          <figcaption>Thank you for making an impact.</figcaption>
+        </figure>
 
-    <!-- Warm intro -->
-    <section class="section-shell">
-      <div class="partner-intro">
-        <p>When you partner with Dear Pastor's Wife, you do something quietly powerful: you make sure a pastor's wife on the other side of the world can find help the moment she needs it, for free. You help a tired woman get away to a retreat. You put a book in the hands of someone who feels unseen. None of this happens on its own. It happens because people like you decide it should.</p>
-        <p>Give once, or walk with us month to month. Either way, thank you for believing the women who hold ministry together are worth investing in.</p>
+        <p class="because-lead">Because of you:</p>
+
+        <div class="because-item">
+          <h3>Women are gathering.</h3>
+          <p>Through our Tea Parties, we're creating spaces where ministry women connect, pray, encourage one another, and find strength in community. As your support grows, we're expanding to more cities across North America, Europe, and beyond.</p>
+        </div>
+        <div class="because-item">
+          <h3>Leaders are being equipped.</h3>
+          <p>Our annual Retreat brings women together for a transformational 25 to 30 person experience of spiritual renewal, leadership development, and deep community. Women leave renewed, clarified in their calling, and empowered to lead with wisdom and strength.</p>
+        </div>
+        <div class="because-item">
+          <h3>Financial and leadership development is accessible.</h3>
+          <p>Our Business, Finance &amp; Leadership Summit is equipping women with tools for financial empowerment, entrepreneurial thinking, and sustainable leadership, currently reaching women globally through our virtual platform, completely free.</p>
+        </div>
+        <div class="because-item">
+          <h3>Resources are reaching women everywhere.</h3>
+          <p>Through our books (<em>Dear Pastor's Wife</em>, <em>Silicon Valley Girl</em>, <em>The Supernatural Woman</em>, and <em>Wisdom for the Workplace</em>) and the articles and content we're creating, women in ministry have access to biblical wisdom and practical tools they can use immediately.</p>
+        </div>
+        <div class="because-item">
+          <h3>Mentorship and support are creating lasting change.</h3>
+          <p>Through one-on-one coaching and spiritual mentorship, we're walking alongside women in ministry, helping them navigate the unique demands of their calling.</p>
+        </div>
+
+        <p class="because-close">We couldn't build this movement without you. We love and appreciate your partnership.</p>
+
+        <div class="share-row">
+          <span style="color:var(--muted);font-weight:700">Know someone who'd love this?</span>
+          <button class="share-btn" type="button" data-share="https://dearpastorswife.org/partnership.html">
+            <span aria-hidden="true">↗</span> <span class="share-label">Share this page</span>
+          </button>
+        </div>
       </div>
-      <div class="share-row">
-        <span style="color:var(--muted);font-weight:700">Know someone who'd love this?</span>
-        <button class="share-btn" type="button" data-share="https://dearpastorswife.org/partnership.html">
-          <span aria-hidden="true">↗</span> <span class="share-label">Share this page</span>
-        </button>
-      </div>
+
+      <aside class="donate-box" id="donateBox" aria-label="Make a donation">
+        <div class="donate-head"><span class="lock" aria-hidden="true">🔒</span> Secure donation</div>
+        <div class="donate-freq" role="tablist" aria-label="Giving frequency">
+          <button type="button" class="donate-freq-btn" data-freq="once" role="tab">Give once</button>
+          <button type="button" class="donate-freq-btn is-active" data-freq="monthly" role="tab" aria-selected="true">♥ Monthly</button>
+        </div>
+        <div class="donate-amounts" id="donateAmounts" role="group" aria-label="Amount"></div>
+        <label class="donate-custom">
+          <span class="visually-hidden">Other amount</span>
+          <input type="number" id="donateCustom" min="1" step="1" placeholder="Other amount" inputmode="numeric" />
+          <span class="donate-cur">USD</span>
+        </label>
+        <a class="button primary donate-go" id="donateGo" href="#">Donate monthly</a>
+        <p class="form-status" id="donateStatus" role="status" aria-live="polite"></p>
+        <p class="donate-note"><span class="lock" aria-hidden="true">🔒</span> Processed securely by Stripe. Pay by card, Apple Pay, Google Pay, or bank transfer (ACH). Your details are encrypted and never stored on our servers.</p>
+      </aside>
     </section>
 
     <!-- Impact stories -->
@@ -67,89 +109,7 @@
       </div>
     </section>
 
-    <!-- Partner sign-up (capture details before Stripe) -->
-    <section class="section-shell page-section">
-      <div class="partner-form-card">
-        <h2>Become a partner</h2>
-        <p class="form-note">We'll record your details so we can stay in touch and send your partner updates, then take you to secure checkout to set up your gift.</p>
-        <form class="partner-form" id="partnerForm" novalidate>
-          <div class="field-row">
-            <label>Full name <input name="name" type="text" placeholder="First and last name" required /></label>
-            <label>Email <input name="email" type="email" placeholder="you@example.com" required /></label>
-          </div>
-          <div class="field-row">
-            <label>Phone <input name="phone" type="tel" placeholder="+1 555 123 4567" required /></label>
-            <label>Country <input name="country" type="text" placeholder="Country" required /></label>
-          </div>
-          <label>Mailing address <input name="address" type="text" placeholder="Street, city, state/region, postal code" required /></label>
-
-          <fieldset style="border:0;padding:0;margin:0">
-            <legend style="font-weight:700;color:var(--wine);font-size:0.85rem;margin-bottom:0.5rem">How would you like to partner?</legend>
-            <div class="partner-tier-pills">
-              <label><input type="radio" name="frequency" value="monthly" checked /> Monthly</label>
-              <label><input type="radio" name="frequency" value="once" /> One time</label>
-            </div>
-          </fieldset>
-
-          <fieldset style="border:0;padding:0;margin:0">
-            <legend style="font-weight:700;color:var(--wine);font-size:0.85rem;margin-bottom:0.5rem">Choose an amount</legend>
-            <div class="partner-tier-pills">
-              <label><input type="radio" name="amount" value="25" /> $25</label>
-              <label><input type="radio" name="amount" value="50" /> $50</label>
-              <label><input type="radio" name="amount" value="100" checked /> $100</label>
-              <label><input type="radio" name="amount" value="250" /> $250</label>
-            </div>
-            <label style="margin-top:0.8rem">Or another amount
-              <input name="customAmount" type="number" min="1" step="1" placeholder="Custom amount in USD" />
-            </label>
-          </fieldset>
-
-          <button class="button gold" type="submit">Continue to secure checkout →</button>
-          <p class="form-status" id="partnerStatus" role="status" aria-live="polite"></p>
-          <p class="secure-note inline">
-            <span class="lock">🔒</span> Payments are processed by Stripe, a PCI-compliant provider. Your card and bank details are encrypted and never stored on our servers.
-          </p>
-        </form>
-      </div>
-    </section>
-
-    <!-- One-time quick give -->
-    <section class="give section-shell page-section" id="give">
-      <div class="give-layout">
-        <div class="give-card give-onetime">
-          <h3>Prefer to give a one-time gift?</h3>
-          <p class="give-sub">Every amount makes room for another woman to be poured into.</p>
-          <div class="amount-grid" id="amountGrid"></div>
-          <label class="custom-amount">
-            <span>Other amount</span>
-            <div class="custom-input">
-              <span class="currency">$</span>
-              <input type="number" id="customAmount" min="1" step="1" placeholder="100" />
-            </div>
-          </label>
-          <a class="button gold give-btn" id="giveOnceBtn" href="#">Give securely →</a>
-          <p class="give-methods"><span>Pay by</span> card, Apple Pay, Google Pay, or bank transfer (ACH)</p>
-        </div>
-        <div class="give-card partner-about">
-          <h3>Why a partnership program?</h3>
-          <p class="give-sub">A one-time gift helps today. Partnership lets us plan for tomorrow.</p>
-          <ul class="about-objectives">
-            <li>Support we can count on, month to month</li>
-            <li>Real relationships with people who share the heart for this</li>
-            <li>Room to reach further, more women, in more places</li>
-            <li>Less time chasing funds, more time serving women</li>
-          </ul>
-          <p class="about-partners-label">Our partners include</p>
-          <div class="partner-chips">
-            <span>Individuals</span>
-            <span>Churches &amp; denominations</span>
-            <span>Faith-based brands</span>
-            <span>Foundations</span>
-            <span>Ministry leaders</span>
-          </div>
-        </div>
-      </div>
-
+    <section class="give section-shell page-section">
       <!-- Tiers -->
       <div class="partnership-tiers">
         <div class="section-heading centered">
