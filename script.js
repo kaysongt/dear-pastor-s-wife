@@ -161,11 +161,10 @@ buildChrome();
    through the code.
 
    PAYMENTS (Stripe Payment Links):
-     • `oneTimeUrl` is a "Customers choose what to pay" link — the giver
-       sets the amount on Stripe's page, so it covers every one-time gift
-       (give card + partner form "one time"). NOTE: Stripe Payment Links
-       ignore any ?amount= we append, which is why one-time uses a single
-       pay-what-you-want link instead of one link per preset.
+     • `oneTimeUrl` is a single FIXED $100 one-time-gift link (not
+       pay-what-you-want) — it covers every one-time gift (give card +
+       partner form "one time"), which is why both those flows show a
+       flat $100 rather than an amount picker.
      • `monthly` maps a USD amount to a FIXED recurring subscription link.
        Custom monthly amounts snap to the nearest of these; Stripe always
        shows the real charge before the giver confirms.
@@ -186,13 +185,12 @@ const CONFIG = {
     // client has confirmed go-live. While false, all give/donate buttons stay
     // in the friendly "checkout opens once Stripe is connected" demo state and
     // charge nobody. Flip to true to arm real payments.
-    // TODO: still needed before arming — a working $25/mo link (current one
-    // 404s) and, for the widget's $75/$500 monthly buttons, matching links
-    // (they currently snap down to $50/$250).
-    live: false,
+    // TODO: still needed — matching links for the widget's $75/$500 monthly
+    // buttons (they currently snap down to $50/$250).
+    live: true,
     oneTimeUrl: "https://buy.stripe.com/9B6eVd4HK0F3awy7qB6Vq07",
     monthly: {
-      25:  "https://buy.stripe.com/dRmbJ15LO2Nb3a16Vq08",
+      25:  "https://buy.stripe.com/dRmbJ15LO2Nb3463al6Vq08",
       50:  "https://buy.stripe.com/aFaaEX8Y0bjHbAC9yJ6Vq09",
       100: "https://buy.stripe.com/14AfZh2zC0F3awyeT36Vq0a",
       250: "https://buy.stripe.com/7sY28ra24gE18oq9yJ6Vq0b",
@@ -235,9 +233,6 @@ const EVENTS = [
 ];
 
 const EVENT_CAT_LABEL = { conference: "Conference", "tea-party": "Tea Party", retreat: "Retreat" };
-
-// Giving
-const ONE_TIME_AMOUNTS = [25, 50, 100, 250];
 
 // Fundraising Partnership Program: names + suggested ranges only.
 const TIERS = [
@@ -405,10 +400,7 @@ $$(".event-filters .filter-chip").forEach(chip => {
 })();
 
 /* ---------- GIVING ---------- */
-const amountGrid = $("#amountGrid");
-const customAmount = $("#customAmount");
 const giveBtn = $("#giveOnceBtn");
-let selectedAmount = ONE_TIME_AMOUNTS[2]; // default $100
 
 // True only when payments are armed (CONFIG.payments.live) AND a real
 // one-time Stripe link is set. Until then, buttons stay in demo mode.
@@ -424,7 +416,7 @@ function withEmail(url, email) {
   return `${url}${sep}prefilled_email=${encodeURIComponent(email)}`;
 }
 
-// One-time gift: single "choose what you pay" link (amount set on Stripe).
+// One-time gift: single fixed-$100 Stripe link (not pay-what-you-want).
 function oneTimeLink(email) {
   return withEmail(CONFIG.payments.oneTimeUrl, email);
 }
@@ -456,45 +448,24 @@ giveBtn?.addEventListener("click", (e) => {
   }
   note.textContent = "Secure checkout opens here once Stripe is connected. Thank you for your heart to give!";
 });
-
-function renderAmounts() {
-  if (!amountGrid) return;
-  amountGrid.innerHTML = ONE_TIME_AMOUNTS.map(a => `
-    <button type="button" class="amount-btn ${a === selectedAmount ? "is-active" : ""}" data-amount="${a}">$${a}</button>
-  `).join("");
-
-  $$(".amount-btn", amountGrid).forEach(btn => {
-    btn.addEventListener("click", () => {
-      selectedAmount = Number(btn.dataset.amount);
-      if (customAmount) customAmount.value = "";
-      $$(".amount-btn", amountGrid).forEach(b => b.classList.remove("is-active"));
-      btn.classList.add("is-active");
-      updateGiveBtn();
-    });
-  });
-  updateGiveBtn();
-}
-
-customAmount?.addEventListener("input", () => {
-  const val = Number(customAmount.value);
-  if (val > 0) {
-    selectedAmount = val;
-    $$(".amount-btn").forEach(b => b.classList.remove("is-active"));
-    updateGiveBtn();
-  }
-});
+updateGiveBtn();
 
 /* ---------- DONATION WIDGET (partnership.html) ----------
    Terri-style box: Give once / Monthly toggle + amount presets + custom.
-   "Give once" routes to the pay-what-you-want link (amount chosen on
-   Stripe); "Monthly" routes to the fixed monthly link nearest the amount. */
+   "Monthly" routes to the fixed monthly link nearest the amount. "Give
+   once" has only a single fixed-$100 Stripe link (not pay-what-you-want),
+   so the amount picker is hidden on that tab and the button just says
+   "Give $100" instead of implying any preset amount is honored. */
 const DONATE_AMOUNTS = [25, 50, 75, 100, 250, 500];
+const ONE_TIME_FIXED_AMOUNT = 100;
 
 function initDonateWidget() {
   const box = $("#donateBox");
   if (!box) return;
   const amountsWrap = $("#donateAmounts", box);
+  const customLabel = $(".donate-custom", box);
   const customInput = $("#donateCustom", box);
+  const onceNote = $("#donateOnceNote", box);
   const goBtn = $("#donateGo", box);
   const status = $("#donateStatus", box);
 
@@ -509,9 +480,13 @@ function initDonateWidget() {
     b.classList.toggle("is-active", Number(b.dataset.amount) === amount && !customInput.value));
 
   const refresh = () => {
-    goBtn.textContent = freq === "monthly" ? "Donate monthly" : "Donate";
+    const isOnce = freq === "once";
+    amountsWrap.hidden = isOnce;
+    if (customLabel) customLabel.hidden = isOnce;
+    if (onceNote) onceNote.hidden = !isOnce;
+    goBtn.textContent = isOnce ? `Give $${ONE_TIME_FIXED_AMOUNT}` : "Donate monthly";
     goBtn.href = paymentsConfigured()
-      ? (freq === "monthly" ? monthlyLink(amount) : oneTimeLink())
+      ? (isOnce ? oneTimeLink() : monthlyLink(amount))
       : "#";
     if (status) status.textContent = "";
   };
@@ -901,7 +876,6 @@ if (heroCopy && !reduceMotion) {
 renderResources();
 renderFeaturedEvents();
 renderEvents();
-renderAmounts();
 renderTiers();
 animateCounters();
 

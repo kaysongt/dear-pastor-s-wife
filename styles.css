@@ -528,21 +528,8 @@ h3 { font-size: clamp(1.4rem, 2.2vw, 2.1rem); letter-spacing: -0.005em; }
 .give-onetime h3 { color: #fff; position: relative; }
 .give-sub { margin: 0.6rem 0 1.6rem; line-height: 1.6; position: relative; }
 .give-onetime .give-sub { color: rgba(255,255,255,0.82); }
-.amount-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7rem; position: relative; }
-.amount-btn {
-  border: 2px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08);
-  color: #fff; font-weight: 800; font-size: 1.05rem; padding: 0.9rem 0; border-radius: 1rem;
-  cursor: pointer; transition: all 0.25s ease;
-}
-.amount-btn:hover { border-color: var(--gold); }
-.amount-btn.is-active { background: var(--gold); color: var(--plum); border-color: var(--gold); box-shadow: 0 10px 24px rgba(176, 122, 86,0.4); }
-.custom-amount { display: block; margin: 1.3rem 0; position: relative; }
-.custom-amount > span { display: block; color: rgba(255,255,255,0.8); font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; }
-.custom-input { display: flex; align-items: center; background: rgba(255,255,255,0.12); border: 2px solid rgba(255,255,255,0.25); border-radius: 1rem; padding: 0 1rem; transition: all 0.25s ease; }
-.custom-input:focus-within { border-color: var(--gold); }
-.custom-input .currency { color: var(--gold); font-weight: 900; font-size: 1.1rem; }
-.custom-input input { border: none; background: transparent; color: #fff; padding: 0.9rem 0.5rem; font: inherit; font-weight: 800; outline: none; width: 100%; }
-.custom-input input::placeholder { color: rgba(255,255,255,0.45); }
+.give-onetime .give-sub a { color: var(--gold); text-decoration: underline; font-weight: 700; }
+.give-onetime .give-sub a:hover { color: #fff; }
 .give-btn { width: 100%; position: relative; margin-top: 0.4rem; }
 .secure-note { position: relative; margin-top: 1.3rem; color: rgba(255,255,255,0.72); font-size: 0.82rem; line-height: 1.6; }
 .secure-note .lock { margin-right: 0.3rem; }
@@ -772,7 +759,6 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
   .footer-links { grid-template-columns: 1fr 1fr; }
   .gallery { grid-template-columns: 1fr; height: auto; }
   .gallery img, .gallery img:nth-child(2) { height: 300px; margin: 0; }
-  .amount-grid { grid-template-columns: repeat(2, 1fr); }
   .tier-grid { grid-template-columns: 1fr; }
   .resource-controls { flex-direction: column; align-items: stretch; }
   .resource-search input { width: 100%; }
@@ -1166,9 +1152,9 @@ h1 {
 
 /* ----- Partner + donation two-column ----- */
 .partner-give {
-  display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.95fr);
+  display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(320px, 1fr);
   gap: clamp(2rem, 4vw, 3.5rem); align-items: start;
-  padding-top: 3rem;
+  padding-top: 3rem; max-width: 1080px; margin: 0 auto;
 }
 .partner-give .eyebrow { justify-content: flex-start; }
 .partner-give h1 {
@@ -1232,13 +1218,30 @@ h1 {
 .donate-box .form-status { margin-top: 0.7rem; color: var(--gold-deep); }
 .donate-note { margin-top: 1rem; color: var(--muted); font-size: 0.8rem; line-height: 1.5; display: flex; gap: 0.4rem; }
 .donate-note .lock { color: var(--gold-deep); flex-shrink: 0; }
+.donate-once-note {
+  text-align: center; color: var(--wine); font-weight: 700; font-size: 1rem;
+  padding: 0.9rem; margin-bottom: 1rem; border-radius: 0.9rem;
+  background: rgba(87, 58, 111, 0.06); border: 1.5px solid var(--line);
+}
+.donate-once-note strong { font-family: "Fraunces", serif; font-size: 1.2rem; }
+/* .donate-amounts/.donate-custom set their own `display`, which otherwise
+   beats the UA [hidden] rule — restate it here so toggling `hidden` from
+   JS (Give once vs Monthly) actually hides them. */
+.donate-amounts[hidden], .donate-custom[hidden] { display: none; }
 
 @media (max-width: 900px) {
   .partner-give { grid-template-columns: 1fr; }
-  .partner-give .eyebrow { justify-content: center; }
-  .partner-give h1 { text-align: center; }
-  /* Donation box comes first on mobile so giving is one tap away. */
-  .donate-box { position: static; order: -1; }
+  .partner-give .eyebrow { justify-content: center; order: 1; }
+  .partner-give h1 { text-align: center; order: 2; }
+  /* Reorder for mobile only: heading, photo, payment widget, then the
+     "because of you" impact stories — giving is one tap away right after
+     the photo, instead of buried under the full narrative. Desktop keeps
+     the default two-column order (untouched, no order set there). */
+  .partner-narrative { display: contents; }
+  .partner-photo { order: 3; }
+  .donate-box { position: static; order: 4; }
+  .because-wrap { order: 5; }
+  .share-row { order: 6; }
 }
 
 .impact-grid {
