@@ -241,10 +241,17 @@ const RESOURCES = [
 // `featured` events render as large cards at the top of the Events page.
 // `art` picks the brand-palette placeholder block (no stock photos until
 // the client's event photos arrive). `details`/`requirements` feed the event page.
-// NOTE: "Summer Blast" is an external event May is only speaking at — it is not
-// a DPW-hosted event, so it deliberately does NOT live here (no timeline entry,
-// no featured card, and it never drives the announcement bar).
+// `guest: true` marks an external event May is only SPEAKING at (not DPW-hosted).
+// Guest events appear on the vertical timeline but are never featured and never
+// drive the announcement bar; their `link` points off-site to the host.
 const EVENTS = [
+  {
+    slug: "summer-blast", category: "conference", year: 2026,
+    date: "Jul 30 to Aug 2, 2026", sort: "2026-07-30", endSort: "2026-08-02",
+    title: "Summer Blast", location: "United States", venue: "Hosted by KingsWord",
+    desc: "May joins KingsWord's Summer Blast as a guest speaker. Registration and full details are on the host's site.",
+    status: "soon", guest: true, link: "https://summerblast.kingsword.org/",
+  },
   {
     slug: "dpw-tea-party-chicago", category: "tea-party", year: 2026,
     date: "Aug 15, 2026", sort: "2026-08-15",
@@ -276,14 +283,6 @@ const EVENTS = [
 
 const EVENT_CAT_LABEL = { conference: "Conference", "tea-party": "Tea Party", retreat: "Retreat" };
 
-// External events where May is a GUEST SPEAKER (not DPW-hosted). Kept separate
-// from EVENTS so they never appear on the DPW itinerary, featured cards, or the
-// announcement bar — they only render in the "Where May is speaking" section and
-// auto-expire (via sort/endSort) once they've passed.
-const SPEAKING = [
-  { title: "Summer Blast", host: "", location: "United States", date: "Jul 30 to Aug 2, 2026", sort: "2026-07-30", endSort: "2026-08-02", link: "" },
-];
-
 // --- Event date helpers: auto-expire past events so the itinerary rotates. ---
 // An event drops off the day AFTER it ends, so the next one rises automatically.
 const todayISO = () => {
@@ -293,17 +292,18 @@ const todayISO = () => {
 const eventEndISO = (e) => e.endSort || e.sort;
 const isPastEvent = (e) => eventEndISO(e) < todayISO();
 const eventUrl = (e) => e.link || `event.html?slug=${encodeURIComponent(e.slug)}`;
+const isExternal = (url) => /^https?:\/\//.test(url || "");
 const findEvent = (slug) => EVENTS.find(e => e.slug === slug);
 const upcomingEvents = () => EVENTS.filter(e => !isPastEvent(e)).sort((a, b) => a.sort.localeCompare(b.sort));
 
-// Point the announcement bar at the soonest upcoming DPW event (never the
-// external Summer Blast, which isn't in EVENTS). Auto-advances as events pass;
+// Point the announcement bar at the soonest upcoming DPW-hosted event (guest
+// events May only speaks at never drive it). Auto-advances as events pass;
 // hides the bar when there's nothing coming up.
 function updateAnnounceBar() {
   const bar = document.querySelector("#announceBar");
   const inner = bar && bar.querySelector(".announce-inner");
   if (!inner) return;
-  const next = upcomingEvents()[0];
+  const next = upcomingEvents().filter(e => !e.guest)[0];
   if (!next) { bar.classList.add("hidden"); return; }
   inner.innerHTML = `
     <span class="announce-tag">Next up</span>
@@ -455,52 +455,31 @@ function renderEvents() {
   // Group by year (currently all 2026, but future-proof).
   const years = [...new Set(list.map(e => e.year))].sort((a, b) => a - b);
   tl.innerHTML = years.map(year => {
-    const items = list.filter(e => e.year === year).map(e => `
-      <div class="timeline-item ${e.status === "past" ? "is-past" : ""} reveal">
+    const items = list.filter(e => e.year === year).map(e => {
+      const ext = isExternal(eventUrl(e));
+      const linkAttrs = ext ? ' target="_blank" rel="noopener"' : '';
+      const linkLabel = e.guest ? "Event details" : (e.status === "open" ? "Register" : "View details");
+      return `
+      <div class="timeline-item ${e.status === "past" ? "is-past" : ""}${e.guest ? " is-guest" : ""} reveal">
         <div class="timeline-card">
           <div class="timeline-info">
             <span class="tl-cat tl-cat-${e.category}">${EVENT_CAT_LABEL[e.category] || ""}</span>
+            ${e.guest ? '<span class="tl-guest">✦ Guest speaker</span>' : ""}
             <span class="tl-title">${e.title}</span>
             <span class="tl-date">${e.date}</span>
             <span class="tl-loc">${e.location}</span>
             <span class="tl-desc">${e.desc}</span>
           </div>
           <div class="tl-action">
-            ${statusMap[e.status] || ""}
-            <a class="tl-link" href="${eventUrl(e)}">${e.status === "open" ? "Register" : "View details"} →</a>
+            ${e.guest ? '<span class="tl-status status-guest">Guest speaker</span>' : (statusMap[e.status] || "")}
+            <a class="tl-link" href="${eventUrl(e)}"${linkAttrs}>${linkLabel} →</a>
           </div>
         </div>
-      </div>
-    `).join("");
+      </div>`;
+    }).join("");
     return `<h3 class="timeline-year">${year}</h3>${items}`;
   }).join("");
 
-  observeReveals();
-}
-
-// "Where May is speaking" — external guest-speaker engagements (events.html).
-function renderSpeaking() {
-  const list = $("#speakingList");
-  if (!list) return;
-  const section = $("#speaking");
-  const upcoming = SPEAKING.filter(s => !isPastEvent(s)).sort((a, b) => a.sort.localeCompare(b.sort));
-  if (upcoming.length === 0) { if (section) section.hidden = true; return; }
-  if (section) section.hidden = false;
-
-  list.innerHTML = upcoming.map(s => {
-    const sub = [s.host, s.location].filter(Boolean).join(" · ");
-    return `
-    <div class="speaking-row reveal">
-      <span class="sp-date">${escapeHtml(s.date)}</span>
-      <div class="sp-main">
-        <strong>${escapeHtml(s.title)}</strong>
-        ${sub ? `<span>${escapeHtml(sub)}</span>` : ""}
-      </div>
-      ${s.link
-        ? `<a class="sp-status sp-upcoming" href="${s.link}" target="_blank" rel="noopener">Event details →</a>`
-        : `<span class="sp-status sp-upcoming">Guest speaker</span>`}
-    </div>`;
-  }).join("");
   observeReveals();
 }
 
@@ -915,6 +894,9 @@ function renderEventDetail() {
   const statusLabel = { open: "Registration open", soon: "Save the date", past: "Past event" };
   const cat = EVENT_CAT_LABEL[e.category] || "";
   const closed = past;
+  // Guest engagements are hosted elsewhere: no on-site registration, just a
+  // link out to the host's own page.
+  const external = !closed && (e.guest || isExternal(e.link));
 
   root.innerHTML = `
     <section class="event-page section-shell page-section">
@@ -941,6 +923,11 @@ function renderEventDetail() {
               <h3>This event has ended</h3>
               <p class="give-sub">Thank you to everyone who joined us. Explore what's coming up next.</p>
               <a class="button primary" href="events.html">See upcoming events</a>
+            ` : external ? `
+              <h3>Guest speaking engagement</h3>
+              <p class="give-sub">May is a guest speaker at this event. Registration and full details are handled by the host.</p>
+              <a class="button primary" href="${escapeHtml(e.link)}" target="_blank" rel="noopener">Register on the host's site →</a>
+              <a class="button ghost" href="events.html">Back to all events</a>
             ` : `
               <h3>${e.status === "open" ? "Register" : "Save my spot"}</h3>
               <p class="give-sub">${e.status === "open" ? "Complete the steps below to register. It only takes a minute." : "Register your interest and we'll send details and confirm your place."}</p>
@@ -974,7 +961,7 @@ function renderEventDetail() {
       </div>
     </section>`;
 
-  if (closed) return;
+  if (closed || external) return;
 
   const form = $("#eventRegForm");
   initStepper(form);
@@ -1343,7 +1330,6 @@ renderTiers();
 animateCounters();
 initBecauseCollapse();
 updateAnnounceBar();
-renderSpeaking();
 
 // Mark static sections for reveal
 $$(".section-heading, .book-info, .story-copy").forEach(el => el.classList.add("reveal"));

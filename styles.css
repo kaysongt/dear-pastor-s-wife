@@ -976,6 +976,13 @@ h1 {
   text-transform: uppercase; padding: 0.3rem 0.7rem; border-radius: 999px;
   background: rgba(184, 136, 42, 0.9); color: var(--plum); margin-bottom: 0.6rem;
 }
+/* Guest-speaker marker for external events May speaks at (not DPW-hosted). */
+.tl-guest {
+  display: inline-block; margin: 0 0 0.6rem 0.4rem; font-size: 0.62rem; font-weight: 900;
+  letter-spacing: 0.1em; text-transform: uppercase; padding: 0.3rem 0.7rem; border-radius: 999px;
+  background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.45);
+}
+.status-guest { background: rgba(255,255,255,0.18); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
 .timeline-info .tl-title {
   display: block; margin-top: 0.1rem; font-family: var(--font-head), serif;
   font-size: 1.55rem; font-weight: 800; line-height: 1.15;
