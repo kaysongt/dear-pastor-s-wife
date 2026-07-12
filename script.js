@@ -276,6 +276,14 @@ const EVENTS = [
 
 const EVENT_CAT_LABEL = { conference: "Conference", "tea-party": "Tea Party", retreat: "Retreat" };
 
+// External events where May is a GUEST SPEAKER (not DPW-hosted). Kept separate
+// from EVENTS so they never appear on the DPW itinerary, featured cards, or the
+// announcement bar — they only render in the "Where May is speaking" section and
+// auto-expire (via sort/endSort) once they've passed.
+const SPEAKING = [
+  { title: "Summer Blast", host: "", location: "United States", date: "Jul 30 to Aug 2, 2026", sort: "2026-07-30", endSort: "2026-08-02", link: "" },
+];
+
 // --- Event date helpers: auto-expire past events so the itinerary rotates. ---
 // An event drops off the day AFTER it ends, so the next one rises automatically.
 const todayISO = () => {
@@ -467,6 +475,32 @@ function renderEvents() {
     return `<h3 class="timeline-year">${year}</h3>${items}`;
   }).join("");
 
+  observeReveals();
+}
+
+// "Where May is speaking" — external guest-speaker engagements (events.html).
+function renderSpeaking() {
+  const list = $("#speakingList");
+  if (!list) return;
+  const section = $("#speaking");
+  const upcoming = SPEAKING.filter(s => !isPastEvent(s)).sort((a, b) => a.sort.localeCompare(b.sort));
+  if (upcoming.length === 0) { if (section) section.hidden = true; return; }
+  if (section) section.hidden = false;
+
+  list.innerHTML = upcoming.map(s => {
+    const sub = [s.host, s.location].filter(Boolean).join(" · ");
+    return `
+    <div class="speaking-row reveal">
+      <span class="sp-date">${escapeHtml(s.date)}</span>
+      <div class="sp-main">
+        <strong>${escapeHtml(s.title)}</strong>
+        ${sub ? `<span>${escapeHtml(sub)}</span>` : ""}
+      </div>
+      ${s.link
+        ? `<a class="sp-status sp-upcoming" href="${s.link}" target="_blank" rel="noopener">Event details →</a>`
+        : `<span class="sp-status sp-upcoming">Guest speaker</span>`}
+    </div>`;
+  }).join("");
   observeReveals();
 }
 
@@ -1309,6 +1343,7 @@ renderTiers();
 animateCounters();
 initBecauseCollapse();
 updateAnnounceBar();
+renderSpeaking();
 
 // Mark static sections for reveal
 $$(".section-heading, .book-info, .story-copy").forEach(el => el.classList.add("reveal"));
