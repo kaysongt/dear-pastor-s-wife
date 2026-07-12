@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Partner with Dear Pastor's Wife. Your giving keeps resources free for women in ministry the world over. Give once or partner month to month." />
-  <meta name="theme-color" content="#573a6f" />
+  <meta name="theme-color" content="#601938" />
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Partner with Dear Pastor's Wife" />
@@ -15,10 +15,10 @@
 
   <title>Partnership | Dear Pastor's Wife</title>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-  <link rel="alternate icon" type="image/png" href="assets/logo.png" />
+  <link rel="alternate icon" type="image/png" href="assets/brand/logomark-tyrian.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800;9..144,900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800;9..144,900&family=Jost:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body data-page="partnership">
@@ -83,8 +83,17 @@
           <span class="donate-cur">USD</span>
         </label>
         <p class="donate-once-note" id="donateOnceNote" hidden>One-time gifts are a fixed <strong>$100</strong> gift.</p>
+        <label class="donate-fee">
+          <input type="checkbox" id="donateFee" />
+          <span>Add <strong id="donateFeeAmt">the processing fee</strong> so 100% of my gift reaches the ministry.</span>
+        </label>
+        <p class="donate-total" id="donateTotal" hidden></p>
         <a class="button primary donate-go" id="donateGo" href="#">Donate monthly</a>
         <p class="form-status" id="donateStatus" role="status" aria-live="polite"></p>
+        <div class="donate-methods" role="group" aria-label="Payment method">
+          <button type="button" class="donate-method is-active" data-method="card">💳 Card &amp; wallets</button>
+          <button type="button" class="donate-method" data-method="bank" id="donateBankBtn">🏦 Bank transfer (ACH)</button>
+        </div>
         <p class="donate-note"><span class="lock" aria-hidden="true">🔒</span> Processed securely by Stripe. Pay by card, Apple Pay, Google Pay, or bank transfer (ACH). Your details are encrypted and never stored on our servers.</p>
       </aside>
     </section>

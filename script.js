@@ -41,12 +41,13 @@ const NAV_ITEMS = [
   { page: "community", label: "Community", href: "community.html" },
 ];
 
+// Official DPW logomark (vessel + four-point star), path-based so it inherits
+// `currentColor` — renders Tyrian in the header and cream on dark event art.
 const VESSEL_SVG = `
-  <svg class="brand-vessel" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-    <path d="M16 6h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
-    <path d="M18 6c0 6-6 8-6 18 0 9 5 18 12 18s12-9 12-18c0-10-6-12-6-18"
-      stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M14 24c4 3 16 3 20 0" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+  <svg class="brand-vessel" viewBox="0 0 160 160" fill="currentColor" aria-hidden="true">
+    <path d="M57.63,49.84c6.63-13.58,19.95-21.15,34.65-15.14,4.33,1.92,7.5,5.65,10.6,9.08,4.04,4.71,7.65,9.78,10.86,15.09,1.6,2.66,3.09,5.39,4.36,8.25,1.37,2.82,2.34,6.13,1.62,9.26-1.09,6.2-3.75,11.89-6.45,17.51-4.14,8.34-8.89,16.33-13.98,24.12-1.72,2.59-3.42,5.16-5.36,7.65-.5.64-1.23,1.28-1.95,1.69-2.13,1.21-4.57,1.71-6.95,2.02-4.72.54-9.49.36-14.13-.67-4.79-.82-8.51-4.72-11.69-8.06-4.24-4.61-7.97-9.6-11.47-14.73-3.47-5.16-6.73-10.45-9.63-15.97-1.43-2.75-2.8-5.67-3.45-8.86-1.16-4.83.81-9.65,3.03-13.84,2.07-4.18,4.32-8.26,6.86-12.18,4.53-6.6,17.45-26.01,25.63-25.94,0,0-.02.2-.02.2-7.1.07-17.99,16.88-21.94,22.61-4.26,6.34-7.9,13.23-10.9,20.2-1.12,2.76-1.49,5.67-.82,8.57.63,2.88,1.95,5.6,3.39,8.3,2.87,5.41,6.13,10.65,9.58,15.73,3.45,5.08,7.1,10.05,11.21,14.56,3.13,3.26,6.07,6.72,10.66,7.63,5.53,1.28,17.31,2.2,21.4-2.25,9.06-12.34,17.22-25.63,23.22-39.75,1.56-4.17,3.38-8.67,2.71-13.13-.37-1.39-.95-2.86-1.54-4.25-4.24-9.49-15.81-27.68-25.09-32.24-10.63-4.47-21.62-1.79-29.08,6.99-2.02,2.31-3.8,4.87-5.15,7.63l-.18-.08h0Z"/>
+    <path d="M79.69,94.33c.09,4.25-.17,25.69,7.91,19.54,3.47-2.63,5.5-6.56,7.05-10.57,1.93-5.02,3.95-10.75,8.38-14.4,2.58-1.97,5.13-3.92,6.66-6.76,6.15-11.72-11.07-23.51-19.81-28.55-6.21-3.63-14.56-6.42-21.3-2.64-3.32,1.89-5.27,5.28-7.33,8.42-4.86,7.94-13.75,23.05-6.99,31.68,1.17,1.52,2.52,2.87,4.12,3.86,3.29,1.94,7.36,2.65,10.7,4.61,1.75.9,3.36,2.04,4.95,3.16-3.31-2.09-6.83-3.81-10.56-4.89-1.85-.57-3.8-1.05-5.57-2.06-5.73-3.37-8.3-8.99-7.26-15.51,1.13-7.94,4.96-15.09,9.09-21.81,2.14-3.36,4.3-7.02,7.9-9.08,11.86-6.35,25.05,2.93,34.17,10.13,6.55,5.4,14.43,14.68,9.41,23.53-1.69,3.07-4.39,5.18-7.11,7.2-4.28,3.41-6.15,8.54-8.25,13.6-1.68,4.1-3.96,8.24-7.66,10.89-.92.66-2.02,1.28-3.32,1.24-6.28-.62-5.32-16.9-5.19-21.59h0Z"/>
+    <path d="M79.61,66.57c-.72,5.75-.96,9.4-2.37,11.75-2.31,2.93-6.31,3.21-13.66,3.87,7.23.85,11.14,1.04,13.46,3.72,1.73,2.37,2.04,6.64,2.6,12.5.94-7.59,1.07-12.02,4.49-14.2,2.43-1.14,6.06-1.39,11.53-2.01-6.79-.81-10.72-1-13.07-3.02-1.98-2.3-2.19-6.12-2.97-12.6Z"/>
   </svg>`;
 
 const IG_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.8.25 2.23.42.56.22.96.48 1.38.9.42.42.68.82.9 1.38.17.42.37 1.06.42 2.23.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.05 1.17-.25 1.8-.42 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.17-1.06.37-2.23.42-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.05-1.8-.25-2.23-.42a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.17-.42-.37-1.06-.42-2.23C2.21 15.58 2.2 15.2 2.2 12s0-3.58.07-4.85c.05-1.17.25-1.8.42-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.17 1.06-.37 2.23-.42C8.42 2.21 8.8 2.2 12 2.2zm0 4.86A4.94 4.94 0 1 0 12 16.94 4.94 4.94 0 0 0 12 7.06zm0 8.14A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4zm6.3-8.34a1.15 1.15 0 1 1-2.3 0 1.15 1.15 0 0 1 2.3 0z"/></svg>`;
@@ -86,19 +87,14 @@ function buildChrome() {
       <a class="brand" href="${homeHref}">
         ${VESSEL_SVG}
         <span class="brand-wordmark">
-          <span class="bw-main">Dear Pastor's Wife</span>
-          <span class="bw-sub">Vessel</span>
+          <span class="bw-main">dear pastor's wife</span>
+          <span class="bw-sub">Clarity · Confidence · Community</span>
         </span>
       </a>
       <button class="menu-toggle" aria-expanded="false">Menu</button>
       <nav class="nav-links" aria-label="Primary navigation">
         ${navLinksHtml}
         <a class="nav-give${partnerActive}" href="partnership.html">♥ Partner</a>
-        <span class="nav-social" aria-label="Social media">
-          ${socialLink(SOCIAL.instagram, "Instagram", IG_SVG)}
-          ${socialLink(SOCIAL.facebook, "Facebook", FB_SVG)}
-          ${socialLink(SOCIAL.youtube, "YouTube", YT_SVG)}
-        </span>
       </nav>
     </header>`;
 
@@ -108,7 +104,7 @@ function buildChrome() {
         <div class="footer-brand">
           <a class="brand" href="${homeHref}" style="margin-bottom:0.6rem">
             ${VESSEL_SVG}
-            <span class="brand-wordmark"><span class="bw-main">Dear Pastor's Wife</span><span class="bw-sub">Vessel</span></span>
+            <span class="brand-wordmark"><span class="bw-main">dear pastor's wife</span><span class="bw-sub">Clarity · Confidence · Community</span></span>
           </a>
           <p class="footer-tagline">A global resource hub and community for women in ministry. Clarity, confidence, and real support.</p>
           <div class="footer-social" aria-label="Social media">
@@ -148,10 +144,17 @@ function buildChrome() {
       </div>
     </footer>`;
 
+  // Persistent floating "Give" button. On mobile the header's Partner button
+  // hides inside the menu, so this keeps giving one tap away on every page.
+  // Skipped on the partnership page, where the full donate box is already visible.
+  const floatingGive = current === "partnership"
+    ? ""
+    : `<a class="floating-give" href="partnership.html#give" aria-label="Give to Dear Pastor's Wife">♥ Give</a>`;
+
   const topSlot = document.querySelector('[data-chrome="top"]');
   if (topSlot) topSlot.outerHTML = topHtml;
   const footSlot = document.querySelector('[data-chrome="footer"]');
-  if (footSlot) footSlot.outerHTML = footerHtml;
+  if (footSlot) footSlot.outerHTML = footerHtml + floatingGive;
 }
 buildChrome();
 
@@ -195,6 +198,17 @@ const CONFIG = {
       100: "https://buy.stripe.com/14AfZh2zC0F3awyeT36Vq0a",
       250: "https://buy.stripe.com/7sY28ra24gE18oq9yJ6Vq0b",
     },
+    // Standard card processing fee (2.9% + $0.30) used to show donors the
+    // "cover the fees" total. NOTE: fixed Stripe Payment Links can't take an
+    // arbitrary amount, so the widget DISPLAYS the fee-inclusive total and, to
+    // actually charge it, needs either dedicated fee-inclusive links or a
+    // Checkout Session created server-side. Hook is here; wiring is server-side.
+    feePercent: 0.029,
+    feeFixed: 0.30,
+    // Bank transfer (ACH). Card links are live; ACH via Plaid/bank-linking
+    // needs a server-side Checkout Session or a Plaid integration. When that
+    // endpoint exists, set it here and the "Bank transfer" option goes live.
+    bankTransferUrl: "",
   },
   crm: {
     // systeme.io form endpoint. Empty = demo mode (no network call).
@@ -221,18 +235,63 @@ const RESOURCES = [
 ];
 
 // Events. category: conference | tea-party | retreat. status: open | soon | past.
-// `sort` is an ISO-ish date used only for ordering.
+// `sort` is an ISO date used for ordering AND auto-expiry; `endSort` (optional,
+// for multi-day events) is the last day — an event "falls off" the itinerary the
+// day after it ends. `slug` powers its dedicated page (event.html?slug=...).
 // `featured` events render as large cards at the top of the Events page.
 // `art` picks the brand-palette placeholder block (no stock photos until
-// the client's event photos arrive).
+// the client's event photos arrive). `details`/`requirements` feed the event page.
 const EVENTS = [
-  { category: "conference", year: 2026, date: "Jul 30 to Aug 2, 2026", sort: "2026-07-30", title: "Summer Blast", location: "United States", desc: "Our summer gathering to open the season, with worship, teaching, and connection for women in ministry.", status: "soon", link: "index.html#newsletter", featured: true, art: "plum" },
-  { category: "tea-party", year: 2026, date: "Aug 15, 2026", sort: "2026-08-15", title: "DPW Tea Party", location: "Chicago, USA", desc: "An intimate two-hour gathering with icebreakers and table topics, the kind of conversation that quickly feels like a reunion. Free and open to pastors' wives, ministers' wives, and women in Christian leadership.", status: "soon", link: "index.html#newsletter", featured: true, art: "clay" },
-  { category: "conference", year: 2026, date: "September 2026", sort: "2026-09-01", title: "DPW at KingsWord", location: "Nigeria", desc: "Join us in Nigeria with KingsWord. Firm dates are being confirmed.", status: "soon", link: "index.html#newsletter" },
-  { category: "retreat", year: 2026, date: "Oct 9 to 11, 2026", sort: "2026-10-09", title: "DPW Retreat", location: "United Kingdom", desc: "A multi-day, immersive weekend away, with teaching, worship, prayer, and honest table conversations. Women arrive carrying the weight of their call and leave lighter, clearer, and more equipped.", status: "soon", link: "index.html#newsletter" },
+  {
+    slug: "summer-blast", category: "conference", year: 2026,
+    date: "Jul 30 to Aug 2, 2026", sort: "2026-07-30", endSort: "2026-08-02",
+    title: "Summer Blast", location: "United States", venue: "Venue announced to registrants",
+    desc: "Our summer gathering to open the season, with worship, teaching, and connection for women in ministry.",
+    details: "Four days to open the season together: worship, teaching sessions, and unhurried time to connect with women who understand ministry life. Come expecting to be poured into and to leave refreshed for what's ahead.",
+    requirements: "Open to pastors' wives, ministers' wives, and women in Christian leadership. Registration is free; seating is limited, so save your spot early.",
+    status: "soon", featured: true, art: "plum",
+  },
+  {
+    slug: "dpw-tea-party-chicago", category: "tea-party", year: 2026,
+    date: "Aug 15, 2026", sort: "2026-08-15",
+    title: "DPW Tea Party", location: "Chicago, USA", venue: "Central Chicago (address shared on registration)",
+    desc: "An intimate two-hour gathering with icebreakers and table topics, the kind of conversation that quickly feels like a reunion. Free and open to pastors' wives, ministers' wives, and women in Christian leadership.",
+    details: "Two hours around a table: icebreakers to open hearts, table topics too good to cut short, and a room that quickly feels like a reunion even among women meeting for the first time. We close praying for one another.",
+    requirements: "Completely free. Open to pastors' wives, ministers' wives, and women in Christian leadership. Please register so we can set a place for you.",
+    status: "soon", featured: true, art: "clay",
+  },
+  {
+    slug: "dpw-kingsword-nigeria", category: "conference", year: 2026,
+    date: "September 2026", sort: "2026-09-01",
+    title: "DPW at KingsWord", location: "Nigeria", venue: "KingsWord, Nigeria",
+    desc: "Join us in Nigeria with KingsWord. Firm dates are being confirmed.",
+    details: "We're bringing Dear Pastor's Wife to Nigeria in partnership with KingsWord. Firm dates and the full programme are being confirmed — register your interest and we'll be in touch the moment details are set.",
+    requirements: "Open to women in ministry and Christian leadership. Register your interest to receive dates, venue, and registration details first.",
+    status: "soon", art: "plum",
+  },
+  {
+    slug: "dpw-retreat-uk", category: "retreat", year: 2026,
+    date: "Oct 9 to 11, 2026", sort: "2026-10-09", endSort: "2026-10-11",
+    title: "DPW Retreat", location: "United Kingdom", venue: "Countryside venue, UK (shared on registration)",
+    desc: "A multi-day, immersive weekend away, with teaching, worship, prayer, and honest table conversations. Women arrive carrying the weight of their call and leave lighter, clearer, and more equipped.",
+    details: "From Friday afternoon to Sunday morning, we gather away from the noise: teaching to testimony, worship to prayer, honest table conversations to hands-on workbook sessions. An intimate 25–30 woman experience of renewal.",
+    requirements: "Open to women in ministry and Christian leadership. Places are limited to keep the retreat intimate; a deposit may apply and will be confirmed at registration.",
+    status: "soon", art: "clay",
+  },
 ];
 
 const EVENT_CAT_LABEL = { conference: "Conference", "tea-party": "Tea Party", retreat: "Retreat" };
+
+// --- Event date helpers: auto-expire past events so the itinerary rotates. ---
+// An event drops off the day AFTER it ends, so the next one rises automatically.
+const todayISO = () => {
+  const d = new Date(); d.setHours(0, 0, 0, 0);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
+const eventEndISO = (e) => e.endSort || e.sort;
+const isPastEvent = (e) => eventEndISO(e) < todayISO();
+const eventUrl = (e) => e.link || `event.html?slug=${encodeURIComponent(e.slug)}`;
+const findEvent = (slug) => EVENTS.find(e => e.slug === slug);
 
 // Fundraising Partnership Program: names + suggested ranges only.
 const TIERS = [
@@ -240,6 +299,28 @@ const TIERS = [
   { name: "Ministry Partner", min: 50, monthly: "$50 to $99", annual: "$600 to $1,200" },
   { name: "Impact Partner", min: 100, monthly: "$100 to $249", annual: "$1,200 to $3,000" },
   { name: "Legacy Partner", min: 250, monthly: "$250 to $499", annual: "$3,000 to $6,000" },
+];
+
+/* ---------- COMMUNITY (preview) ----------
+   One community organized by topics (not many small groups). This mock data
+   powers the forum preview shell on community.html; swap it for a real API
+   (topics + threads endpoints) when the backend is ready. */
+const COMMUNITY_TOPICS = [
+  { id: "faith",      name: "Faith & Devotion",      icon: "✦", desc: "Prayer, the Word, and staying rooted" },
+  { id: "ministry",   name: "Ministry Life",         icon: "✿", desc: "Boundaries, burnout, and leading well" },
+  { id: "marriage",   name: "Marriage & Partnership",icon: "❥", desc: "Thriving alongside your husband in ministry" },
+  { id: "children",   name: "Raising Children",      icon: "❀", desc: "Parenting well inside the fishbowl" },
+  { id: "leadership", name: "Finance & Leadership",  icon: "◆", desc: "Money, work, and leading with confidence" },
+  { id: "wellbeing",  name: "Rest & Wellbeing",      icon: "☼", desc: "Caring for you, so you can pour out" },
+];
+
+const COMMUNITY_THREADS = [
+  { topic: "ministry",   title: "How do you actually protect your day off?", author: "Grace O.", role: "Lead Pastor's wife", replies: 34, likes: 91, ago: "2h", excerpt: "Every time I plan to rest, something 'urgent' comes up. How do you all guard your rhythms without guilt?" },
+  { topic: "faith",      title: "A prayer that carried me through a hard season", author: "Ada N.", role: "Minister's wife", replies: 18, likes: 120, ago: "5h", excerpt: "Sharing the one line I prayed on repeat when I had nothing left. Maybe it meets someone here too." },
+  { topic: "children",   title: "Raising PKs who love the church, not resent it", author: "Bola A.", role: "Youth Pastor's wife", replies: 42, likes: 77, ago: "1d", excerpt: "What has actually helped our kids feel like people, not 'the example'? Compiling what's worked for us." },
+  { topic: "marriage",   title: "Date nights when you both serve every weekend", author: "Kemi T.", role: "Co-Pastor", replies: 27, likes: 64, ago: "1d", excerpt: "Weekends are gone to ministry. How do you keep the marriage first without it feeling like one more task?" },
+  { topic: "leadership", title: "First time managing a real budget — help?", author: "Ruth E.", role: "Ministry Director", replies: 15, likes: 39, ago: "2d", excerpt: "Nobody taught me the money side. Looking for plain-language resources other women here have trusted." },
+  { topic: "wellbeing",  title: "The rest that finally refilled me", author: "May I.", role: "Founder, DPW", replies: 58, likes: 210, ago: "3d", excerpt: "Consecration without burnout is possible. Here's the difference that changed everything for me." },
 ];
 
 /* ---------- HELPERS ---------- */
@@ -309,7 +390,8 @@ function renderFeaturedEvents() {
   if (!wrap) return;
 
   const statusLabel = { open: "Registration open", soon: "Save the date", past: "Past event" };
-  const list = EVENTS.filter(e => e.featured &&
+  // Auto fall-off: completed events leave the featured itinerary automatically.
+  const list = EVENTS.filter(e => e.featured && !isPastEvent(e) &&
     (activeEventFilter === "all" || e.category === activeEventFilter));
   wrap.hidden = list.length === 0;
 
@@ -326,7 +408,7 @@ function renderFeaturedEvents() {
         <p class="featured-event-desc">${e.desc}</p>
         <div class="featured-event-action">
           <span class="tl-status status-${e.status}">${statusLabel[e.status] || ""}</span>
-          ${e.link ? `<a class="button primary" href="${e.link}">${e.status === "open" ? "Register" : "Notify me"} →</a>` : ""}
+          <a class="button primary" href="${eventUrl(e)}">${e.status === "open" ? "Register" : "View & save my spot"} →</a>
         </div>
       </div>
     </article>
@@ -341,7 +423,7 @@ function renderEvents() {
   const empty = $("#eventEmpty");
 
   const list = EVENTS
-    .filter(e => activeEventFilter === "all" || e.category === activeEventFilter)
+    .filter(e => !isPastEvent(e) && (activeEventFilter === "all" || e.category === activeEventFilter))
     .sort((a, b) => a.sort.localeCompare(b.sort));
 
   if (empty) empty.hidden = list.length !== 0;
@@ -367,7 +449,7 @@ function renderEvents() {
           </div>
           <div class="tl-action">
             ${statusMap[e.status] || ""}
-            ${e.link ? `<a class="tl-link" href="${e.link}">${e.status === "open" ? "Register" : "Notify me"} →</a>` : ""}
+            <a class="tl-link" href="${eventUrl(e)}">${e.status === "open" ? "Register" : "View details"} →</a>
           </div>
         </div>
       </div>
@@ -468,9 +550,15 @@ function initDonateWidget() {
   const onceNote = $("#donateOnceNote", box);
   const goBtn = $("#donateGo", box);
   const status = $("#donateStatus", box);
+  const feeCheck = $("#donateFee", box);
+  const feeAmtLabel = $("#donateFeeAmt", box);
+  const totalLine = $("#donateTotal", box);
 
   let freq = "monthly";            // matches the default-active toggle
   let amount = 100;                // matches the default-active preset
+  let method = "card";             // card | bank
+
+  const feeFor = (base) => base * CONFIG.payments.feePercent + CONFIG.payments.feeFixed;
 
   amountsWrap.innerHTML = DONATE_AMOUNTS.map(a =>
     `<button type="button" class="donate-amt${a === amount ? " is-active" : ""}" data-amount="${a}">$${a}</button>`
@@ -484,10 +572,32 @@ function initDonateWidget() {
     amountsWrap.hidden = isOnce;
     if (customLabel) customLabel.hidden = isOnce;
     if (onceNote) onceNote.hidden = !isOnce;
+
+    // Processing-fee coverage (display + hook; see CONFIG.payments notes).
+    const base = isOnce ? ONE_TIME_FIXED_AMOUNT : amount;
+    const fee = feeFor(base);
+    if (feeAmtLabel) feeAmtLabel.textContent = `$${fee.toFixed(2)} (fee)`;
+    const cover = feeCheck && feeCheck.checked;
+    if (totalLine) {
+      totalLine.hidden = !cover;
+      totalLine.textContent = cover
+        ? `With fees covered, your ${isOnce ? "gift" : "monthly gift"} is $${(base + fee).toFixed(2)}.`
+        : "";
+    }
+
     goBtn.textContent = isOnce ? `Give $${ONE_TIME_FIXED_AMOUNT}` : "Donate monthly";
-    goBtn.href = paymentsConfigured()
-      ? (isOnce ? oneTimeLink() : monthlyLink(amount))
-      : "#";
+
+    // Payment method: card/wallet links are live; bank transfer (ACH) needs a
+    // server-side Checkout Session / Plaid link, so it stays in demo until
+    // CONFIG.payments.bankTransferUrl is set.
+    if (method === "bank") {
+      goBtn.textContent = "Continue with bank transfer";
+      goBtn.href = CONFIG.payments.bankTransferUrl || "#";
+    } else {
+      goBtn.href = paymentsConfigured()
+        ? (isOnce ? oneTimeLink() : monthlyLink(amount))
+        : "#";
+    }
     if (status) status.textContent = "";
   };
 
@@ -522,9 +632,27 @@ function initDonateWidget() {
     refresh();
   });
 
+  // Cover-the-fees toggle
+  if (feeCheck) feeCheck.addEventListener("change", refresh);
+
+  // Payment method toggle (card vs bank transfer)
+  $$(".donate-method", box).forEach(btn => {
+    btn.addEventListener("click", () => {
+      method = btn.dataset.method;
+      $$(".donate-method", box).forEach(b => b.classList.toggle("is-active", b === btn));
+      refresh();
+    });
+  });
+
   // Demo mode: don't navigate to a "#" placeholder — explain instead.
   goBtn.addEventListener("click", (e) => {
-    if (paymentsConfigured()) return;
+    if (method === "bank" && !CONFIG.payments.bankTransferUrl) {
+      e.preventDefault();
+      if (status) status.textContent = "Bank transfer (ACH) opens here once bank linking is connected. You can give by card now, or check back soon.";
+      return;
+    }
+    if (method === "card" && paymentsConfigured()) return;
+    if (method === "bank") return; // configured bank URL: allow navigation
     e.preventDefault();
     if (status) status.textContent = "Secure checkout opens here once Stripe is connected. Thank you for your heart to give!";
   });
@@ -642,6 +770,266 @@ function initPartnerForm() {
   });
 }
 initPartnerForm();
+
+/* ---------- MULTI-STEP FORM STEPPER ----------
+   Progressive enhancement for any <form> whose fields are grouped into
+   <fieldset class="form-step"> sections. Adds a progress bar, step dots,
+   and Back/Next navigation, validating each step before advancing. Works
+   for the event registration form and any future multi-step flow. */
+function initStepper(form) {
+  if (!form) return;
+  const steps = $$(".form-step", form);
+  if (steps.length < 2) return;
+
+  let current = 0;
+
+  // Progress bar + step counter, injected at the top of the form.
+  const labels = steps.map(s => s.dataset.stepLabel || "");
+  const header = document.createElement("div");
+  header.className = "stepper-head";
+  header.innerHTML = `
+    <div class="stepper-bar"><span class="stepper-bar-fill"></span></div>
+    <p class="stepper-count" aria-live="polite"></p>`;
+  form.prepend(header);
+  const fill = $(".stepper-bar-fill", header);
+  const count = $(".stepper-count", header);
+
+  // Navigation buttons.
+  const nav = document.createElement("div");
+  nav.className = "stepper-nav";
+  nav.innerHTML = `
+    <button type="button" class="button ghost stepper-back">← Back</button>
+    <button type="button" class="button primary stepper-next">Continue →</button>`;
+  // The form's real submit button is a form-level child, revealed on the last
+  // step; the Back/Next nav sits just before it.
+  const submitBtn = form.querySelector('[type="submit"]');
+  form.insertBefore(nav, submitBtn || null);
+  const backBtn = $(".stepper-back", nav);
+  const nextBtn = $(".stepper-next", nav);
+
+  const show = (i) => {
+    current = Math.max(0, Math.min(i, steps.length - 1));
+    steps.forEach((s, idx) => { s.hidden = idx !== current; });
+    const pct = ((current + 1) / steps.length) * 100;
+    fill.style.width = pct + "%";
+    count.textContent = `Step ${current + 1} of ${steps.length}${labels[current] ? " · " + labels[current] : ""}`;
+    backBtn.hidden = current === 0;
+    const last = current === steps.length - 1;
+    nextBtn.hidden = last;
+    if (submitBtn) submitBtn.hidden = !last;
+    const firstField = steps[current].querySelector("input, select, textarea");
+    if (firstField) firstField.focus({ preventScroll: true });
+  };
+
+  const stepValid = () => {
+    const fields = $$("input, select, textarea", steps[current]);
+    for (const f of fields) {
+      if (!f.checkValidity()) { f.reportValidity(); return false; }
+    }
+    return true;
+  };
+
+  nextBtn.addEventListener("click", () => { if (stepValid()) show(current + 1); });
+  backBtn.addEventListener("click", () => show(current - 1));
+  // Enter advances instead of submitting, except on the final step.
+  form.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && current < steps.length - 1 && e.target.tagName !== "TEXTAREA") {
+      e.preventDefault();
+      if (stepValid()) show(current + 1);
+    }
+  });
+
+  show(0);
+}
+
+/* ---------- EVENT DETAIL PAGE (event.html?slug=...) ----------
+   One template renders any event from the EVENTS data, with full details and
+   an on-site multi-step registration form — so registrations live on the site
+   instead of external Google Forms. */
+function renderEventDetail() {
+  const root = $("#eventDetail");
+  if (!root) return;
+
+  const slug = new URLSearchParams(window.location.search).get("slug");
+  const e = slug ? findEvent(slug) : null;
+
+  if (!e) {
+    root.innerHTML = `
+      <section class="page-hero section-shell">
+        <p class="eyebrow">Event</p>
+        <h1>We couldn't find that event.</h1>
+        <p>It may have wrapped up, or the link is out of date.</p>
+        <div class="hero-actions" style="justify-content:center">
+          <a class="button primary" href="events.html">See all events</a>
+        </div>
+      </section>`;
+    return;
+  }
+
+  document.title = `${e.title} | Dear Pastor's Wife`;
+  const past = isPastEvent(e);
+  const statusLabel = { open: "Registration open", soon: "Save the date", past: "Past event" };
+  const cat = EVENT_CAT_LABEL[e.category] || "";
+  const closed = past;
+
+  root.innerHTML = `
+    <section class="event-page section-shell page-section">
+      <a class="event-back" href="events.html">← All events</a>
+      <div class="event-page-grid">
+        <div class="event-page-main">
+          <span class="tl-cat tl-cat-${e.category}">${cat}</span>
+          <h1>${escapeHtml(e.title)}</h1>
+          <p class="event-page-meta">
+            <span>📅 ${escapeHtml(e.date)}</span>
+            <span>📍 ${escapeHtml(e.location)}</span>
+            <span class="tl-status status-${closed ? "past" : e.status}">${statusLabel[closed ? "past" : e.status] || ""}</span>
+          </p>
+          <p class="event-page-lead">${escapeHtml(e.desc)}</p>
+          ${e.details ? `<h2 class="event-h2">What to expect</h2><p>${escapeHtml(e.details)}</p>` : ""}
+          <h2 class="event-h2">Location</h2>
+          <p>${escapeHtml(e.venue || e.location)}</p>
+          ${e.requirements ? `<h2 class="event-h2">Who it's for & registration</h2><p>${escapeHtml(e.requirements)}</p>` : ""}
+        </div>
+
+        <aside class="event-page-side">
+          <div class="event-reg-card" id="eventRegCard">
+            ${closed ? `
+              <h3>This event has ended</h3>
+              <p class="give-sub">Thank you to everyone who joined us. Explore what's coming up next.</p>
+              <a class="button primary" href="events.html">See upcoming events</a>
+            ` : `
+              <h3>${e.status === "open" ? "Register" : "Save my spot"}</h3>
+              <p class="give-sub">${e.status === "open" ? "Complete the steps below to register. It only takes a minute." : "Register your interest and we'll send details and confirm your place."}</p>
+              <form id="eventRegForm" class="stepper-form" novalidate>
+                <fieldset class="form-step" data-step-label="About you">
+                  <div class="field-row">
+                    <label><span>First name</span><input type="text" name="firstName" required autocomplete="given-name" /></label>
+                    <label><span>Last name</span><input type="text" name="lastName" required autocomplete="family-name" /></label>
+                  </div>
+                  <label><span>Email</span><input type="email" name="email" required autocomplete="email" placeholder="you@example.com" /></label>
+                  <label><span>Phone</span><input type="tel" name="phone" required autocomplete="tel" placeholder="(555) 000-0000" /></label>
+                </fieldset>
+                <fieldset class="form-step" data-step-label="Where you serve" hidden>
+                  <label><span>Street address</span><input type="text" name="address" autocomplete="street-address" placeholder="Address (optional)" /></label>
+                  <div class="field-row">
+                    <label><span>City</span><input type="text" name="city" autocomplete="address-level2" /></label>
+                    <label><span>Country</span><input type="text" name="country" autocomplete="country-name" /></label>
+                  </div>
+                  <label><span>Your ministry / church role</span><input type="text" name="role" placeholder="e.g. Pastor's wife, women's pastor" /></label>
+                </fieldset>
+                <fieldset class="form-step" data-step-label="Confirm" hidden>
+                  <label><span>Anything we should know? (optional)</span><textarea name="notes" rows="3" placeholder="Dietary needs, accessibility, questions…"></textarea></label>
+                  <label class="check-row"><input type="checkbox" name="consent" required /> <span>Please keep me updated about this event and DPW resources.</span></label>
+                </fieldset>
+                <button class="button primary" type="submit" hidden>${e.status === "open" ? "Complete registration" : "Save my spot"}</button>
+                <p class="form-status" id="eventRegStatus" role="status" aria-live="polite"></p>
+              </form>
+            `}
+          </div>
+        </aside>
+      </div>
+    </section>`;
+
+  if (closed) return;
+
+  const form = $("#eventRegForm");
+  initStepper(form);
+  const status = $("#eventRegStatus");
+  form.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    const data = Object.fromEntries(new FormData(form).entries());
+    data.event = e.title;
+    data.eventSlug = e.slug;
+    if (status) status.textContent = "Sending…";
+    const ok = await sendToCrm("eventRegistration", data);
+    if (ok) {
+      $("#eventRegCard").innerHTML = `
+        <h3>You're registered! 🎉</h3>
+        <p class="give-sub">Thank you, ${escapeHtml(data.firstName)}. We've saved your details for <strong>${escapeHtml(e.title)}</strong> and will email you at ${escapeHtml(data.email)} with everything you need.</p>
+        <a class="button ghost" href="events.html">Back to all events</a>`;
+    } else if (status) {
+      status.textContent = "Something went wrong. Please email connect@dearpastorswife.org.";
+    }
+  });
+}
+renderEventDetail();
+
+/* ---------- COMMUNITY FORUM PREVIEW (community.html) ----------
+   Renders the topic-based forum shell from mock data. The composer is
+   intentionally disabled ("opens at launch"); topic chips filter the preview
+   thread feed so the experience feels real. Wire to a backend by replacing
+   COMMUNITY_TOPICS/THREADS with fetched data and enabling the composer. */
+function renderCommunity() {
+  const app = $("#communityApp");
+  if (!app) return;
+
+  let activeTopic = "all";
+
+  app.innerHTML = `
+    <div class="community-composer" aria-disabled="true">
+      <div class="community-avatar" aria-hidden="true">＋</div>
+      <button class="community-composer-fake" type="button" disabled>Start a conversation… <span>(opens at launch)</span></button>
+    </div>
+    <div class="community-layout">
+      <aside class="community-topics" aria-label="Topics">
+        <p class="community-aside-title">Topics</p>
+        <div class="community-topic-list" id="communityTopics"></div>
+      </aside>
+      <div class="community-feed" id="communityFeed"></div>
+    </div>`;
+
+  const topicsWrap = $("#communityTopics", app);
+  const feed = $("#communityFeed", app);
+  const topicName = (id) => (COMMUNITY_TOPICS.find(t => t.id === id) || {}).name || "";
+
+  const paintTopics = () => {
+    topicsWrap.innerHTML = `
+      <button class="community-topic${activeTopic === "all" ? " is-active" : ""}" data-topic="all">
+        <span class="ct-icon">✺</span><span class="ct-body"><strong>All conversations</strong><small>Everything, newest first</small></span>
+      </button>` +
+      COMMUNITY_TOPICS.map(t => `
+        <button class="community-topic${activeTopic === t.id ? " is-active" : ""}" data-topic="${t.id}">
+          <span class="ct-icon">${t.icon}</span>
+          <span class="ct-body"><strong>${escapeHtml(t.name)}</strong><small>${escapeHtml(t.desc)}</small></span>
+        </button>`).join("");
+  };
+
+  const paintFeed = () => {
+    const list = COMMUNITY_THREADS.filter(t => activeTopic === "all" || t.topic === activeTopic);
+    feed.innerHTML = list.map(t => `
+      <article class="community-thread">
+        <div class="community-thread-head">
+          <span class="community-thread-avatar" aria-hidden="true">${escapeHtml(t.author.charAt(0))}</span>
+          <div>
+            <strong>${escapeHtml(t.author)}</strong>
+            <span class="community-thread-meta">${escapeHtml(t.role)} · ${escapeHtml(t.ago)} ago</span>
+          </div>
+          <span class="community-thread-topic">${escapeHtml(topicName(t.topic))}</span>
+        </div>
+        <h3 class="community-thread-title">${escapeHtml(t.title)}</h3>
+        <p class="community-thread-excerpt">${escapeHtml(t.excerpt)}</p>
+        <div class="community-thread-foot">
+          <span>♥ ${t.likes}</span>
+          <span>💬 ${t.replies} replies</span>
+          <button type="button" class="community-thread-open" disabled>Open at launch →</button>
+        </div>
+      </article>`).join("") ||
+      `<p class="resource-empty">No conversations in this topic yet.</p>`;
+  };
+
+  topicsWrap.addEventListener("click", (e) => {
+    const btn = e.target.closest(".community-topic");
+    if (!btn) return;
+    activeTopic = btn.dataset.topic;
+    paintTopics();
+    paintFeed();
+  });
+
+  paintTopics();
+  paintFeed();
+}
+renderCommunity();
 
 /* ---------- SHARE BUTTON ----------
    Uses the native share sheet where available (mobile), and falls back
@@ -872,12 +1260,44 @@ if (heroCopy && !reduceMotion) {
   }, { passive: true });
 }
 
+/* ---------- "BECAUSE OF YOU" COLLAPSE (mobile) ----------
+   On phones the partnership "Because of you" list is long, so we collapse it
+   to the first two items behind a Show more toggle. Desktop always shows all
+   (the CSS only hides items inside .is-collapsed under the 900px breakpoint). */
+function initBecauseCollapse() {
+  const wrap = $(".because-wrap");
+  if (!wrap) return;
+  const items = $$(".because-item", wrap);
+  if (items.length <= 2) return;
+
+  items.forEach((item, i) => { if (i >= 2) item.classList.add("is-hidden"); });
+
+  const toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "because-toggle";
+  const setLabel = () => {
+    const collapsed = wrap.classList.contains("is-collapsed");
+    toggle.innerHTML = `${collapsed ? "Show more" : "Show less"} <span class="chev" aria-hidden="true">▾</span>`;
+    toggle.setAttribute("aria-expanded", String(!collapsed));
+  };
+  wrap.classList.add("is-collapsed");
+  const closing = $(".because-close", wrap);
+  (closing || wrap).insertAdjacentElement(closing ? "beforebegin" : "beforeend", toggle);
+  setLabel();
+  toggle.addEventListener("click", () => {
+    wrap.classList.toggle("is-collapsed");
+    items.forEach((item, i) => { if (i >= 2) item.classList.toggle("is-hidden", wrap.classList.contains("is-collapsed")); });
+    setLabel();
+  });
+}
+
 /* ---------- INIT ---------- */
 renderResources();
 renderFeaturedEvents();
 renderEvents();
 renderTiers();
 animateCounters();
+initBecauseCollapse();
 
 // Mark static sections for reveal
 $$(".section-heading, .book-info, .story-copy").forEach(el => el.classList.add("reveal"));

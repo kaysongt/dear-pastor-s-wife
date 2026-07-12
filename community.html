@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="The Dear Pastor's Wife community: a space for pastors' wives to connect, coming soon. Join the list to be the first to know when it opens." />
-  <meta name="theme-color" content="#573a6f" />
+  <meta name="theme-color" content="#601938" />
   <title>Community | Dear Pastor's Wife</title>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-  <link rel="alternate icon" type="image/png" href="assets/logo.png" />
+  <link rel="alternate icon" type="image/png" href="assets/brand/logomark-tyrian.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800;9..144,900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800;9..144,900&family=Jost:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body data-page="community">
@@ -19,23 +19,19 @@
   <main id="top">
     <section class="page-hero section-shell">
       <p class="eyebrow">Community</p>
-      <h1>Something good is on the way.</h1>
+      <h1>One sisterhood, organized by what we carry.</h1>
+      <p>Not another noisy group chat — a calm, topic-based space where women in ministry can ask, share, and encourage one another. Here's a preview of what's opening soon.</p>
     </section>
 
     <section class="community section-shell page-section" id="community">
-      <div class="coming-soon-card">
-        <div class="coming-soon-mark" aria-hidden="true">
-          <svg class="brand-vessel" viewBox="0 0 48 48" fill="none">
-            <path d="M16 6h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
-            <path d="M18 6c0 6-6 8-6 18 0 9 5 18 12 18s12-9 12-18c0-10-6-12-6-18"
-              stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M14 24c4 3 16 3 20 0" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-          </svg>
+      <!-- Launch banner + waitlist (real posting opens at launch) -->
+      <div class="community-banner">
+        <div class="community-banner-copy">
+          <span class="coming-soon-tag">Preview · launching soon</span>
+          <h2>Be here when the doors open.</h2>
+          <p>Browse the topics and conversations below to get a feel for it. Leave your email and you'll be the first in when posting goes live.</p>
         </div>
-        <span class="coming-soon-tag">Coming soon</span>
-        <h2>A space for pastors' wives to connect, coming soon.</h2>
-        <p class="coming-soon-sub">We're building it with care. Leave your email and you'll be the first to know when the doors open.</p>
-        <form class="coming-soon-form" id="communityForm" novalidate>
+        <form class="community-notify" id="communityForm" novalidate>
           <label>
             <span class="visually-hidden">First name</span>
             <input type="text" name="firstName" placeholder="First name" required />
@@ -47,8 +43,11 @@
           <button class="button primary" type="submit">Notify me</button>
           <p class="form-status" id="communityStatus" role="status" aria-live="polite"></p>
         </form>
-        <p class="coming-soon-meanwhile">In the meantime, the <a href="resources.html">resource library</a> is open, and we'd love to see you at an <a href="events.html">upcoming event</a>.</p>
       </div>
+
+      <!-- Forum shell — rendered from mock data by renderCommunity() and ready
+           to swap onto a real backend later. -->
+      <div id="communityApp" aria-label="Community preview"></div>
     </section>
   </main>
 
