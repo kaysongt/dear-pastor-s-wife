@@ -77,7 +77,7 @@ function buildChrome() {
     <div class="announce-bar" id="announceBar">
       <div class="announce-inner">
         <span class="announce-tag">Next up</span>
-        <p>Summer Blast, <strong>July 30 to Aug 2, 2026.</strong> Save the date.</p>
+        <p>See where we're gathering next.</p>
         <a href="events.html">See all events →</a>
       </div>
       <button class="announce-close" aria-label="Dismiss announcement">×</button>
@@ -241,16 +241,10 @@ const RESOURCES = [
 // `featured` events render as large cards at the top of the Events page.
 // `art` picks the brand-palette placeholder block (no stock photos until
 // the client's event photos arrive). `details`/`requirements` feed the event page.
+// NOTE: "Summer Blast" is an external event May is only speaking at — it is not
+// a DPW-hosted event, so it deliberately does NOT live here (no timeline entry,
+// no featured card, and it never drives the announcement bar).
 const EVENTS = [
-  {
-    slug: "summer-blast", category: "conference", year: 2026,
-    date: "Jul 30 to Aug 2, 2026", sort: "2026-07-30", endSort: "2026-08-02",
-    title: "Summer Blast", location: "United States", venue: "Venue announced to registrants",
-    desc: "Our summer gathering to open the season, with worship, teaching, and connection for women in ministry.",
-    details: "Four days to open the season together: worship, teaching sessions, and unhurried time to connect with women who understand ministry life. Come expecting to be poured into and to leave refreshed for what's ahead.",
-    requirements: "Open to pastors' wives, ministers' wives, and women in Christian leadership. Registration is free; seating is limited, so save your spot early.",
-    status: "soon", featured: true, art: "plum",
-  },
   {
     slug: "dpw-tea-party-chicago", category: "tea-party", year: 2026,
     date: "Aug 15, 2026", sort: "2026-08-15",
@@ -292,6 +286,22 @@ const eventEndISO = (e) => e.endSort || e.sort;
 const isPastEvent = (e) => eventEndISO(e) < todayISO();
 const eventUrl = (e) => e.link || `event.html?slug=${encodeURIComponent(e.slug)}`;
 const findEvent = (slug) => EVENTS.find(e => e.slug === slug);
+const upcomingEvents = () => EVENTS.filter(e => !isPastEvent(e)).sort((a, b) => a.sort.localeCompare(b.sort));
+
+// Point the announcement bar at the soonest upcoming DPW event (never the
+// external Summer Blast, which isn't in EVENTS). Auto-advances as events pass;
+// hides the bar when there's nothing coming up.
+function updateAnnounceBar() {
+  const bar = document.querySelector("#announceBar");
+  const inner = bar && bar.querySelector(".announce-inner");
+  if (!inner) return;
+  const next = upcomingEvents()[0];
+  if (!next) { bar.classList.add("hidden"); return; }
+  inner.innerHTML = `
+    <span class="announce-tag">Next up</span>
+    <p><strong>${escapeHtml(next.title)}</strong>, ${escapeHtml(next.date)}${next.location ? " · " + escapeHtml(next.location) : ""}. Save the date.</p>
+    <a href="${eventUrl(next)}">See details →</a>`;
+}
 
 // Fundraising Partnership Program: names + suggested ranges only.
 const TIERS = [
@@ -1298,6 +1308,7 @@ renderEvents();
 renderTiers();
 animateCounters();
 initBecauseCollapse();
+updateAnnounceBar();
 
 // Mark static sections for reveal
 $$(".section-heading, .book-info, .story-copy").forEach(el => el.classList.add("reveal"));
