@@ -296,6 +296,57 @@ const isExternal = (url) => /^https?:\/\//.test(url || "");
 const findEvent = (slug) => EVENTS.find(e => e.slug === slug);
 const upcomingEvents = () => EVENTS.filter(e => !isPastEvent(e)).sort((a, b) => a.sort.localeCompare(b.sort));
 
+/* ---------- ADD TO CALENDAR ----------
+   Events are all-day (no set times yet), so we build all-day calendar entries
+   from `sort` (start) and `endSort`/`sort` (end). All-day DTEND is exclusive,
+   so we add one day. Works fully client-side: an .ics data-URI download covers
+   Apple Calendar / Outlook, and a template link covers Google Calendar. */
+const icsDate = (iso) => iso.replace(/-/g, "");                     // 2026-08-15 -> 20260815
+const addDays = (iso, n) => { const d = new Date(iso + "T00:00:00"); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+const calStart = (e) => e.sort;
+const calEnd = (e) => addDays(e.endSort || e.sort, 1);              // DTEND is exclusive
+const icsEsc = (s) => String(s || "").replace(/([,;\\])/g, "\\$1").replace(/\r?\n/g, "\\n");
+
+function googleCalUrl(e) {
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: e.title,
+    dates: `${icsDate(calStart(e))}/${icsDate(calEnd(e))}`,
+    details: (e.desc || "") + (isExternal(e.link) ? `\n\n${e.link}` : ""),
+    location: e.location || "",
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+function icsHref(e) {
+  const lines = [
+    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Dear Pastors Wife//Events//EN", "CALSCALE:GREGORIAN",
+    "BEGIN:VEVENT",
+    `UID:${e.slug}@dearpastorswife.org`,
+    `DTSTAMP:${icsDate(todayISO())}T000000Z`,
+    `DTSTART;VALUE=DATE:${icsDate(calStart(e))}`,
+    `DTEND;VALUE=DATE:${icsDate(calEnd(e))}`,
+    `SUMMARY:${icsEsc(e.title)}`,
+    `LOCATION:${icsEsc(e.location)}`,
+    `DESCRIPTION:${icsEsc((e.desc || "") + (isExternal(e.link) ? ` ${e.link}` : ""))}`,
+    isExternal(e.link) ? `URL:${e.link}` : "",
+    "END:VEVENT", "END:VCALENDAR",
+  ].filter(Boolean);
+  return "data:text/calendar;charset=utf-8," + encodeURIComponent(lines.join("\r\n"));
+}
+
+// Reusable "Add to calendar" dropdown (Google + Apple/Outlook .ics).
+function calMenuHtml(e, { compact = false } = {}) {
+  return `
+    <div class="add-cal">
+      <button type="button" class="add-cal-btn${compact ? " compact" : ""}" aria-haspopup="true" aria-expanded="false">📅 Add to calendar</button>
+      <div class="add-cal-menu" role="menu" hidden>
+        <a role="menuitem" href="${googleCalUrl(e)}" target="_blank" rel="noopener">Google Calendar</a>
+        <a role="menuitem" href="${icsHref(e)}" download="${e.slug}.ics">Apple / Outlook (.ics)</a>
+      </div>
+    </div>`;
+}
+
 // Point the announcement bar at the soonest upcoming DPW-hosted event (guest
 // events May only speaks at never drive it). Auto-advances as events pass;
 // hides the bar when there's nothing coming up.
@@ -427,6 +478,7 @@ function renderFeaturedEvents() {
         <div class="featured-event-action">
           <span class="tl-status status-${e.status}">${statusLabel[e.status] || ""}</span>
           <a class="button primary" href="${eventUrl(e)}">${e.status === "open" ? "Register" : "View & save my spot"} →</a>
+          ${calMenuHtml(e)}
         </div>
       </div>
     </article>
@@ -473,6 +525,7 @@ function renderEvents() {
           <div class="tl-action">
             ${e.guest ? '<span class="tl-status status-guest">Guest speaker</span>' : (statusMap[e.status] || "")}
             <a class="tl-link" href="${eventUrl(e)}"${linkAttrs}>${linkLabel} →</a>
+            ${calMenuHtml(e, { compact: true })}
           </div>
         </div>
       </div>`;
@@ -748,6 +801,32 @@ handleForm("newsletterForm", "newsletterStatus", "You're in! Watch your inbox fo
 handleForm("contactForm", "contactStatus", "Thank you. Your message is on its way and we'll be in touch soon.");
 handleForm("bookingForm", "bookingStatus", "Thank you! Your booking request is in and the team will follow up by email.");
 
+/* ---------- ADD-TO-CALENDAR DROPDOWN (delegated) ---------- */
+function closeCalMenus(except) {
+  $$(".add-cal-menu:not([hidden])").forEach(m => {
+    if (m === except) return;
+    m.hidden = true;
+    const btn = m.previousElementSibling;
+    if (btn) btn.setAttribute("aria-expanded", "false");
+  });
+}
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".add-cal-btn");
+  if (btn) {
+    e.preventDefault();
+    const menu = btn.parentElement.querySelector(".add-cal-menu");
+    const willOpen = menu.hidden;
+    closeCalMenus(willOpen ? menu : null);
+    menu.hidden = !willOpen;
+    btn.setAttribute("aria-expanded", String(willOpen));
+    return;
+  }
+  // A menu choice was clicked — let the download/link happen, then close.
+  if (e.target.closest(".add-cal-menu")) { setTimeout(closeCalMenus, 0); return; }
+  closeCalMenus();
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeCalMenus(); });
+
 /* ---------- PARTNER SIGN-UP → STRIPE ----------
    Captures partner contact details (name, email, address, phone) and
    records them to the CRM (systeme.io) BEFORE handing the partner off to
@@ -910,6 +989,7 @@ function renderEventDetail() {
             <span>📍 ${escapeHtml(e.location)}</span>
             <span class="tl-status status-${closed ? "past" : e.status}">${statusLabel[closed ? "past" : e.status] || ""}</span>
           </p>
+          ${!closed ? `<div class="event-cal-row">${calMenuHtml(e)}</div>` : ""}
           <p class="event-page-lead">${escapeHtml(e.desc)}</p>
           ${e.details ? `<h2 class="event-h2">What to expect</h2><p>${escapeHtml(e.details)}</p>` : ""}
           <h2 class="event-h2">Location</h2>

@@ -1511,6 +1511,32 @@ h1 {
 }
 .event-reg-card h3 { font-size: 1.4rem; margin-bottom: 0.4rem; }
 
+/* ===================== Add to calendar dropdown ===================== */
+.add-cal { position: relative; display: inline-block; }
+.add-cal-btn {
+  font: inherit; font-weight: 800; font-size: 0.85rem; cursor: pointer;
+  padding: 0.55rem 1rem; border-radius: 999px; white-space: nowrap;
+  background: transparent; color: var(--wine); border: 1.5px solid var(--line);
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+.add-cal-btn:hover { border-color: var(--wine); background: rgba(96, 25, 56, 0.06); }
+.add-cal-btn.compact { padding: 0.3rem 0.7rem; font-size: 0.8rem; }
+/* On the dark timeline cards, render the compact button in light ink. */
+.timeline-card .add-cal-btn { color: #fff; border-color: rgba(255, 255, 255, 0.4); }
+.timeline-card .add-cal-btn:hover { background: rgba(255, 255, 255, 0.12); border-color: #fff; }
+.add-cal-menu {
+  position: absolute; z-index: 30; top: calc(100% + 0.5rem); right: 0; min-width: 200px;
+  background: #fff; border: 1px solid var(--line); border-radius: 0.9rem;
+  box-shadow: var(--shadow); padding: 0.4rem; display: flex; flex-direction: column;
+}
+.add-cal-menu[hidden] { display: none; }
+.add-cal-menu a {
+  padding: 0.6rem 0.8rem; border-radius: 0.6rem; font-weight: 700; font-size: 0.9rem;
+  color: var(--ink); white-space: nowrap;
+}
+.add-cal-menu a:hover { background: var(--paper); color: var(--wine); }
+.event-cal-row { margin: 0 0 1.4rem; }
+
 /* ===================== Multi-step form / stepper ===================== */
 .stepper-form label,
 .event-reg-card label {
