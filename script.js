@@ -248,7 +248,7 @@ const EVENTS = [
     desc: "An intimate two-hour gathering with icebreakers and table topics, the kind of conversation that quickly feels like a reunion. Free and open to pastors' wives, ministers' wives, and women in Christian leadership.",
     details: "Two hours around a table: icebreakers to open hearts, table topics too good to cut short, and a room that quickly feels like a reunion even among women meeting for the first time. We close praying for one another.",
     requirements: "Completely free. Open to pastors' wives, ministers' wives, and women in Christian leadership. Please register so we can set a place for you.",
-    status: "soon", featured: true, art: "clay",
+    status: "soon", art: "clay",
   },
   {
     slug: "dpw-kingsword-nigeria", category: "conference", year: 2026,
@@ -457,9 +457,16 @@ function renderFeaturedEvents() {
   if (!wrap) return;
 
   const statusLabel = { open: "Registration open", soon: "Save the date", past: "Past event" };
-  // Auto fall-off: completed events leave the featured itinerary automatically.
-  const list = EVENTS.filter(e => e.featured && !isPastEvent(e) &&
-    (activeEventFilter === "all" || e.category === activeEventFilter));
+  // Always feature the nearest upcoming event in the active tab (auto fall-off:
+  // completed events drop out and the next one rises automatically) — except
+  // Summer Blast, which is an external guest engagement rather than a DPW
+  // event to headline. When it would be the nearest match (on "All" and
+  // "Conferences"), the next-closest qualifying event steps up instead.
+  const nearest = EVENTS
+    .filter(e => !isPastEvent(e) && e.slug !== "summer-blast" &&
+      (activeEventFilter === "all" || e.category === activeEventFilter))
+    .sort((a, b) => a.sort.localeCompare(b.sort))[0];
+  const list = nearest ? [nearest] : [];
   wrap.hidden = list.length === 0;
 
   wrap.innerHTML = list.map(e => `
