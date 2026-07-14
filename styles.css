@@ -343,8 +343,10 @@ h3 { font-size: clamp(1.4rem, 2.2vw, 2.1rem); letter-spacing: -0.005em; }
 .resource-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.3rem; }
 /* Homepage teaser only has 2 cards (Book, YouTube), not 3, so a bare
    repeat(3,1fr) would leave an empty column on the right instead of
-   sizing the two cards to fill the row. */
-#resources .resource-grid { grid-template-columns: repeat(2, 1fr); max-width: 760px; margin: 0 auto; }
+   sizing the two cards to fill the row. Scoped to body[data-page="home"]
+   specifically, not just #resources, since resources.html's full
+   library section reuses that same id for its (much longer) grid. */
+body[data-page="home"] #resources .resource-grid { grid-template-columns: repeat(2, 1fr); max-width: 760px; margin: 0 auto; }
 .resource-card {
   display: flex; flex-direction: column; padding: 1.8rem;
   border-radius: 1.6rem; border: 1px solid rgba(184, 136, 42, 0.22);
