@@ -748,8 +748,16 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
 .footer-bottom p { color: var(--muted); font-size: 0.88rem; font-weight: 600; }
 .footer-bottom .footer-social { justify-content: center; margin: 0 0 1.2rem; }
 .footer-bottom p.footer-credit { margin-top: 0.4rem; font-size: 0.82rem; font-weight: 500; }
-.footer-bottom p.footer-credit a { color: var(--wine); font-weight: 700; }
+.footer-bottom p.footer-credit a { color: var(--wine); font-weight: 700; display: inline-flex; align-items: center; }
 .footer-bottom p.footer-credit a:hover { text-decoration: underline; }
+.footer-bottom p.footer-credit .cozy-logo {
+  display: inline-block; width: 28px; height: 15px; margin-right: 0.35rem; vertical-align: middle;
+  background-color: var(--wine);
+  -webkit-mask-image: url('assets/cozy-digital-logo.png'); mask-image: url('assets/cozy-digital-logo.png');
+  -webkit-mask-size: contain; mask-size: contain;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+}
 
 /* ===================== Responsive ===================== */
 @media (max-width: 1024px) {
@@ -1256,7 +1264,7 @@ h1 {
    ============================================================ */
 
 /* ----- Vessel logo mark + wordmark ----- */
-.brand { display: inline-flex; align-items: center; gap: 0.6rem; }
+.brand { display: inline-flex; align-items: center; gap: 0.4rem; }
 .brand-vessel { width: 52px; height: 52px; color: var(--wine); flex: none; }
 .brand .brand-wordmark {
   display: inline-flex !important; flex-direction: column; line-height: 1;

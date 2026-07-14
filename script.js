@@ -129,7 +129,7 @@ function buildChrome() {
           ${socialLink(SOCIAL.youtube, "YouTube", YT_SVG)}
         </div>
         <p>© 2026 Dear Pastor's Wife by May Ijisesan. All rights reserved.</p>
-        <p class="footer-credit">Made by <a href="https://www.cozydigital.org" target="_blank" rel="noopener">Cozy Digital</a></p>
+        <p class="footer-credit">Made by <a href="https://www.cozydigital.org" target="_blank" rel="noopener"><span class="cozy-logo" aria-hidden="true"></span>Cozy Digital</a></p>
       </div>
     </footer>`;
 
