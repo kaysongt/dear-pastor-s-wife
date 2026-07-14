@@ -762,7 +762,11 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
   .nav-links {
     position: absolute; top: calc(100% + 1px); left: 1rem; right: 1rem;
     display: none; flex-direction: column; align-items: stretch; padding: 1.2rem;
-    background: rgba(255, 250, 243, 0.98); backdrop-filter: blur(20px);
+    /* Fully opaque, no backdrop-filter: iOS Safari has long-standing
+       compositing bugs where a blurred, semi-transparent sticky-header
+       child renders with page content ghosting through it. A solid fill
+       sidesteps the whole bug class instead of chasing it per-device. */
+    background: var(--paper);
     border: 1px solid var(--line); border-radius: 1.5rem; box-shadow: var(--shadow);
   }
   .nav-links.open { display: flex; }
@@ -803,6 +807,12 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
   .book-actions .button { width: 100%; }
   .eyebrow::before { display: none; }
   .hero-trust { gap: 1.4rem; }
+
+  /* Keep the "Clarity · Confidence · Community" tagline on one line
+     instead of wrapping under the wordmark. */
+  .brand-vessel { width: 30px; height: 30px; }
+  .brand .brand-wordmark .bw-main { font-size: 1.02rem; }
+  .brand .brand-wordmark .bw-sub { font-size: 0.46rem; letter-spacing: 0.09em; white-space: nowrap; }
 }
 
 /* ===================== Mobile: picture on top of hero ===================== */
@@ -1212,7 +1222,11 @@ h1 {
     box-shadow: none; border: none; background: transparent; min-width: 0;
     max-height: 0; overflow: hidden; padding: 0; transition: max-height 0.25s ease;
   }
-  .nav-dropdown.open .nav-dropdown-menu { max-height: 300px; padding: 0.3rem 0 0.3rem 1rem; }
+  /* Same specificity as the desktop .open rule that sets
+     transform: translateX(-50%) — without restating transform here too,
+     that desktop rule wins the tie (later in source, equal specificity)
+     and the submenu items render shifted off-screen to the left. */
+  .nav-dropdown.open .nav-dropdown-menu { max-height: 300px; padding: 0.3rem 0 0.3rem 1rem; transform: none; }
   .nav-dropdown-menu a { padding: 0.8rem 1rem !important; }
 }
 
