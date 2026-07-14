@@ -1199,12 +1199,12 @@ h1 {
 }
 .event-featured-grid[hidden] { display: none; }
 .featured-event {
-  display: flex; flex-direction: column; border-radius: var(--radius); overflow: hidden;
+  display: flex; flex-direction: column; border-radius: var(--radius);
   background: linear-gradient(160deg, rgba(255,250,243,0.95), rgba(255,255,255,0.85));
   border: 1px solid rgba(184, 136, 42, 0.25); box-shadow: var(--shadow);
 }
 .featured-event-art {
-  position: relative; min-height: 210px;
+  position: relative; min-height: 210px; border-radius: var(--radius) var(--radius) 0 0; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
 }
 .featured-event-art .brand-vessel { width: 84px; height: 84px; opacity: 0.35; color: var(--cream); }
