@@ -789,7 +789,10 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
 @media (max-width: 640px) {
   .announce-bar { padding: 0.6rem 2.2rem; font-size: 0.82rem; }
   .faq-grid, .reviews, .focus-grid, .resource-grid, .newsletter-inputs, .track-select { grid-template-columns: 1fr; }
-  .footer-links { grid-template-columns: 1fr 1fr; }
+  /* Single column instead of 2: with 3 footer groups (Explore, Get
+     Involved, Connect), a 2-column grid strands the third one alone,
+     off-center, in an otherwise-empty row. */
+  .footer-links { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
   .gallery { grid-template-columns: 1fr; height: auto; }
   .gallery img, .gallery img:nth-child(2) { height: 300px; margin: 0; }
   .tier-grid { grid-template-columns: 1fr; }
