@@ -20,9 +20,9 @@ The header, announcement bar, and footer are **injected by JavaScript** from
 `buildChrome()` in `script.js`, so they are identical across every page. Each
 page only needs:
 
-- `<body data-page="...">` — drives the active nav state (e.g. `data-page="events"`).
-- `<div data-chrome="top"></div>` — where the announce bar + header render.
-- `<div data-chrome="footer"></div>` — where the footer renders.
+- `<body data-page="...">`, drives the active nav state (e.g. `data-page="events"`).
+- `<div data-chrome="top"></div>`, where the announce bar + header render.
+- `<div data-chrome="footer"></div>`, where the footer renders.
 
 Edit nav links once in `NAV_ITEMS`, and social URLs once in `SOCIAL`, both at the
 top of `script.js`.
@@ -45,7 +45,7 @@ python3 -m http.server 4173
 
 - **systeme.io (CRM):** set `CONFIG.crm.endpoint` to the systeme.io form/submission
   endpoint. When set, all form submissions (newsletter, contact, booking, and the
-  partner sign-up) are POSTed there automatically. **Endpoint URL pending from client** —
+  partner sign-up) are POSTed there automatically. **Endpoint URL pending from client**,
   contact capture runs in demo mode (logs to console) until then.
 - **Stripe (payments + ACH):** Live Payment Links are wired in `CONFIG.payments`, but
   gated behind a master switch: **`CONFIG.payments.live` is `false`**, so every
@@ -77,12 +77,11 @@ setup is assigned to us.
 
 ## Still pending / placeholders
 
-- **Social URLs** — Instagram and Facebook are placeholders (`data-pending` + `SOCIAL`
+- **Social URLs**, Instagram and Facebook are placeholders (`data-pending` + `SOCIAL`
   in `script.js`). YouTube is live.
-- **Logo file** — `assets/logo.png` is still used for the favicon; the header/footer
+- **Logo file**, `assets/logo.png` is still used for the favicon; the header/footer
   now use the inline vessel mark.
-- **Final 7-Day Reset PDF** — `assets/dpw-7-day-reset.pdf` is a placeholder.
-- **Community forum** — front-end MVP; threads/replies persist in the visitor's
+- **Community forum**, front-end MVP; threads/replies persist in the visitor's
   browser (localStorage). Production needs a backend (accounts + moderation).
 
 **Launch deadline: July 29, 2026** (must be live before Summer Blast on July 30).

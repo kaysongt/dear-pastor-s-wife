@@ -211,7 +211,6 @@ const CONFIG = {
 const RESOURCES = [
   { type: "book", status: "current", title: "Dear Pastor's Wife (The Book)", desc: "Biblical wisdom and honest encouragement for women in ministry life.", cta: "Get it on Amazon", link: "https://www.amazon.com/Dear-Pastors-Wife-May-Ijisesan-ebook/dp/B09TQ2G8PJ" },
   { type: "video", status: "current", title: "Weekly Encouragement on YouTube", desc: "New teaching, Q&A, and real talk for ministry women every week.", cta: "Watch on YouTube", link: "https://www.youtube.com/@DearPastorsWife" },
-  { type: "download", status: "current", title: "The 7-Day Guided Reset (PDF)", desc: "A simple 7-day plan to slow down, refill, and reset when ministry has run you dry.", cta: "Download the PDF", link: "assets/dpw-7-day-reset.pdf", download: true },
   { type: "video", status: "current", title: "Leading Without Losing Yourself", desc: "A teaching session on staying rooted while you serve and lead.", cta: "Watch now", link: "https://www.youtube.com/@DearPastorsWife" },
   { type: "video", status: "archived", title: "2024 Conference Replay: Thrive", desc: "The full replay of our first leadership conference for ministry women.", cta: "Watch replay", link: "https://www.youtube.com/@DearPastorsWife" },
   { type: "article", status: "current", title: "You Are Not \"Just a Pastor's Wife\"", desc: "The label \"pastor's wife\" was never meant to shrink you. Discover the two-fold call you've been doubly graced to carry.", cta: "Read the article", link: "not-just-a-pastors-wife.html" },
