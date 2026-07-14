@@ -825,7 +825,7 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
      in the file (in the brand-refresh section) at equal specificity,
      so on a specificity tie they'd otherwise win via source order
      regardless of this media query actually matching. */
-  .brand-vessel { width: 32px !important; height: 32px !important; }
+  .brand-vessel { width: 36px !important; height: 36px !important; }
   .brand { min-width: 0; flex-shrink: 1; }
   .brand .brand-wordmark { min-width: 0; }
   .brand .brand-wordmark .bw-main { font-size: 1rem !important; }
@@ -1039,7 +1039,7 @@ h1 {
 }
 .bookings-intro h2 { color: white; }
 .bookings-photo {
-  width: 100%; max-height: 320px; object-fit: cover; object-position: center 18%;
+  width: 100%; max-height: 320px; object-fit: cover; object-position: center 6%;
   border-radius: 1.5rem; margin: 1.4rem 0 0.4rem; display: block;
   box-shadow: 0 18px 40px rgba(0,0,0,0.28); position: relative; z-index: 1;
 }
@@ -1257,7 +1257,7 @@ h1 {
 
 /* ----- Vessel logo mark + wordmark ----- */
 .brand { display: inline-flex; align-items: center; gap: 0.6rem; }
-.brand-vessel { width: 44px; height: 44px; color: var(--wine); flex: none; }
+.brand-vessel { width: 52px; height: 52px; color: var(--wine); flex: none; }
 .brand .brand-wordmark {
   display: inline-flex !important; flex-direction: column; line-height: 1;
 }
@@ -1383,7 +1383,7 @@ h1 {
 
 /* ----- Donation widget ----- */
 .donate-box {
-  position: sticky; top: 96px;
+  position: sticky; top: 96px; margin-top: 15rem;
   background: linear-gradient(160deg, #fff, rgba(244,237,227,0.7));
   border: 1px solid rgba(184, 136, 42, 0.25); border-radius: var(--radius);
   box-shadow: var(--shadow); padding: 1.6rem;
@@ -1457,7 +1457,7 @@ h1 {
      the default two-column order (untouched, no order set there). */
   .partner-narrative { display: contents; }
   .partner-photo { order: 3; }
-  .donate-box { position: static; order: 4; }
+  .donate-box { position: static; order: 4; margin-top: 0; }
   .because-wrap { order: 5; }
   .share-row { order: 6; }
 }
