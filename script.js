@@ -13,11 +13,9 @@
    ============================================================ */
 
 /* ---------- SOCIAL LINKS ---------- */
-// Facebook URL not confirmed by the client yet: keep the icon visible but
-// point it at "#" with a "link coming soon" title so nothing 404s.
+// No Facebook page exists, so it's intentionally absent here.
 const SOCIAL = {
   instagram: "https://www.instagram.com/dearpastorswife",
-  facebook: "#",
   youtube: "https://www.youtube.com/@DearPastorsWife",
 };
 
@@ -51,7 +49,6 @@ const VESSEL_SVG = `
   </svg>`;
 
 const IG_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.8.25 2.23.42.56.22.96.48 1.38.9.42.42.68.82.9 1.38.17.42.37 1.06.42 2.23.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.05 1.17-.25 1.8-.42 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.17-1.06.37-2.23.42-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.05-1.8-.25-2.23-.42a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.17-.42-.37-1.06-.42-2.23C2.21 15.58 2.2 15.2 2.2 12s0-3.58.07-4.85c.05-1.17.25-1.8.42-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.17 1.06-.37 2.23-.42C8.42 2.21 8.8 2.2 12 2.2zm0 4.86A4.94 4.94 0 1 0 12 16.94 4.94 4.94 0 0 0 12 7.06zm0 8.14A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4zm6.3-8.34a1.15 1.15 0 1 1-2.3 0 1.15 1.15 0 0 1 2.3 0z"/></svg>`;
-const FB_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z"/></svg>`;
 const YT_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.5a3 3 0 0 0-2.1-2.1C19.6 4 12 4 12 4s-7.6 0-9.4.4A3 3 0 0 0 .5 6.5C.1 8.3.1 12 .1 12s0 3.7.4 5.5a3 3 0 0 0 2.1 2.1c1.8.4 9.4.4 9.4.4s7.6 0 9.4-.4a3 3 0 0 0 2.1-2.1c.4-1.8.4-5.5.4-5.5s0-3.7-.4-5.5zM9.5 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>`;
 
 function buildChrome() {
@@ -109,7 +106,6 @@ function buildChrome() {
           <p class="footer-tagline">A global resource hub and community for women in ministry. Clarity, confidence, and real support.</p>
           <div class="footer-social" aria-label="Social media">
             ${socialLink(SOCIAL.instagram, "Instagram", IG_SVG)}
-            ${socialLink(SOCIAL.facebook, "Facebook", FB_SVG)}
             ${socialLink(SOCIAL.youtube, "YouTube", YT_SVG)}
           </div>
         </div>
@@ -133,7 +129,6 @@ function buildChrome() {
             <strong>Connect</strong>
             <a href="${SOCIAL.youtube}" target="_blank" rel="noopener">YouTube</a>
             <a href="${SOCIAL.instagram}" target="_blank" rel="noopener">Instagram</a>
-            <a href="#" title="link coming soon" data-pending="url">Facebook</a>
             <a href="https://www.amazon.com/Dear-Pastors-Wife-May-Ijisesan-ebook/dp/B09TQ2G8PJ" target="_blank" rel="noopener">Amazon</a>
             <a href="mailto:connect@dearpastorswife.org">Email</a>
           </div>
@@ -1209,7 +1204,11 @@ if (menuButton && navLinks) {
     menuButton.setAttribute("aria-expanded", String(isOpen));
     menuButton.textContent = isOpen ? "Close" : "Menu";
   });
-  navLinks.querySelectorAll("a").forEach(link => {
+  // Exclude the dropdown toggle itself: on mobile its own handler above
+  // opens/closes the Events submenu, so closing the whole mobile nav here
+  // too would immediately undo that toggle (tapping "Events" looked like
+  // it did nothing, or closed the menu instead of revealing the submenu).
+  navLinks.querySelectorAll("a:not(.nav-dropdown-toggle)").forEach(link => {
     link.addEventListener("click", () => {
       navLinks.classList.remove("open");
       dropdown?.classList.remove("open");
