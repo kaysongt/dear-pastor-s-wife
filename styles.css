@@ -1370,6 +1370,10 @@ h1 {
 }
 .partner-photo { margin: 0 0 1.8rem; border-radius: var(--radius); overflow: hidden; position: relative; box-shadow: var(--shadow); }
 .partner-photo img { width: 100%; height: clamp(240px, 34vw, 340px); object-fit: cover; object-position: 50% 28%; display: block; }
+/* community.html's photo source is a modest 768px wide — capping the
+   display width keeps it closer to native resolution instead of being
+   stretched (and softened) across the full section width on desktop. */
+body[data-page="community"] .partner-photo { max-width: 700px; margin-left: auto; margin-right: auto; }
 .partner-photo figcaption {
   position: absolute; left: 0; right: 0; bottom: 0;
   padding: 2.4rem 1.4rem 1.1rem;
