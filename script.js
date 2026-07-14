@@ -40,7 +40,7 @@ const NAV_ITEMS = [
 ];
 
 // Official DPW logomark (vessel + four-point star), path-based so it inherits
-// `currentColor` — renders Tyrian in the header and cream on dark event art.
+// `currentColor`, renders Tyrian in the header and cream on dark event art.
 const VESSEL_SVG = `
   <svg class="brand-vessel" viewBox="0 0 160 160" fill="currentColor" aria-hidden="true">
     <path d="M57.63,49.84c6.63-13.58,19.95-21.15,34.65-15.14,4.33,1.92,7.5,5.65,10.6,9.08,4.04,4.71,7.65,9.78,10.86,15.09,1.6,2.66,3.09,5.39,4.36,8.25,1.37,2.82,2.34,6.13,1.62,9.26-1.09,6.2-3.75,11.89-6.45,17.51-4.14,8.34-8.89,16.33-13.98,24.12-1.72,2.59-3.42,5.16-5.36,7.65-.5.64-1.23,1.28-1.95,1.69-2.13,1.21-4.57,1.71-6.95,2.02-4.72.54-9.49.36-14.13-.67-4.79-.82-8.51-4.72-11.69-8.06-4.24-4.61-7.97-9.6-11.47-14.73-3.47-5.16-6.73-10.45-9.63-15.97-1.43-2.75-2.8-5.67-3.45-8.86-1.16-4.83.81-9.65,3.03-13.84,2.07-4.18,4.32-8.26,6.86-12.18,4.53-6.6,17.45-26.01,25.63-25.94,0,0-.02.2-.02.2-7.1.07-17.99,16.88-21.94,22.61-4.26,6.34-7.9,13.23-10.9,20.2-1.12,2.76-1.49,5.67-.82,8.57.63,2.88,1.95,5.6,3.39,8.3,2.87,5.41,6.13,10.65,9.58,15.73,3.45,5.08,7.1,10.05,11.21,14.56,3.13,3.26,6.07,6.72,10.66,7.63,5.53,1.28,17.31,2.2,21.4-2.25,9.06-12.34,17.22-25.63,23.22-39.75,1.56-4.17,3.38-8.67,2.71-13.13-.37-1.39-.95-2.86-1.54-4.25-4.24-9.49-15.81-27.68-25.09-32.24-10.63-4.47-21.62-1.79-29.08,6.99-2.02,2.31-3.8,4.87-5.15,7.63l-.18-.08h0Z"/>
@@ -154,7 +154,7 @@ buildChrome();
 
    PAYMENTS (Stripe Payment Links):
      • `oneTimeUrl` is a single FIXED $100 one-time-gift link (not
-       pay-what-you-want) — it covers every one-time gift (give card +
+       pay-what-you-want), it covers every one-time gift (give card +
        partner form "one time"), which is why both those flows show a
        flat $100 rather than an amount picker.
      • `monthly` maps a USD amount to a FIXED recurring subscription link.
@@ -215,7 +215,7 @@ const RESOURCES = [
   { type: "video", status: "current", title: "Leading Without Losing Yourself", desc: "A teaching session on staying rooted while you serve and lead.", cta: "Watch now", link: "https://www.youtube.com/@DearPastorsWife" },
   { type: "video", status: "archived", title: "2024 Conference Replay: Thrive", desc: "The full replay of our first leadership conference for ministry women.", cta: "Watch replay", link: "https://www.youtube.com/@DearPastorsWife" },
   { type: "article", status: "current", title: "You Are Not \"Just a Pastor's Wife\"", desc: "The label \"pastor's wife\" was never meant to shrink you. Discover the two-fold call you've been doubly graced to carry.", cta: "Read the article", link: "not-just-a-pastors-wife.html" },
-  { type: "article", status: "current", title: "Occupy Your Place", desc: "Purpose is not discovered in comfort. Here is how I found mine one assignment at a time — and how you can occupy the place God made for you.", cta: "Read the article", link: "occupy-your-place.html" },
+  { type: "article", status: "current", title: "Occupy Your Place", desc: "Purpose is not discovered in comfort. Here is how I found mine one assignment at a time, and how you can occupy the place God made for you.", cta: "Read the article", link: "occupy-your-place.html" },
   { type: "article", status: "current", title: "Consecration Without Burnout", desc: "A consecrated life doesn't have to be a depleted one. Learn the difference between consecration and sacrifice, and how to serve God with joy.", cta: "Read the article", link: "consecration-without-burnout.html" },
   { type: "article", status: "current", title: "When You Can't Borrow His Faith", desc: "Your husband's faith cannot carry you through every storm. Here is how I learned to stand on my own faith when everything was on the line.", cta: "Read the article", link: "when-you-cant-borrow-his-faith.html" },
   { type: "article", status: "current", title: "Thriving, Not Just Surviving", desc: "You don't have to settle for merely surviving your marriage. With intentionality and courage, a pastor's marriage can thrive.", cta: "Read the article", link: "thriving-not-surviving-marriage.html" },
@@ -225,7 +225,7 @@ const RESOURCES = [
 
 // Events. category: conference | tea-party | retreat. status: open | soon | past.
 // `sort` is an ISO date used for ordering AND auto-expiry; `endSort` (optional,
-// for multi-day events) is the last day — an event "falls off" the itinerary the
+// for multi-day events) is the last day, an event "falls off" the itinerary the
 // day after it ends. `slug` powers its dedicated page (event.html?slug=...).
 // `featured` events render as large cards at the top of the Events page.
 // `art` picks the brand-palette placeholder block (no stock photos until
@@ -255,7 +255,7 @@ const EVENTS = [
     date: "September 2026", sort: "2026-09-01",
     title: "DPW at KingsWord", location: "Nigeria", venue: "KingsWord, Nigeria",
     desc: "Join us in Nigeria with KingsWord. Firm dates are being confirmed.",
-    details: "We're bringing Dear Pastor's Wife to Nigeria in partnership with KingsWord. Firm dates and the full programme are being confirmed — register your interest and we'll be in touch the moment details are set.",
+    details: "We're bringing Dear Pastor's Wife to Nigeria in partnership with KingsWord. Firm dates and the full programme are being confirmed, register your interest and we'll be in touch the moment details are set.",
     requirements: "Open to women in ministry and Christian leadership. Register your interest to receive dates, venue, and registration details first.",
     status: "soon", art: "plum",
   },
@@ -378,7 +378,7 @@ const COMMUNITY_THREADS = [
   { topic: "faith",      title: "A prayer that carried me through a hard season", author: "Ada N.", role: "Minister's wife", replies: 18, likes: 120, ago: "5h", excerpt: "Sharing the one line I prayed on repeat when I had nothing left. Maybe it meets someone here too." },
   { topic: "children",   title: "Raising PKs who love the church, not resent it", author: "Bola A.", role: "Youth Pastor's wife", replies: 42, likes: 77, ago: "1d", excerpt: "What has actually helped our kids feel like people, not 'the example'? Compiling what's worked for us." },
   { topic: "marriage",   title: "Date nights when you both serve every weekend", author: "Kemi T.", role: "Co-Pastor", replies: 27, likes: 64, ago: "1d", excerpt: "Weekends are gone to ministry. How do you keep the marriage first without it feeling like one more task?" },
-  { topic: "leadership", title: "First time managing a real budget — help?", author: "Ruth E.", role: "Ministry Director", replies: 15, likes: 39, ago: "2d", excerpt: "Nobody taught me the money side. Looking for plain-language resources other women here have trusted." },
+  { topic: "leadership", title: "First time managing a real budget, help?", author: "Ruth E.", role: "Ministry Director", replies: 15, likes: 39, ago: "2d", excerpt: "Nobody taught me the money side. Looking for plain-language resources other women here have trusted." },
   { topic: "wellbeing",  title: "The rest that finally refilled me", author: "May I.", role: "Founder, DPW", replies: 58, likes: 210, ago: "3d", excerpt: "Consecration without burnout is possible. Here's the difference that changed everything for me." },
 ];
 
@@ -386,8 +386,8 @@ const COMMUNITY_THREADS = [
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 // Declared this early (not down by REVEAL ON SCROLL, where it's used) because
-// observeReveals() can be called during initial script execution — e.g. by
-// events.html's ?filter= handling — well before that point in the file. A
+// observeReveals() can be called during initial script execution, e.g. by
+// events.html's ?filter= handling, well before that point in the file. A
 // later `const reduceMotion` would leave it in the temporal dead zone for
 // that early call, throwing a ReferenceError that aborts the rest of the
 // script's top-level execution (every init after the throw silently never
@@ -459,7 +459,7 @@ function renderFeaturedEvents() {
 
   const statusLabel = { open: "Registration open", soon: "Save the date", past: "Past event" };
   // Always feature the nearest upcoming event in the active tab (auto fall-off:
-  // completed events drop out and the next one rises automatically) — except
+  // completed events drop out and the next one rises automatically), except
   // Summer Blast, which is an external guest engagement rather than a DPW
   // event to headline. When it would be the nearest match (on "All" and
   // "Conferences"), the next-closest qualifying event steps up instead.
@@ -726,7 +726,7 @@ function initDonateWidget() {
     });
   });
 
-  // Demo mode: don't navigate to a "#" placeholder — explain instead.
+  // Demo mode: don't navigate to a "#" placeholder, explain instead.
   goBtn.addEventListener("click", (e) => {
     if (method === "bank" && !CONFIG.payments.bankTransferUrl) {
       e.preventDefault();
@@ -827,7 +827,7 @@ document.addEventListener("click", (e) => {
     btn.setAttribute("aria-expanded", String(willOpen));
     return;
   }
-  // A menu choice was clicked — let the download/link happen, then close.
+  // A menu choice was clicked, let the download/link happen, then close.
   if (e.target.closest(".add-cal-menu")) { setTimeout(closeCalMenus, 0); return; }
   closeCalMenus();
 });
@@ -952,7 +952,7 @@ function initStepper(form) {
 
 /* ---------- EVENT DETAIL PAGE (event.html?slug=...) ----------
    One template renders any event from the EVENTS data, with full details and
-   an on-site multi-step registration form — so registrations live on the site
+   an on-site multi-step registration form, so registrations live on the site
    instead of external Google Forms. */
 function renderEventDetail() {
   const root = $("#eventDetail");
@@ -1250,7 +1250,7 @@ document.addEventListener("click", (e) => {
    Scroll-based (not IntersectionObserver) so fast scrolling can never
    leave content stranded at opacity 0. A safety timer reveals everything
    unconditionally as a final guarantee. (reduceMotion and
-   revealListenerAttached are declared near the top of the file — see the
+   revealListenerAttached are declared near the top of the file, see the
    comment there for why.) */
 
 function revealInViewport() {

@@ -1,6 +1,6 @@
 /* ===== BRAND FONTS (real files drop in here) =========================
    The licensed brand fonts (Freight Display Pro for headings, Futura PT
-   for body/labels) are not yet available — only a PNG preview was shipped.
+   for body/labels) are not yet available, only a PNG preview was shipped.
    Until the .woff2 files (or Adobe Fonts embed) arrive we use close free
    stand-ins: Fraunces (≈ Freight Display) + Jost (≈ Futura PT).
 
@@ -8,7 +8,7 @@
      1. Drop the font files in assets/fonts/ and uncomment the @font-face
         blocks below (or paste the Adobe Fonts <link> into each page head).
      2. Point --font-head / --font-body at the real families.
-   Nothing else in the stylesheet needs to change — everything reads from
+   Nothing else in the stylesheet needs to change, everything reads from
    the two variables. */
 /*
 @font-face {
@@ -30,23 +30,23 @@
      the primary (Tyrian); --gold drives the Antique Gold accent. */
   --ink: #2b141c;          /* warm near-black, plum undertone (text) */
   --muted: #7a6a66;        /* muted clay-grey */
-  --cream: #f3ece1;        /* Linen — light off-white */
+  --cream: #f3ece1;        /* Linen, light off-white */
   --paper: #fbf6ef;        /* lighter Linen surface */
   --blush: #ead9c8;        /* soft Parchment Clay tint */
   --rose: #8b3d24;         /* Kiln Sienna (accent) */
-  --wine: #601938;         /* PRIMARY — Tyrian */
+  --wine: #601938;         /* PRIMARY, Tyrian */
   --wine-2: #7d2749;       /* lighter Tyrian */
-  --plum: #3a0f20;         /* Anchor — Dark Plum */
-  --gold: #b8882a;         /* Secondary — Antique Gold */
+  --plum: #3a0f20;         /* Anchor, Dark Plum */
+  --gold: #b8882a;         /* Secondary, Antique Gold */
   --gold-deep: #8b3d24;    /* Kiln Sienna (deep accent) */
-  --accent: #c8a87c;       /* Neutral — Parchment Clay */
+  --accent: #c8a87c;       /* Neutral, Parchment Clay */
   --line: rgba(96, 25, 56, 0.14);
   --shadow: 0 24px 80px rgba(58, 15, 32, 0.16);
   --shadow-strong: 0 30px 100px rgba(58, 15, 32, 0.26);
   --glow: 0 0 60px rgba(96, 25, 56, 0.26);
   --radius: 1.8rem;
 
-  /* Typography — swap these two lines when the real font files arrive. */
+  /* Typography, swap these two lines when the real font files arrive. */
   --font-head: var(--font-head), Georgia, "Times New Roman", serif;
   --font-body: "Jost", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -820,7 +820,16 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
   .tier-grid { grid-template-columns: 1fr; }
   .resource-controls { flex-direction: column; align-items: stretch; }
   .resource-search input { width: 100%; }
-  .timeline-card { flex-direction: column; align-items: flex-start; }
+  /* Stack the card contents and pin each child to the card width so the
+     text wraps. The base card is a wrapping flex row; on a narrow column
+     layout that let the children size to their max-content width, so the
+     text overflowed the card and got clipped on the right. nowrap + an
+     explicit full width forces them back inside the card. */
+  .timeline-card { flex-direction: column; align-items: stretch; flex-wrap: nowrap; }
+  .timeline-card > * { min-width: 0; width: 100%; }
+  /* Let the action row (status pill + details link + Add to calendar)
+     wrap instead of running off the side of the narrow card. */
+  .tl-action { flex-wrap: wrap; row-gap: 0.8rem; }
   .site-footer { text-align: center; }
   .footer-content { grid-template-columns: 1fr; gap: 2rem; }
   .footer-brand { text-align: center; }
@@ -834,7 +843,7 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
   .hero-trust { gap: 1.4rem; }
 
   /* Keep the "Clarity · Confidence · Community" tagline on one line
-     instead of wrapping under the wordmark — but let the whole brand
+     instead of wrapping under the wordmark, but let the whole brand
      block actually shrink to fit next to the Menu button (min-width:0
      overrides the flex default that was blocking it), and truncate
      with an ellipsis as a safety net on the very narrowest phones
@@ -887,7 +896,7 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
 }
 .floating-give:hover { color: var(--plum); filter: brightness(1.05); transform: translateY(-2px); }
 /* Show on narrow screens (where the nav Partner button collapses into the menu),
-   but never on the partnership page — its own donate box is already on screen. */
+   but never on the partnership page, its own donate box is already on screen. */
 @media (max-width: 900px) {
   body:not([data-page="partnership"]) .floating-give { display: inline-flex; }
 }
@@ -1262,7 +1271,7 @@ h1 {
     max-height: 0; overflow: hidden; padding: 0; transition: max-height 0.25s ease;
   }
   /* Same specificity as the desktop .open rule that sets
-     transform: translateX(-50%) — without restating transform here too,
+     transform: translateX(-50%), without restating transform here too,
      that desktop rule wins the tie (later in source, equal specificity)
      and the submenu items render shifted off-screen to the left. */
   .nav-dropdown.open .nav-dropdown-menu { max-height: 300px; padding: 0.3rem 0 0.3rem 1rem; transform: none; }
@@ -1380,7 +1389,7 @@ h1 {
 }
 .partner-photo { margin: 0 0 1.8rem; border-radius: var(--radius); overflow: hidden; position: relative; box-shadow: var(--shadow); }
 .partner-photo img { width: 100%; height: clamp(240px, 34vw, 340px); object-fit: cover; object-position: 50% 28%; display: block; }
-/* community.html's photo source is a modest 768px wide — capping the
+/* community.html's photo source is a modest 768px wide, capping the
    display width keeps it closer to native resolution instead of being
    stretched (and softened) across the full section width on desktop. */
 body[data-page="community"] .partner-photo { max-width: 700px; margin-left: auto; margin-right: auto; }
@@ -1465,7 +1474,7 @@ body[data-page="community"] .partner-photo { max-width: 700px; margin-left: auto
 }
 .donate-once-note strong { font-family: var(--font-head), serif; font-size: 1.2rem; }
 /* .donate-amounts/.donate-custom set their own `display`, which otherwise
-   beats the UA [hidden] rule — restate it here so toggling `hidden` from
+   beats the UA [hidden] rule, restate it here so toggling `hidden` from
    JS (Give once vs Monthly) actually hides them. */
 .donate-amounts[hidden], .donate-custom[hidden] { display: none; }
 
@@ -1474,7 +1483,7 @@ body[data-page="community"] .partner-photo { max-width: 700px; margin-left: auto
   .partner-give .eyebrow { justify-content: center; order: 1; }
   .partner-give h1 { text-align: center; order: 2; }
   /* Reorder for mobile only: heading, photo, payment widget, then the
-     "because of you" impact stories — giving is one tap away right after
+     "because of you" impact stories, giving is one tap away right after
      the photo, instead of buried under the full narrative. Desktop keeps
      the default two-column order (untouched, no order set there). */
   .partner-narrative { display: contents; }
