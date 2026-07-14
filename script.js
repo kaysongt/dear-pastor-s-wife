@@ -104,10 +104,6 @@ function buildChrome() {
             <span class="brand-wordmark"><span class="bw-main">dear pastor's wife</span><span class="bw-sub">Clarity · Confidence · Community</span></span>
           </a>
           <p class="footer-tagline">A global resource hub and community for women in ministry. Clarity, confidence, and real support.</p>
-          <div class="footer-social" aria-label="Social media">
-            ${socialLink(SOCIAL.instagram, "Instagram", IG_SVG)}
-            ${socialLink(SOCIAL.youtube, "YouTube", YT_SVG)}
-          </div>
         </div>
         <div class="footer-links">
           <div>
@@ -125,17 +121,15 @@ function buildChrome() {
             <a href="community.html">Community</a>
             <a href="booking.html">Invite May to speak</a>
           </div>
-          <div>
-            <strong>Connect</strong>
-            <a href="${SOCIAL.youtube}" target="_blank" rel="noopener">YouTube</a>
-            <a href="${SOCIAL.instagram}" target="_blank" rel="noopener">Instagram</a>
-            <a href="https://www.amazon.com/Dear-Pastors-Wife-May-Ijisesan-ebook/dp/B09TQ2G8PJ" target="_blank" rel="noopener">Amazon</a>
-            <a href="mailto:connect@dearpastorswife.org">Email</a>
-          </div>
         </div>
       </div>
       <div class="footer-bottom">
+        <div class="footer-social" aria-label="Social media">
+          ${socialLink(SOCIAL.instagram, "Instagram", IG_SVG)}
+          ${socialLink(SOCIAL.youtube, "YouTube", YT_SVG)}
+        </div>
         <p>© 2026 Dear Pastor's Wife by May Ijisesan. All rights reserved.</p>
+        <p class="footer-credit">Made by <a href="https://www.cozydigital.org" target="_blank" rel="noopener">Cozy Digital</a></p>
       </div>
     </footer>`;
 
@@ -390,6 +384,15 @@ const COMMUNITY_THREADS = [
 /* ---------- HELPERS ---------- */
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+// Declared this early (not down by REVEAL ON SCROLL, where it's used) because
+// observeReveals() can be called during initial script execution — e.g. by
+// events.html's ?filter= handling — well before that point in the file. A
+// later `const reduceMotion` would leave it in the temporal dead zone for
+// that early call, throwing a ReferenceError that aborts the rest of the
+// script's top-level execution (every init after the throw silently never
+// runs: mobile menu button, dropdown toggle, community/tier rendering...).
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let revealListenerAttached = false; // set true once observeReveals() attaches its scroll/resize listeners
 const TYPE_LABEL = { book: "Book", download: "Downloadable", video: "Video", article: "Article" };
 const escapeHtml = (str) => String(str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
@@ -1238,9 +1241,9 @@ document.addEventListener("click", (e) => {
 /* ---------- REVEAL ON SCROLL ----------
    Scroll-based (not IntersectionObserver) so fast scrolling can never
    leave content stranded at opacity 0. A safety timer reveals everything
-   unconditionally as a final guarantee. */
-const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-let revealListenerAttached = false;
+   unconditionally as a final guarantee. (reduceMotion and
+   revealListenerAttached are declared near the top of the file — see the
+   comment there for why.) */
 
 function revealInViewport() {
   const trigger = window.innerHeight * 0.94;

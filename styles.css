@@ -739,13 +739,17 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
 .footer-content { display: grid; grid-template-columns: 1.2fr 1.4fr; gap: 4rem; margin-bottom: 3rem; max-width: 1180px; margin-left: auto; margin-right: auto; }
 .footer-brand img { width: 110px; margin-bottom: 1.2rem; }
 .footer-tagline { color: var(--muted); font-size: 0.95rem; line-height: 1.6; max-width: 400px; }
-.footer-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+.footer-links { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.5rem; max-width: 420px; }
 .footer-links div { display: flex; flex-direction: column; gap: 0.8rem; }
 .footer-links strong { color: var(--wine); font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem; }
 .footer-links a { color: var(--muted); font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease; display: inline-block; }
 .footer-links a:hover { color: var(--wine); transform: translateX(5px); }
 .footer-bottom { text-align: center; padding-top: 2rem; border-top: 1px solid var(--line); max-width: 1180px; margin: 0 auto; }
 .footer-bottom p { color: var(--muted); font-size: 0.88rem; font-weight: 600; }
+.footer-bottom .footer-social { justify-content: center; margin: 0 0 1.2rem; }
+.footer-bottom p.footer-credit { margin-top: 0.4rem; font-size: 0.82rem; font-weight: 500; }
+.footer-bottom p.footer-credit a { color: var(--wine); font-weight: 700; }
+.footer-bottom p.footer-credit a:hover { text-decoration: underline; }
 
 /* ===================== Responsive ===================== */
 @media (max-width: 1024px) {
@@ -812,10 +816,24 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
   .hero-trust { gap: 1.4rem; }
 
   /* Keep the "Clarity · Confidence · Community" tagline on one line
-     instead of wrapping under the wordmark. */
-  .brand-vessel { width: 30px; height: 30px; }
-  .brand .brand-wordmark .bw-main { font-size: 1.02rem; }
-  .brand .brand-wordmark .bw-sub { font-size: 0.46rem; letter-spacing: 0.09em; white-space: nowrap; }
+     instead of wrapping under the wordmark — but let the whole brand
+     block actually shrink to fit next to the Menu button (min-width:0
+     overrides the flex default that was blocking it), and truncate
+     with an ellipsis as a safety net on the very narrowest phones
+     instead of overflowing the header and clipping the Menu button.
+     !important throughout: the base .bw-main/.bw-sub rules live later
+     in the file (in the brand-refresh section) at equal specificity,
+     so on a specificity tie they'd otherwise win via source order
+     regardless of this media query actually matching. */
+  .brand-vessel { width: 32px !important; height: 32px !important; }
+  .brand { min-width: 0; flex-shrink: 1; }
+  .brand .brand-wordmark { min-width: 0; }
+  .brand .brand-wordmark .bw-main { font-size: 1rem !important; }
+  .brand .brand-wordmark .bw-sub {
+    font-size: 0.4rem !important; letter-spacing: 0.02em !important; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+  }
+  .menu-toggle { flex-shrink: 0; }
 }
 
 /* ===================== Mobile: picture on top of hero ===================== */
@@ -1239,7 +1257,7 @@ h1 {
 
 /* ----- Vessel logo mark + wordmark ----- */
 .brand { display: inline-flex; align-items: center; gap: 0.6rem; }
-.brand-vessel { width: 38px; height: 38px; color: var(--wine); flex: none; }
+.brand-vessel { width: 44px; height: 44px; color: var(--wine); flex: none; }
 .brand .brand-wordmark {
   display: inline-flex !important; flex-direction: column; line-height: 1;
 }
