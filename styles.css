@@ -1387,7 +1387,7 @@ h1 {
   display: flex; align-items: flex-start; gap: 0.55rem; margin: 0.2rem 0 0.9rem;
   font-size: 0.82rem; color: var(--muted); font-weight: 600; line-height: 1.45; cursor: pointer;
 }
-.donate-fee input { margin-top: 0.15rem; accent-color: var(--wine); flex-shrink: 0; }
+.donate-fee input { width: 1.1rem; height: 1.1rem; margin-top: 0.15rem; accent-color: var(--wine); flex-shrink: 0; }
 .donate-fee strong { color: var(--gold-deep); }
 .donate-total { margin: 0 0 0.8rem; font-weight: 800; color: var(--wine); font-size: 0.9rem; }
 .donate-total[hidden] { display: none; }
