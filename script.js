@@ -129,7 +129,7 @@ function buildChrome() {
           ${socialLink(SOCIAL.youtube, "YouTube", YT_SVG)}
         </div>
         <p>© 2026 Dear Pastor's Wife by May Ijisesan. All rights reserved.</p>
-        <p class="footer-credit">Made by <a href="https://www.cozydigital.org" target="_blank" rel="noopener"><span class="cozy-logo" aria-hidden="true"></span>Cozy Digital</a></p>
+        <p class="footer-credit">Made by <a href="https://www.cozydigital.org" target="_blank" rel="noopener">Cozy Digital<span class="cozy-logo" aria-hidden="true"></span></a></p>
       </div>
     </footer>`;
 
@@ -177,15 +177,15 @@ const CONFIG = {
     // client has confirmed go-live. While false, all give/donate buttons stay
     // in the friendly "checkout opens once Stripe is connected" demo state and
     // charge nobody. Flip to true to arm real payments.
-    // TODO: still needed — matching links for the widget's $75/$500 monthly
-    // buttons (they currently snap down to $50/$250).
     live: true,
     oneTimeUrl: "https://buy.stripe.com/9B6eVd4HK0F3awy7qB6Vq07",
     monthly: {
       25:  "https://buy.stripe.com/dRmbJ15LO2Nb3463al6Vq08",
       50:  "https://buy.stripe.com/aFaaEX8Y0bjHbAC9yJ6Vq09",
+      75:  "https://buy.stripe.com/cNi9AT4HKdrPdIK12d6Vq0d",
       100: "https://buy.stripe.com/14AfZh2zC0F3awyeT36Vq0a",
       250: "https://buy.stripe.com/7sY28ra24gE18oq9yJ6Vq0b",
+      500: "https://buy.stripe.com/dRmbJ1a24cnL0VY5it6Vq0c",
     },
     // Standard card processing fee (2.9% + $0.30) used to show donors the
     // "cover the fees" total. NOTE: fixed Stripe Payment Links can't take an
@@ -347,7 +347,8 @@ function updateAnnounceBar() {
   if (!next) { bar.classList.add("hidden"); return; }
   inner.innerHTML = `
     <span class="announce-tag">Next up</span>
-    <p><strong>${escapeHtml(next.title)}</strong>, ${escapeHtml(next.date)}${next.location ? " · " + escapeHtml(next.location) : ""}. Save the date.</p>
+    <p><strong>${escapeHtml(next.title)}</strong>, ${escapeHtml(next.date)}${next.location ? " · " + escapeHtml(next.location) : ""}.</p>
+    <span class="announce-note">Save the date.</span>
     <a href="${eventUrl(next)}">See details →</a>`;
 }
 

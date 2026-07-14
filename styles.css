@@ -97,6 +97,7 @@ img { display: block; max-width: 100%; }
   padding: 0.2rem 0.6rem; border-radius: 999px;
 }
 .announce-inner p { margin: 0; color: rgba(255,255,255,0.9); }
+.announce-inner .announce-note { color: rgba(255,255,255,0.9); }
 .announce-inner strong { color: #fff; }
 .announce-inner a { color: var(--gold); font-weight: 800; white-space: nowrap; }
 .announce-inner a:hover { color: #fff; }
@@ -751,7 +752,7 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
 .footer-bottom p.footer-credit a { color: var(--wine); font-weight: 700; display: inline-flex; align-items: center; }
 .footer-bottom p.footer-credit a:hover { text-decoration: underline; }
 .footer-bottom p.footer-credit .cozy-logo {
-  display: inline-block; width: 28px; height: 15px; margin-right: 0.35rem; vertical-align: middle;
+  display: inline-block; width: 28px; height: 15px; margin-left: 0.35rem; vertical-align: middle;
   background-color: var(--wine);
   -webkit-mask-image: url('assets/cozy-digital-logo.png'); mask-image: url('assets/cozy-digital-logo.png');
   -webkit-mask-size: contain; mask-size: contain;
@@ -796,15 +797,24 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
   .speaking-row { grid-template-columns: 1fr auto; }
   .speaking-row .sp-date { grid-column: 1 / -1; }
   .stats, .faq-grid, .reviews, .footer-links { grid-template-columns: 1fr 1fr; }
+  /* The floating "Give" button is fixed at bottom-right on mobile; add
+     footer clearance so it never overlaps the copyright / credit line. */
+  body:not([data-page="partnership"]) .footer-bottom { padding-bottom: 4.5rem; }
 }
 
 @media (max-width: 640px) {
   .announce-bar { padding: 0.6rem 2.2rem; font-size: 0.82rem; }
+  /* "Save the date." drops to its own line on mobile so the event
+     name/date/location isn't crammed together with the call to action.
+     Center it (and the event line) so it lines up with the rest of the
+     bar instead of sitting left-aligned and looking out of place. */
+  .announce-inner .announce-note { flex-basis: 100%; text-align: center; margin: 0.1rem 0; }
+  .announce-inner p { text-align: center; width: 100%; }
   .faq-grid, .reviews, .focus-grid, .resource-grid, .newsletter-inputs, .track-select { grid-template-columns: 1fr; }
-  /* Single column instead of 2: with 3 footer groups (Explore, Get
-     Involved, Connect), a 2-column grid strands the third one alone,
-     off-center, in an otherwise-empty row. */
-  .footer-links { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
+  /* Two groups (Explore, Get Involved) sit side by side rather than
+     stacking into one very tall vertical list. Left-align the links and
+     center the pair under the brand block. */
+  .footer-links { grid-template-columns: 1fr 1fr; gap: 1.5rem 2rem; text-align: left; justify-content: center; max-width: 360px; margin-left: auto; margin-right: auto; }
   .gallery { grid-template-columns: 1fr; height: auto; }
   .gallery img, .gallery img:nth-child(2) { height: 300px; margin: 0; }
   .tier-grid { grid-template-columns: 1fr; }
