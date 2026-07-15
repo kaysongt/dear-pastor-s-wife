@@ -858,7 +858,7 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
      in the file (in the brand-refresh section) at equal specificity,
      so on a specificity tie they'd otherwise win via source order
      regardless of this media query actually matching. */
-  .brand-vessel { width: 48px !important; height: 48px !important; }
+  .brand-vessel { width: 41px !important; height: 48px !important; }
   .brand { min-width: 0; flex-shrink: 1; }
   .brand .brand-wordmark { min-width: 0; }
   .brand .brand-wordmark .bw-main { font-size: 1.2rem !important; }
@@ -1103,7 +1103,7 @@ h1 {
   color: var(--wine); background: rgba(96, 25, 56, 0.08);
   margin-bottom: 1.4rem;
 }
-.coming-soon-mark .brand-vessel { width: 68px; height: 68px; }
+.coming-soon-mark .brand-vessel { width: 58px; height: 68px; }
 .coming-soon-tag {
   display: inline-block; background: var(--gold); color: var(--plum);
   font-weight: 900; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
@@ -1240,7 +1240,7 @@ h1 {
   position: relative; min-height: 210px; border-radius: var(--radius) var(--radius) 0 0; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
 }
-.featured-event-art .brand-vessel { width: 150px; height: 150px; opacity: 0.5; color: var(--cream); }
+.featured-event-art .brand-vessel { width: 129px; height: 150px; opacity: 0.92; color: var(--cream); }
 .featured-event-art.art-plum { background: linear-gradient(135deg, var(--plum), var(--wine) 55%, var(--wine-2)); }
 .featured-event-art.art-clay { background: linear-gradient(135deg, var(--gold-deep), var(--rose) 55%, var(--accent)); }
 .featured-flag {
@@ -1289,8 +1289,10 @@ h1 {
    ============================================================ */
 
 /* ----- Vessel logo mark + wordmark ----- */
-.brand { display: inline-flex; align-items: center; gap: 0.4rem; }
-.brand-vessel { width: 72px; height: 72px; color: var(--wine); flex: none; }
+.brand { display: inline-flex; align-items: center; gap: 0.25rem; }
+/* The vessel viewBox is cropped tight to the artwork (92:107), so sizes
+   are height-driven with a matching width to keep the mark undistorted. */
+.brand-vessel { width: 62px; height: 72px; color: var(--wine); flex: none; }
 .brand .brand-wordmark {
   display: inline-flex !important; flex-direction: column; line-height: 1;
 }
