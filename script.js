@@ -166,10 +166,10 @@ buildChrome();
        /test_ segment). Real cards are charged.
 
    CRM (systeme.io):
-     • In systeme.io, create a form and copy its POST/submission endpoint
-       (or use the systeme.io API via a serverless function) into
-       `crm.endpoint`. When set, form submissions are POSTed there.
-     • Leave it empty to keep forms in "demo" mode (logs + success msg).
+     • Wired to the "DPW Newletter Signup" funnel's opt-in page (see
+       `crm` below): every site form posts its first name + email there and
+       systeme.io creates the contact in the CRM (Contacts → Leads).
+     • Blank `crm.endpoint` returns forms to "demo" mode (logs + success msg).
 */
 const CONFIG = {
   payments: {
@@ -200,8 +200,19 @@ const CONFIG = {
     bankTransferUrl: "",
   },
   crm: {
-    // systeme.io form endpoint. Empty = demo mode (no network call).
-    endpoint: "",
+    // systeme.io opt-in capture (funnel: "DPW Newletter Signup"). The endpoint
+    // is the funnel's opt-in page itself; systeme.io creates/updates the CRM
+    // contact from the posted first name + email. Empty = demo mode.
+    //
+    // ⚠ GOES LIVE ONLY WHEN DNS EXISTS: newsletter.dearpastorswife.org needs a
+    // CNAME record pointing at systeme.io (systeme.io side is already
+    // provisioned and serving the TLS cert). Until that record is added,
+    // submissions can't reach systeme.io and forms show the "email us
+    // directly" fallback message.
+    endpoint: "https://newsletter.dearpastorswife.org/",
+    // The opt-in page's submit-button entity id, sent as entityId so the
+    // submission matches what the hosted page itself would send.
+    optinEntityId: "a2e4377a-139b-4e1a-b728-b12ec7121a6a",
   },
 };
 
@@ -761,19 +772,43 @@ function renderTiers() {
   observeReveals();
 }
 
-/* ---------- FORMS (integration-ready: systeme.io) ---------- */
+/* ---------- FORMS (wired to systeme.io) ---------- */
+// Every form funnels its contact into the systeme.io CRM via the opt-in
+// endpoint above. systeme.io's opt-in only stores contact fields, so first
+// name + email are what lands in the CRM; extra fields a form collects
+// (newsletter track, booking message, event slug, …) are logged locally for
+// now and will need the systeme.io API (server-side) to be stored per-contact.
 async function sendToCrm(formId, data) {
   if (!CONFIG.crm.endpoint) {
     // Demo mode: no CRM endpoint configured yet.
     console.log(`[${formId}] submission (demo, no CRM endpoint set)`, data);
     return true;
   }
+  const payload = {
+    optin: {
+      fields: {
+        first_name: { value: data.firstName || data.name || "" },
+        email: { value: data.email || "" },
+      },
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+      popupId: null,
+      isDesktop: !window.matchMedia("(max-width: 900px)").matches,
+      surveysResults: [],
+      entityId: CONFIG.crm.optinEntityId,
+      checkBoxIds: [],
+    },
+  };
   try {
+    // mode "no-cors": systeme.io sends no CORS headers, so the response is
+    // opaque, but the submission itself lands. The body stays text/plain so
+    // the browser doesn't require a preflight the endpoint won't answer.
     await fetch(CONFIG.crm.endpoint, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ form: formId, ...data }),
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify(payload),
     });
+    console.log(`[${formId}] contact sent to systeme.io CRM`, { form: formId, ...data });
     return true;
   } catch (err) {
     console.error(`[${formId}] CRM submission failed`, err);
@@ -835,9 +870,9 @@ document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeCalMe
 /* ---------- PARTNER SIGN-UP → STRIPE ----------
    Captures partner contact details (name, email, address, phone) and
    records them to the CRM (systeme.io) BEFORE handing the partner off to
-   Stripe for payment. Stripe Payment Links are set (see CONFIG); the CRM
-   endpoint is still pending, so contact capture runs in demo mode (logs
-   only) while the payment redirect is live. */
+   Stripe for payment. Stripe Payment Links are set and the CRM endpoint is
+   wired (see CONFIG.crm — live once the newsletter subdomain's DNS record
+   exists). */
 function initPartnerForm() {
   const form = $("#partnerForm");
   if (!form) return;
@@ -1127,7 +1162,6 @@ function renderCommunity() {
         <p class="community-thread-excerpt">${escapeHtml(t.excerpt)}</p>
         <div class="community-thread-foot">
           <span>♥ ${t.likes}</span>
-          <span>💬 ${t.replies} replies</span>
           <button type="button" class="community-thread-open" disabled>Open at launch →</button>
         </div>
       </article>`).join("") ||
@@ -1175,8 +1209,7 @@ initShare();
 /* ---------- COMMUNITY (Coming Soon) ----------
    The community forum is post-launch. The Community page is a styled
    "Coming Soon" card with an email signup that feeds the same
-   systeme.io pipeline as the other forms (demo mode until the CRM
-   endpoint is configured in CONFIG).*/
+   systeme.io pipeline as the other forms (see CONFIG.crm).*/
 handleForm("communityForm", "communityStatus", "You're on the list! We'll let you know the moment the community opens. 💛");
 /* ---------- HEADER / ANNOUNCE / NAV ---------- */
 const header = $("#siteHeader");

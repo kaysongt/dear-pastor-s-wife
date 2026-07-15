@@ -275,7 +275,7 @@ h3 { font-size: clamp(1.4rem, 2.2vw, 2.1rem); letter-spacing: -0.005em; }
   animation: float 6s ease-in-out infinite, fadeInUp 0.8s ease 0.5s both;
 }
 @keyframes float { 0%, 100% { transform: rotate(2deg) translateY(0px); } 50% { transform: rotate(2deg) translateY(-20px); } }
-.hero-card img { width: 100%; height: min(68vh, 640px); object-fit: cover; border-radius: 2rem; }
+.hero-card img { width: 100%; height: min(68vh, 640px); object-fit: cover; object-position: 50% 26%; border-radius: 2rem; }
 
 .floating-note {
   position: absolute; left: -1.5rem; bottom: 2.5rem;
@@ -294,7 +294,7 @@ h3 { font-size: clamp(1.4rem, 2.2vw, 2.1rem); letter-spacing: -0.005em; }
 .centered { text-align: center; max-width: 850px; margin-left: auto; margin-right: auto; }
 .centered .eyebrow::before { display: none; }
 .split { display: grid; grid-template-columns: 1.1fr 0.9fr; align-items: end; gap: 3rem; }
-.section-heading p { color: var(--muted); line-height: 1.8; font-size: 1.05rem; }
+.section-heading p { color: var(--muted); line-height: 1.75; font-size: clamp(1.18rem, 1.05rem + 0.45vw, 1.35rem); text-wrap: pretty; }
 
 /* ===================== Dual track ===================== */
 .tracks { padding: 5rem 0; border-top: 1px solid var(--line); }
@@ -858,12 +858,12 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
      in the file (in the brand-refresh section) at equal specificity,
      so on a specificity tie they'd otherwise win via source order
      regardless of this media query actually matching. */
-  .brand-vessel { width: 36px !important; height: 36px !important; }
+  .brand-vessel { width: 48px !important; height: 48px !important; }
   .brand { min-width: 0; flex-shrink: 1; }
   .brand .brand-wordmark { min-width: 0; }
-  .brand .brand-wordmark .bw-main { font-size: 1rem !important; }
+  .brand .brand-wordmark .bw-main { font-size: 1.2rem !important; }
   .brand .brand-wordmark .bw-sub {
-    font-size: 0.4rem !important; letter-spacing: 0.02em !important; white-space: nowrap;
+    font-size: 0.5rem !important; letter-spacing: 0.02em !important; white-space: nowrap;
     overflow: hidden; text-overflow: ellipsis; max-width: 100%;
   }
   .menu-toggle { flex-shrink: 0; }
@@ -1103,7 +1103,7 @@ h1 {
   color: var(--wine); background: rgba(96, 25, 56, 0.08);
   margin-bottom: 1.4rem;
 }
-.coming-soon-mark .brand-vessel { width: 52px; height: 52px; }
+.coming-soon-mark .brand-vessel { width: 68px; height: 68px; }
 .coming-soon-tag {
   display: inline-block; background: var(--gold); color: var(--plum);
   font-weight: 900; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
@@ -1240,7 +1240,7 @@ h1 {
   position: relative; min-height: 210px; border-radius: var(--radius) var(--radius) 0 0; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
 }
-.featured-event-art .brand-vessel { width: 84px; height: 84px; opacity: 0.35; color: var(--cream); }
+.featured-event-art .brand-vessel { width: 150px; height: 150px; opacity: 0.5; color: var(--cream); }
 .featured-event-art.art-plum { background: linear-gradient(135deg, var(--plum), var(--wine) 55%, var(--wine-2)); }
 .featured-event-art.art-clay { background: linear-gradient(135deg, var(--gold-deep), var(--rose) 55%, var(--accent)); }
 .featured-flag {
@@ -1290,17 +1290,17 @@ h1 {
 
 /* ----- Vessel logo mark + wordmark ----- */
 .brand { display: inline-flex; align-items: center; gap: 0.4rem; }
-.brand-vessel { width: 52px; height: 52px; color: var(--wine); flex: none; }
+.brand-vessel { width: 72px; height: 72px; color: var(--wine); flex: none; }
 .brand .brand-wordmark {
   display: inline-flex !important; flex-direction: column; line-height: 1;
 }
 .brand .brand-wordmark .bw-main {
   font-family: var(--font-head), Georgia, serif; font-weight: 800;
-  font-size: 1.18rem; color: var(--wine); letter-spacing: 0.01em;
+  font-size: 1.5rem; color: var(--wine); letter-spacing: 0.01em;
 }
 .brand .brand-wordmark .bw-sub {
-  font-size: 0.58rem; letter-spacing: 0.34em; text-transform: uppercase;
-  color: var(--gold-deep); font-weight: 700; margin-top: 0.18rem;
+  font-size: 0.72rem; letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--gold-deep); font-weight: 700; margin-top: 0.22rem;
 }
 
 /* ----- Active nav link ----- */
@@ -1329,7 +1329,7 @@ h1 {
   background: none; color: var(--wine); -webkit-text-fill-color: var(--wine);
   animation: fadeInUp 0.8s ease 0.2s both;
 }
-.page-hero p { max-width: 620px; margin: 0 auto; color: var(--muted); font-size: 1.08rem; }
+.page-hero p { max-width: 620px; margin: 0 auto; color: var(--muted); font-size: clamp(1.18rem, 1.05rem + 0.45vw, 1.3rem); line-height: 1.75; text-wrap: pretty; }
 .page-section { padding: 2rem 0 4rem; }
 
 /* ----- Long-form article pages ----- */
