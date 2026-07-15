@@ -194,10 +194,11 @@ const CONFIG = {
     // Checkout Session created server-side. Hook is here; wiring is server-side.
     feePercent: 0.029,
     feeFixed: 0.30,
-    // Bank transfer (ACH). Card links are live; ACH via Plaid/bank-linking
-    // needs a server-side Checkout Session or a Plaid integration. When that
-    // endpoint exists, set it here and the "Bank transfer" option goes live.
-    bankTransferUrl: "",
+    // Bank transfer (ACH): ACH Direct Debit is enabled account-wide in Stripe
+    // (Settings → Payment methods), so it rides on the SAME Payment Links as
+    // card — no separate URL needed. The "Bank transfer" toggle below just
+    // sets donor expectations before they land on Stripe's checkout, where
+    // ACH shows automatically alongside card/wallets.
   },
   crm: {
     // systeme.io opt-in capture (funnel: "DPW Newletter Signup"). The endpoint
@@ -677,19 +678,16 @@ function initDonateWidget() {
         : "";
     }
 
-    goBtn.textContent = isOnce ? `Give $${ONE_TIME_FIXED_AMOUNT}` : "Donate monthly";
-
-    // Payment method: card/wallet links are live; bank transfer (ACH) needs a
-    // server-side Checkout Session / Plaid link, so it stays in demo until
-    // CONFIG.payments.bankTransferUrl is set.
-    if (method === "bank") {
-      goBtn.textContent = "Continue with bank transfer";
-      goBtn.href = CONFIG.payments.bankTransferUrl || "#";
-    } else {
-      goBtn.href = paymentsConfigured()
-        ? (isOnce ? oneTimeLink() : monthlyLink(amount))
-        : "#";
-    }
+    // Payment method: "card" and "bank" both route through the SAME Payment
+    // Link — ACH Direct Debit is enabled account-wide in Stripe, so it shows
+    // automatically on Stripe's checkout page alongside card. This toggle
+    // only changes the button copy to set the right expectation beforehand.
+    goBtn.textContent = method === "bank"
+      ? "Continue to bank transfer"
+      : (isOnce ? `Give $${ONE_TIME_FIXED_AMOUNT}` : "Donate monthly");
+    goBtn.href = paymentsConfigured()
+      ? (isOnce ? oneTimeLink() : monthlyLink(amount))
+      : "#";
     if (status) status.textContent = "";
   };
 
@@ -738,13 +736,7 @@ function initDonateWidget() {
 
   // Demo mode: don't navigate to a "#" placeholder, explain instead.
   goBtn.addEventListener("click", (e) => {
-    if (method === "bank" && !CONFIG.payments.bankTransferUrl) {
-      e.preventDefault();
-      if (status) status.textContent = "Bank transfer (ACH) opens here once bank linking is connected. You can give by card now, or check back soon.";
-      return;
-    }
-    if (method === "card" && paymentsConfigured()) return;
-    if (method === "bank") return; // configured bank URL: allow navigation
+    if (paymentsConfigured()) return;
     e.preventDefault();
     if (status) status.textContent = "Secure checkout opens here once Stripe is connected. Thank you for your heart to give!";
   });
