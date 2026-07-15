@@ -11,6 +11,9 @@
 
     gtag('config', 'G-41DSKG7815');
   </script>
+
+  <!-- Stripe Buy Button (embedded one-time gift widget) -->
+  <script async src="https://js.stripe.com/v3/buy-button.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Dear Pastor's Wife is a global resource hub and sisterhood founded by May Ijisesan. Free resources, retreats, conferences, and community for women in ministry leadership. Partner with the mission." />
@@ -230,8 +233,11 @@
       <div class="give-layout">
         <div class="give-card give-onetime">
           <h3>Give a one-time gift</h3>
-          <p class="give-sub">A gift of any size makes room for another woman to be poured into, you'll choose the amount securely on the next screen. Want to give monthly instead? <a href="partnership.html">See partnership options →</a></p>
-          <a class="button gold give-btn" id="giveOnceBtn" href="#">Give securely →</a>
+          <p class="give-sub">A gift of any size makes room for another woman to be poured into. Want to give monthly instead? <a href="partnership.html">See partnership options →</a></p>
+          <stripe-buy-button
+            buy-button-id="buy_btn_1TtaswFlOkA0eubSw9cqNtsl"
+            publishable-key="pk_live_51JHhvaFlOkA0eubSqNNsAxYMXTo0gZxV04HbPk1BYm8a1fWHmeuOVcQezCG1MFrrUHGJvCEZj0XZmMJ04H0l0p5V00qcwN7Rfn"
+          ></stripe-buy-button>
           <p class="give-methods"><span>Pay by</span> card, Apple Pay, Google Pay, or bank transfer (ACH)</p>
         </div>
         <div class="give-card partner-about">

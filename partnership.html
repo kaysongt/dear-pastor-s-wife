@@ -11,6 +11,9 @@
 
     gtag('config', 'G-41DSKG7815');
   </script>
+
+  <!-- Stripe Buy Button (embedded one-time gift widget) -->
+  <script async src="https://js.stripe.com/v3/buy-button.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Partner with Dear Pastor's Wife. Your giving keeps resources free for women in ministry the world over. Give once or partner month to month." />
@@ -94,7 +97,13 @@
           <input type="number" id="donateCustom" min="1" step="1" placeholder="Other amount" inputmode="numeric" />
           <span class="donate-cur">USD</span>
         </label>
-        <p class="donate-once-note" id="donateOnceNote" hidden>Give any amount, you'll choose it securely on the next screen.</p>
+        <p class="donate-once-note" id="donateOnceNote" hidden>Give any amount, choose it securely below.</p>
+        <div class="donate-once-embed" id="donateOnceEmbed" hidden>
+          <stripe-buy-button
+            buy-button-id="buy_btn_1TtaswFlOkA0eubSw9cqNtsl"
+            publishable-key="pk_live_51JHhvaFlOkA0eubSqNNsAxYMXTo0gZxV04HbPk1BYm8a1fWHmeuOVcQezCG1MFrrUHGJvCEZj0XZmMJ04H0l0p5V00qcwN7Rfn"
+          ></stripe-buy-button>
+        </div>
         <label class="donate-fee">
           <input type="checkbox" id="donateFee" />
           <span>Add <strong id="donateFeeAmt">the processing fee</strong> so 100% of my gift reaches the ministry.</span>
@@ -102,7 +111,7 @@
         <p class="donate-total" id="donateTotal" hidden></p>
         <a class="button primary donate-go" id="donateGo" href="#">Donate monthly</a>
         <p class="form-status" id="donateStatus" role="status" aria-live="polite"></p>
-        <div class="donate-methods" role="group" aria-label="Payment method">
+        <div class="donate-methods" id="donateMethods" role="group" aria-label="Payment method">
           <button type="button" class="donate-method is-active" data-method="card">💳 Card &amp; wallets</button>
           <button type="button" class="donate-method" data-method="bank" id="donateBankBtn">🏦 Bank transfer (ACH)</button>
         </div>

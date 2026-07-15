@@ -583,8 +583,6 @@ $$(".event-filters .filter-chip").forEach(chip => {
 })();
 
 /* ---------- GIVING ---------- */
-const giveBtn = $("#giveOnceBtn");
-
 // True only when payments are armed (CONFIG.payments.live) AND a real
 // one-time Stripe link is set. Until then, buttons stay in demo mode.
 function paymentsConfigured() {
@@ -613,26 +611,6 @@ function monthlyLink(amount, email) {
   return withEmail(CONFIG.payments.monthly[nearest], email);
 }
 
-function updateGiveBtn() {
-  if (!giveBtn) return;
-  giveBtn.href = paymentsConfigured() ? oneTimeLink() : "#";
-}
-
-giveBtn?.addEventListener("click", (e) => {
-  if (paymentsConfigured()) return;
-  e.preventDefault();
-  let note = $("#giveDemoNote");
-  if (!note) {
-    note = document.createElement("p");
-    note.id = "giveDemoNote";
-    note.className = "form-status";
-    note.setAttribute("role", "status");
-    giveBtn.insertAdjacentElement("afterend", note);
-  }
-  note.textContent = "Secure checkout opens here once Stripe is connected. Thank you for your heart to give!";
-});
-updateGiveBtn();
-
 /* ---------- DONATION WIDGET (partnership.html) ----------
    Terri-style box: Give once / Monthly toggle + amount presets + custom.
    "Monthly" routes to the fixed monthly link nearest the amount (see
@@ -650,7 +628,9 @@ function initDonateWidget() {
   const customLabel = $(".donate-custom", box);
   const customInput = $("#donateCustom", box);
   const onceNote = $("#donateOnceNote", box);
+  const onceEmbed = $("#donateOnceEmbed", box);
   const goBtn = $("#donateGo", box);
+  const methodsWrap = $("#donateMethods", box);
   const status = $("#donateStatus", box);
   const feeCheck = $("#donateFee", box);
   const feeLabel = feeCheck ? feeCheck.closest(".donate-fee") : null;
@@ -676,6 +656,12 @@ function initDonateWidget() {
     amountsWrap.hidden = isOnce;
     if (customLabel) customLabel.hidden = isOnce;
     if (onceNote) onceNote.hidden = !isOnce;
+    // One-time gifts render as the embedded Stripe Buy Button (handles its
+    // own amount entry + payment method choice, ACH included), so the
+    // custom Donate button and card/bank toggle only apply to monthly.
+    if (onceEmbed) onceEmbed.hidden = !isOnce;
+    goBtn.hidden = isOnce;
+    if (methodsWrap) methodsWrap.hidden = isOnce;
     // Fee-coverage estimate needs a known amount; one-time gifts are entered
     // on Stripe's own page, so there's nothing accurate to show here.
     if (feeLabel) feeLabel.hidden = isOnce;
@@ -691,18 +677,14 @@ function initDonateWidget() {
           ? `With fees covered, your monthly gift is $${(amount + fee).toFixed(2)}.`
           : "";
       }
-    }
 
-    // Payment method: "card" and "bank" both route through the SAME Payment
-    // Link — ACH Direct Debit is enabled account-wide in Stripe, so it shows
-    // automatically on Stripe's checkout page alongside card. This toggle
-    // only changes the button copy to set the right expectation beforehand.
-    goBtn.textContent = method === "bank"
-      ? "Continue to bank transfer"
-      : (isOnce ? "Give securely" : "Donate monthly");
-    goBtn.href = paymentsConfigured()
-      ? (isOnce ? oneTimeLink() : monthlyLink(amount))
-      : "#";
+      // Payment method: "card" and "bank" both route through the SAME
+      // Payment Link — ACH Direct Debit is enabled account-wide in Stripe,
+      // so it shows automatically on Stripe's checkout page alongside
+      // card. This toggle only changes the button copy beforehand.
+      goBtn.textContent = method === "bank" ? "Continue to bank transfer" : "Donate monthly";
+      goBtn.href = paymentsConfigured() ? monthlyLink(amount) : "#";
+    }
     if (status) status.textContent = "";
   };
 

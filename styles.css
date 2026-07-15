@@ -1455,6 +1455,9 @@ body[data-page="partnership"] .partner-photo img { height: clamp(340px, 46vw, 48
 .donate-custom input:focus { outline: none; box-shadow: none; }
 .donate-cur { color: var(--muted); font-weight: 800; font-size: 0.85rem; }
 .donate-go { width: 100%; }
+.donate-go[hidden] { display: none; }
+.donate-once-embed { margin-bottom: 1rem; display: flex; justify-content: center; }
+.donate-once-embed[hidden] { display: none; }
 .donate-box .form-status { margin-top: 0.7rem; color: var(--gold-deep); }
 .donate-note { margin-top: 1rem; color: var(--muted); font-size: 0.8rem; line-height: 1.5; display: flex; gap: 0.4rem; }
 .donate-note .lock { color: var(--gold-deep); flex-shrink: 0; }
@@ -1472,6 +1475,7 @@ body[data-page="partnership"] .partner-photo img { height: clamp(340px, 46vw, 48
 
 /* Payment method switch (card vs bank transfer) */
 .donate-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.9rem; }
+.donate-methods[hidden] { display: none; }
 .donate-method {
   border: 1.5px solid var(--line); background: #fff; color: var(--muted);
   font: inherit; font-weight: 700; font-size: 0.82rem; padding: 0.6rem 0.4rem;
