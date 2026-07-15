@@ -1401,6 +1401,9 @@ h1 {
    display width keeps it closer to native resolution instead of being
    stretched (and softened) across the full section width on desktop. */
 body[data-page="community"] .partner-photo { max-width: 700px; margin-left: auto; margin-right: auto; }
+/* Partnership photo is a tall portrait, so give it more height and anchor
+   the crop near the top so May's head is never clipped. */
+body[data-page="partnership"] .partner-photo img { height: clamp(340px, 46vw, 480px); object-position: 50% 12%; }
 .partner-photo figcaption {
   position: absolute; left: 0; right: 0; bottom: 0;
   padding: 2.4rem 1.4rem 1.1rem;
