@@ -1440,7 +1440,7 @@ body[data-page="partnership"] .partner-photo img { height: clamp(340px, 46vw, 48
 }
 .donate-freq-btn:hover { border-color: var(--wine-2); color: var(--wine); }
 .donate-freq-btn.is-active { border-color: var(--wine); background: var(--wine); color: #fff; }
-.donate-amounts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 0.7rem; }
+.donate-amounts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-bottom: 0.7rem; }
 .donate-amt {
   border: 1.5px solid var(--line); background: #fff; color: var(--wine);
   font: inherit; font-weight: 800; font-size: 1rem; padding: 0.8rem 0.4rem;
@@ -1448,12 +1448,6 @@ body[data-page="partnership"] .partner-photo img { height: clamp(340px, 46vw, 48
 }
 .donate-amt:hover { border-color: var(--wine-2); }
 .donate-amt.is-active { border-color: var(--wine); background: rgba(96, 25, 56, 0.08); box-shadow: 0 0 0 1px var(--wine) inset; }
-.donate-custom { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; border: 1.5px solid var(--line); border-radius: 0.9rem; padding: 0 1rem; background: #fff; }
-.donate-custom:focus-within { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(184, 136, 42, 0.18); }
-.donate-custom input { border: 0; background: transparent; padding: 0.85rem 0; color: var(--ink); width: 100%; }
-.donate-custom input::placeholder { color: var(--muted); }
-.donate-custom input:focus { outline: none; box-shadow: none; }
-.donate-cur { color: var(--muted); font-weight: 800; font-size: 0.85rem; }
 .donate-go { width: 100%; }
 .donate-go[hidden] { display: none; }
 .donate-once-embed { margin-bottom: 1rem; display: flex; justify-content: center; }
@@ -1489,10 +1483,10 @@ body[data-page="partnership"] .partner-photo img { height: clamp(340px, 46vw, 48
   background: rgba(96, 25, 56, 0.06); border: 1.5px solid var(--line);
 }
 .donate-once-note strong { font-family: var(--font-head), serif; font-size: 1.2rem; }
-/* .donate-amounts/.donate-custom set their own `display`, which otherwise
-   beats the UA [hidden] rule, restate it here so toggling `hidden` from
-   JS (Give once vs Monthly) actually hides them. */
-.donate-amounts[hidden], .donate-custom[hidden] { display: none; }
+/* .donate-amounts sets its own `display`, which otherwise beats the UA
+   [hidden] rule, restate it here so toggling `hidden` from JS (Give once
+   vs Monthly) actually hides it. */
+.donate-amounts[hidden] { display: none; }
 
 @media (max-width: 900px) {
   .partner-give { grid-template-columns: 1fr; }

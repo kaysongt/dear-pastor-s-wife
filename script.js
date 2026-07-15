@@ -612,21 +612,21 @@ function monthlyLink(amount, email) {
 }
 
 /* ---------- DONATION WIDGET (partnership.html) ----------
-   Terri-style box: Give once / Monthly toggle + amount presets + custom.
-   "Monthly" routes to the fixed monthly link nearest the amount (see
-   CONFIG.payments notes on why monthly can't be fully flexible). "Give
-   once" routes to a flexible Stripe link where the giver enters their own
-   amount, so the amount picker + fee-coverage estimate (which needs a
-   known amount) are both hidden on that tab; the button just says "Give
-   securely" rather than implying a specific amount is honored. */
-const DONATE_AMOUNTS = [25, 50, 75, 100, 250, 500, 750, 1000, 2500];
+   Terri-style box: Give once / Monthly toggle + amount presets.
+   "Monthly" presets are exactly the four partnership tier minimums (see
+   TIERS below) — not an arbitrary amount list — so a giver always lands on
+   a real, named tier link (see CONFIG.payments notes on why monthly can't
+   be fully flexible; no custom-amount entry). "Give once" routes to a
+   flexible Stripe link where the giver enters their own amount, so the
+   amount picker + fee-coverage estimate (which needs a known amount) are
+   both hidden on that tab; the button just says "Give securely" rather
+   than implying a specific amount is honored. */
+const DONATE_AMOUNTS = TIERS.map(t => t.min);
 
 function initDonateWidget() {
   const box = $("#donateBox");
   if (!box) return;
   const amountsWrap = $("#donateAmounts", box);
-  const customLabel = $(".donate-custom", box);
-  const customInput = $("#donateCustom", box);
   const onceNote = $("#donateOnceNote", box);
   const onceEmbed = $("#donateOnceEmbed", box);
   const goBtn = $("#donateGo", box);
@@ -638,7 +638,7 @@ function initDonateWidget() {
   const totalLine = $("#donateTotal", box);
 
   let freq = "monthly";            // matches the default-active toggle
-  let amount = 100;                // matches the default-active preset
+  let amount = 100;                // matches the default-active preset (Impact Partner)
   let method = "card";             // card | bank
 
   const feeFor = (base) => base * CONFIG.payments.feePercent + CONFIG.payments.feeFixed;
@@ -649,12 +649,11 @@ function initDonateWidget() {
   ).join("");
 
   const paintAmounts = () => $$(".donate-amt", box).forEach(b =>
-    b.classList.toggle("is-active", Number(b.dataset.amount) === amount && !customInput.value));
+    b.classList.toggle("is-active", Number(b.dataset.amount) === amount));
 
   const refresh = () => {
     const isOnce = freq === "once";
     amountsWrap.hidden = isOnce;
-    if (customLabel) customLabel.hidden = isOnce;
     if (onceNote) onceNote.hidden = !isOnce;
     // One-time gifts render as the embedded Stripe Buy Button (handles its
     // own amount entry + payment method choice, ACH included), so the
@@ -706,15 +705,6 @@ function initDonateWidget() {
     const btn = e.target.closest(".donate-amt");
     if (!btn) return;
     amount = Number(btn.dataset.amount);
-    customInput.value = "";
-    paintAmounts();
-    refresh();
-  });
-
-  // Custom amount
-  customInput.addEventListener("input", () => {
-    const val = Number(customInput.value);
-    if (val > 0) amount = val;
     paintAmounts();
     refresh();
   });
