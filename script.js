@@ -153,13 +153,18 @@ buildChrome();
    through the code.
 
    PAYMENTS (Stripe Payment Links):
-     • `oneTimeUrl` is a single FIXED $100 one-time-gift link (not
-       pay-what-you-want), it covers every one-time gift (give card +
-       partner form "one time"), which is why both those flows show a
-       flat $100 rather than an amount picker.
+     • `oneTimeUrl` is a FLEXIBLE "customer chooses what to pay" link (no
+       preset/min/max on the Stripe side) — it covers every one-time gift
+       (give card + partner form "one time"). Stripe does NOT support
+       prefilling that amount via URL param (tested), so the giver always
+       types their own amount on Stripe's hosted page; our site can't show
+       or pass a specific number, only a suggested one in copy.
      • `monthly` maps a USD amount to a FIXED recurring subscription link.
-       Custom monthly amounts snap to the nearest of these; Stripe always
-       shows the real charge before the giver confirms.
+       Stripe Payment Links have no "customer chooses" option for recurring
+       billing at all (confirmed in the Stripe dashboard: subscriptions
+       require a fixed Price) — so monthly giving is genuinely capped to
+       this tier list. Custom monthly amounts snap to the nearest tier;
+       Stripe always shows the real charge before the giver confirms.
      • Enable "Card" and "ACH Direct Debit" in the Stripe Dashboard so
        bank transfer shows at checkout.
      • These are LIVE-mode links (buy.stripe.com/... ; test links carry a
@@ -180,12 +185,15 @@ const CONFIG = {
     live: true,
     oneTimeUrl: "https://buy.stripe.com/14A3cvdeg87v346aCN6Vq0e",
     monthly: {
-      25:  "https://buy.stripe.com/dRmbJ15LO2Nb3463al6Vq08",
-      50:  "https://buy.stripe.com/aFaaEX8Y0bjHbAC9yJ6Vq09",
-      75:  "https://buy.stripe.com/cNi9AT4HKdrPdIK12d6Vq0d",
-      100: "https://buy.stripe.com/14AfZh2zC0F3awyeT36Vq0a",
-      250: "https://buy.stripe.com/7sY28ra24gE18oq9yJ6Vq0b",
-      500: "https://buy.stripe.com/dRmbJ1a24cnL0VY5it6Vq0c",
+      25:   "https://buy.stripe.com/dRmbJ15LO2Nb3463al6Vq08",
+      50:   "https://buy.stripe.com/aFaaEX8Y0bjHbAC9yJ6Vq09",
+      75:   "https://buy.stripe.com/cNi9AT4HKdrPdIK12d6Vq0d",
+      100:  "https://buy.stripe.com/14AfZh2zC0F3awyeT36Vq0a",
+      250:  "https://buy.stripe.com/7sY28ra24gE18oq9yJ6Vq0b",
+      500:  "https://buy.stripe.com/dRmbJ1a24cnL0VY5it6Vq0c",
+      750:  "https://buy.stripe.com/6oU7sLa243Rf6gifX76Vq0f",
+      1000: "https://buy.stripe.com/bJe00j4HK5Zn7kmbGR6Vq0g",
+      2500: "https://buy.stripe.com/7sYaEX2zC3RfcEGcKV6Vq0h",
     },
     // Standard card processing fee (2.9% + $0.30) used to show donors the
     // "cover the fees" total. NOTE: fixed Stripe Payment Links can't take an
@@ -627,12 +635,13 @@ updateGiveBtn();
 
 /* ---------- DONATION WIDGET (partnership.html) ----------
    Terri-style box: Give once / Monthly toggle + amount presets + custom.
-   "Monthly" routes to the fixed monthly link nearest the amount. "Give
-   once" has only a single fixed-$100 Stripe link (not pay-what-you-want),
-   so the amount picker is hidden on that tab and the button just says
-   "Give $100" instead of implying any preset amount is honored. */
-const DONATE_AMOUNTS = [25, 50, 75, 100, 250, 500];
-const ONE_TIME_FIXED_AMOUNT = 100;
+   "Monthly" routes to the fixed monthly link nearest the amount (see
+   CONFIG.payments notes on why monthly can't be fully flexible). "Give
+   once" routes to a flexible Stripe link where the giver enters their own
+   amount, so the amount picker + fee-coverage estimate (which needs a
+   known amount) are both hidden on that tab; the button just says "Give
+   securely" rather than implying a specific amount is honored. */
+const DONATE_AMOUNTS = [25, 50, 75, 100, 250, 500, 750, 1000, 2500];
 
 function initDonateWidget() {
   const box = $("#donateBox");
@@ -644,6 +653,7 @@ function initDonateWidget() {
   const goBtn = $("#donateGo", box);
   const status = $("#donateStatus", box);
   const feeCheck = $("#donateFee", box);
+  const feeLabel = feeCheck ? feeCheck.closest(".donate-fee") : null;
   const feeAmtLabel = $("#donateFeeAmt", box);
   const totalLine = $("#donateTotal", box);
 
@@ -652,9 +662,10 @@ function initDonateWidget() {
   let method = "card";             // card | bank
 
   const feeFor = (base) => base * CONFIG.payments.feePercent + CONFIG.payments.feeFixed;
+  const fmt = (n) => n.toLocaleString("en-US");
 
   amountsWrap.innerHTML = DONATE_AMOUNTS.map(a =>
-    `<button type="button" class="donate-amt${a === amount ? " is-active" : ""}" data-amount="${a}">$${a}</button>`
+    `<button type="button" class="donate-amt${a === amount ? " is-active" : ""}" data-amount="${a}">$${fmt(a)}</button>`
   ).join("");
 
   const paintAmounts = () => $$(".donate-amt", box).forEach(b =>
@@ -665,17 +676,21 @@ function initDonateWidget() {
     amountsWrap.hidden = isOnce;
     if (customLabel) customLabel.hidden = isOnce;
     if (onceNote) onceNote.hidden = !isOnce;
+    // Fee-coverage estimate needs a known amount; one-time gifts are entered
+    // on Stripe's own page, so there's nothing accurate to show here.
+    if (feeLabel) feeLabel.hidden = isOnce;
+    if (totalLine && isOnce) totalLine.hidden = true;
 
-    // Processing-fee coverage (display + hook; see CONFIG.payments notes).
-    const base = isOnce ? ONE_TIME_FIXED_AMOUNT : amount;
-    const fee = feeFor(base);
-    if (feeAmtLabel) feeAmtLabel.textContent = `$${fee.toFixed(2)} (fee)`;
-    const cover = feeCheck && feeCheck.checked;
-    if (totalLine) {
-      totalLine.hidden = !cover;
-      totalLine.textContent = cover
-        ? `With fees covered, your ${isOnce ? "gift" : "monthly gift"} is $${(base + fee).toFixed(2)}.`
-        : "";
+    if (!isOnce) {
+      const fee = feeFor(amount);
+      if (feeAmtLabel) feeAmtLabel.textContent = `$${fee.toFixed(2)} (fee)`;
+      const cover = feeCheck && feeCheck.checked;
+      if (totalLine) {
+        totalLine.hidden = !cover;
+        totalLine.textContent = cover
+          ? `With fees covered, your monthly gift is $${(amount + fee).toFixed(2)}.`
+          : "";
+      }
     }
 
     // Payment method: "card" and "bank" both route through the SAME Payment
@@ -684,7 +699,7 @@ function initDonateWidget() {
     // only changes the button copy to set the right expectation beforehand.
     goBtn.textContent = method === "bank"
       ? "Continue to bank transfer"
-      : (isOnce ? `Give $${ONE_TIME_FIXED_AMOUNT}` : "Donate monthly");
+      : (isOnce ? "Give securely" : "Donate monthly");
     goBtn.href = paymentsConfigured()
       ? (isOnce ? oneTimeLink() : monthlyLink(amount))
       : "#";
