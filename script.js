@@ -223,6 +223,15 @@ const CONFIG = {
     // submission matches what the hosted page itself would send.
     optinEntityId: "a2e4377a-139b-4e1a-b728-b12ec7121a6a",
   },
+  // Community forum backend (Supabase). Publishable key is safe to expose
+  // client-side — access is enforced by the table's Row Level Security
+  // policies (public read + public insert, no update/delete from the
+  // client; see the "create_community_forum" migration). Open community by
+  // design: posts go live immediately, no approval queue.
+  community: {
+    url: "https://emjunhmlifqvgspmtoha.supabase.co",
+    key: "sb_publishable_KkPGPZ_LTWjKf6c6bop1Mw_YSSgq1As",
+  },
 };
 
 /* ---------- DATA ---------- */
@@ -392,14 +401,9 @@ const COMMUNITY_TOPICS = [
   { id: "wellbeing",  name: "Rest & Wellbeing",      icon: "☼", desc: "Caring for you, so you can pour out" },
 ];
 
-const COMMUNITY_THREADS = [
-  { topic: "ministry",   title: "How do you actually protect your day off?", author: "Grace O.", role: "Lead Pastor's wife", replies: 34, likes: 91, ago: "2h", excerpt: "Every time I plan to rest, something 'urgent' comes up. How do you all guard your rhythms without guilt?" },
-  { topic: "faith",      title: "A prayer that carried me through a hard season", author: "Ada N.", role: "Minister's wife", replies: 18, likes: 120, ago: "5h", excerpt: "Sharing the one line I prayed on repeat when I had nothing left. Maybe it meets someone here too." },
-  { topic: "children",   title: "Raising PKs who love the church, not resent it", author: "Bola A.", role: "Youth Pastor's wife", replies: 42, likes: 77, ago: "1d", excerpt: "What has actually helped our kids feel like people, not 'the example'? Compiling what's worked for us." },
-  { topic: "marriage",   title: "Date nights when you both serve every weekend", author: "Kemi T.", role: "Co-Pastor", replies: 27, likes: 64, ago: "1d", excerpt: "Weekends are gone to ministry. How do you keep the marriage first without it feeling like one more task?" },
-  { topic: "leadership", title: "First time managing a real budget, help?", author: "Ruth E.", role: "Ministry Director", replies: 15, likes: 39, ago: "2d", excerpt: "Nobody taught me the money side. Looking for plain-language resources other women here have trusted." },
-  { topic: "wellbeing",  title: "The rest that finally refilled me", author: "May I.", role: "Founder, DPW", replies: 58, likes: 210, ago: "3d", excerpt: "Consecration without burnout is possible. Here's the difference that changed everything for me." },
-];
+// Real thread/reply content now lives in Supabase (see CONFIG.community and
+// the community forum section below) — the 6 launch posts were seeded there
+// directly via SQL, not from a JS array.
 
 /* ---------- HELPERS ---------- */
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
@@ -1085,35 +1089,93 @@ function renderEventDetail() {
 }
 renderEventDetail();
 
-/* ---------- COMMUNITY FORUM PREVIEW (community.html) ----------
-   Renders the topic-based forum shell from mock data. The composer is
-   intentionally disabled ("opens at launch"); topic chips filter the preview
-   thread feed so the experience feels real. Wire to a backend by replacing
-   COMMUNITY_TOPICS/THREADS with fetched data and enabling the composer. */
+/* ---------- COMMUNITY FORUM (community.html) ----------
+   Live forum backed by Supabase (see CONFIG.community). Public read + public
+   insert via Row Level Security — no accounts, posts go live immediately
+   (open community by the site owner's choice; moderation is manual via the
+   Supabase dashboard, not built into the UI). Talks to Supabase directly via
+   PostgREST (fetch), no SDK, to stay consistent with the rest of the site's
+   dependency-free vanilla JS. */
+const COMMUNITY = CONFIG.community;
+
+async function communityFetch(path, opts = {}) {
+  const res = await fetch(`${COMMUNITY.url}/rest/v1/${path}`, {
+    ...opts,
+    headers: {
+      apikey: COMMUNITY.key,
+      Authorization: `Bearer ${COMMUNITY.key}`,
+      "Content-Type": "application/json",
+      ...(opts.headers || {}),
+    },
+  });
+  if (!res.ok) throw new Error(`Community request failed (${res.status}): ${path}`);
+  return res.status === 204 ? null : res.json();
+}
+
+const fetchThreads = () =>
+  communityFetch("community_threads?select=*,community_replies(count)&order=created_at.desc");
+const fetchThread = async (id) => (await communityFetch(`community_threads?id=eq.${id}&select=*`))[0];
+const fetchReplies = (threadId) =>
+  communityFetch(`community_replies?thread_id=eq.${threadId}&select=*&order=created_at.asc`);
+const createThread = (data) =>
+  communityFetch("community_threads", { method: "POST", headers: { Prefer: "return=representation" }, body: JSON.stringify(data) });
+const createReply = (data) =>
+  communityFetch("community_replies", { method: "POST", headers: { Prefer: "return=representation" }, body: JSON.stringify(data) });
+
+function timeAgo(iso) {
+  const mins = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
+}
+// Preserve line breaks in user-submitted text without allowing HTML injection.
+const textToHtml = (s) => escapeHtml(s).replace(/\n/g, "<br>");
+
 function renderCommunity() {
   const app = $("#communityApp");
   if (!app) return;
 
   let activeTopic = "all";
+  let view = "feed";          // feed | compose | thread
+  let currentThreadId = null;
+  let threads = [];
 
-  app.innerHTML = `
-    <div class="community-composer" aria-disabled="true">
-      <div class="community-avatar" aria-hidden="true">＋</div>
-      <button class="community-composer-fake" type="button" disabled>Start a conversation… <span>(opens at launch)</span></button>
-    </div>
-    <div class="community-layout">
-      <aside class="community-topics" aria-label="Topics">
-        <p class="community-aside-title">Topics</p>
-        <div class="community-topic-list" id="communityTopics"></div>
-      </aside>
-      <div class="community-feed" id="communityFeed"></div>
-    </div>`;
-
-  const topicsWrap = $("#communityTopics", app);
-  const feed = $("#communityFeed", app);
   const topicName = (id) => (COMMUNITY_TOPICS.find(t => t.id === id) || {}).name || "";
+  const replyCount = (t) => (t.community_replies && t.community_replies[0] && t.community_replies[0].count) || 0;
 
-  const paintTopics = () => {
+  async function loadThreads() {
+    try {
+      threads = await fetchThreads();
+    } catch (err) {
+      console.error("[community] failed to load threads", err);
+      threads = null; // distinguishes "load failed" from "genuinely empty"
+    }
+  }
+
+  function topicOptionsHtml(selected) {
+    return COMMUNITY_TOPICS.map(t =>
+      `<option value="${t.id}"${t.id === selected ? " selected" : ""}>${escapeHtml(t.name)}</option>`).join("");
+  }
+
+  function renderFeedView() {
+    app.innerHTML = `
+      <div class="community-composer">
+        <div class="community-avatar" aria-hidden="true">＋</div>
+        <button class="community-composer-fake" type="button" id="startThreadBtn">Start a conversation…</button>
+      </div>
+      <div class="community-layout">
+        <aside class="community-topics" aria-label="Topics">
+          <p class="community-aside-title">Topics</p>
+          <div class="community-topic-list" id="communityTopics"></div>
+        </aside>
+        <div class="community-feed" id="communityFeed"></div>
+      </div>`;
+
+    const topicsWrap = $("#communityTopics", app);
+    const feed = $("#communityFeed", app);
+
     topicsWrap.innerHTML = `
       <button class="community-topic${activeTopic === "all" ? " is-active" : ""}" data-topic="all">
         <span class="ct-icon">✺</span><span class="ct-body"><strong>All conversations</strong><small>Everything, newest first</small></span>
@@ -1123,40 +1185,200 @@ function renderCommunity() {
           <span class="ct-icon">${t.icon}</span>
           <span class="ct-body"><strong>${escapeHtml(t.name)}</strong><small>${escapeHtml(t.desc)}</small></span>
         </button>`).join("");
-  };
 
-  const paintFeed = () => {
-    const list = COMMUNITY_THREADS.filter(t => activeTopic === "all" || t.topic === activeTopic);
-    feed.innerHTML = list.map(t => `
-      <article class="community-thread">
-        <div class="community-thread-head">
-          <span class="community-thread-avatar" aria-hidden="true">${escapeHtml(t.author.charAt(0))}</span>
-          <div>
-            <strong>${escapeHtml(t.author)}</strong>
-            <span class="community-thread-meta">${escapeHtml(t.role)} · ${escapeHtml(t.ago)} ago</span>
+    if (threads === null) {
+      feed.innerHTML = `<p class="resource-empty">Conversations couldn't be loaded right now. Please refresh, or try again shortly.</p>`;
+    } else {
+      const list = threads.filter(t => activeTopic === "all" || t.topic === activeTopic);
+      feed.innerHTML = list.map(t => `
+        <article class="community-thread" data-open="${t.id}">
+          <div class="community-thread-head">
+            <span class="community-thread-avatar" aria-hidden="true">${escapeHtml(t.author_name.charAt(0))}</span>
+            <div>
+              <strong>${escapeHtml(t.author_name)}</strong>
+              <span class="community-thread-meta">${escapeHtml(t.author_role || "")}${t.author_role ? " · " : ""}${timeAgo(t.created_at)}</span>
+            </div>
+            <span class="community-thread-topic">${escapeHtml(topicName(t.topic))}</span>
           </div>
-          <span class="community-thread-topic">${escapeHtml(topicName(t.topic))}</span>
-        </div>
-        <h3 class="community-thread-title">${escapeHtml(t.title)}</h3>
-        <p class="community-thread-excerpt">${escapeHtml(t.excerpt)}</p>
-        <div class="community-thread-foot">
-          <span>♥ ${t.likes}</span>
-          <button type="button" class="community-thread-open" disabled>Open at launch →</button>
-        </div>
-      </article>`).join("") ||
-      `<p class="resource-empty">No conversations in this topic yet.</p>`;
-  };
+          <h3 class="community-thread-title">${escapeHtml(t.title)}</h3>
+          <p class="community-thread-excerpt">${escapeHtml(t.body)}</p>
+          <div class="community-thread-foot">
+            <span>♥ ${t.likes}</span>
+            <span>💬 ${replyCount(t)} ${replyCount(t) === 1 ? "reply" : "replies"}</span>
+            <button type="button" class="community-thread-open" data-open="${t.id}">Read & reply →</button>
+          </div>
+        </article>`).join("") ||
+        `<p class="resource-empty">No conversations in this topic yet. Be the first to start one.</p>`;
+    }
 
-  topicsWrap.addEventListener("click", (e) => {
-    const btn = e.target.closest(".community-topic");
-    if (!btn) return;
-    activeTopic = btn.dataset.topic;
-    paintTopics();
-    paintFeed();
-  });
+    topicsWrap.addEventListener("click", (e) => {
+      const btn = e.target.closest(".community-topic");
+      if (!btn) return;
+      activeTopic = btn.dataset.topic;
+      renderFeedView();
+    });
 
-  paintTopics();
-  paintFeed();
+    feed.addEventListener("click", (e) => {
+      const opener = e.target.closest("[data-open]");
+      if (!opener) return;
+      currentThreadId = opener.dataset.open;
+      view = "thread";
+      renderThreadView();
+    });
+
+    $("#startThreadBtn", app).addEventListener("click", () => {
+      view = "compose";
+      renderComposeView();
+    });
+  }
+
+  function renderComposeView() {
+    app.innerHTML = `
+      <div class="community-panel">
+        <button type="button" class="community-back" id="communityBack">← Back to all conversations</button>
+        <h3>Start a conversation</h3>
+        <form class="stepper-form community-form" id="threadForm" novalidate>
+          <label>Topic
+            <select name="topic" required>${topicOptionsHtml(activeTopic !== "all" ? activeTopic : COMMUNITY_TOPICS[0].id)}</select>
+          </label>
+          <label>Your name
+            <input type="text" name="author_name" maxlength="80" placeholder="First name and last initial, e.g. Grace O." required />
+          </label>
+          <label>Your role <span class="visually-hidden">(optional)</span>
+            <input type="text" name="author_role" maxlength="80" placeholder="e.g. Lead Pastor's wife (optional)" />
+          </label>
+          <label>Title
+            <input type="text" name="title" maxlength="200" placeholder="What's on your heart?" required />
+          </label>
+          <label>Message
+            <textarea name="body" maxlength="4000" rows="5" placeholder="Share what you're carrying or asking…" required></textarea>
+          </label>
+          <button class="button primary" type="submit">Post conversation</button>
+          <p class="form-status" id="threadFormStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>`;
+
+    $("#communityBack", app).addEventListener("click", () => { view = "feed"; renderFeedView(); });
+
+    const form = $("#threadForm", app);
+    const status = $("#threadFormStatus", app);
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      const data = Object.fromEntries(new FormData(form).entries());
+      status.textContent = "Posting…";
+      try {
+        const [created] = await createThread({
+          topic: data.topic,
+          title: data.title.trim(),
+          body: data.body.trim(),
+          author_name: data.author_name.trim(),
+          author_role: data.author_role.trim() || null,
+        });
+        await loadThreads();
+        activeTopic = "all";
+        currentThreadId = created.id;
+        view = "thread";
+        renderThreadView();
+      } catch (err) {
+        console.error("[community] failed to post thread", err);
+        status.textContent = "Something went wrong posting that. Please try again.";
+      }
+    });
+  }
+
+  async function renderThreadView() {
+    app.innerHTML = `<div class="community-panel"><p class="resource-empty">Loading conversation…</p></div>`;
+    let thread, replies;
+    try {
+      [thread, replies] = await Promise.all([fetchThread(currentThreadId), fetchReplies(currentThreadId)]);
+    } catch (err) {
+      console.error("[community] failed to load thread", err);
+      app.innerHTML = `<div class="community-panel">
+        <button type="button" class="community-back" id="communityBack">← Back to all conversations</button>
+        <p class="resource-empty">This conversation couldn't be loaded. Please try again.</p>
+      </div>`;
+      $("#communityBack", app).addEventListener("click", () => { view = "feed"; renderFeedView(); });
+      return;
+    }
+    if (!thread) {
+      view = "feed";
+      renderFeedView();
+      return;
+    }
+
+    app.innerHTML = `
+      <div class="community-panel">
+        <button type="button" class="community-back" id="communityBack">← Back to all conversations</button>
+        <article class="community-thread community-thread-full">
+          <div class="community-thread-head">
+            <span class="community-thread-avatar" aria-hidden="true">${escapeHtml(thread.author_name.charAt(0))}</span>
+            <div>
+              <strong>${escapeHtml(thread.author_name)}</strong>
+              <span class="community-thread-meta">${escapeHtml(thread.author_role || "")}${thread.author_role ? " · " : ""}${timeAgo(thread.created_at)}</span>
+            </div>
+            <span class="community-thread-topic">${escapeHtml(topicName(thread.topic))}</span>
+          </div>
+          <h3 class="community-thread-title">${escapeHtml(thread.title)}</h3>
+          <p class="community-thread-excerpt">${textToHtml(thread.body)}</p>
+          <div class="community-thread-foot"><span>♥ ${thread.likes}</span></div>
+        </article>
+
+        <div class="community-replies" id="communityReplies">
+          <p class="community-aside-title">${replies.length} ${replies.length === 1 ? "Reply" : "Replies"}</p>
+          ${replies.map(r => `
+            <div class="community-reply">
+              <span class="community-thread-avatar" aria-hidden="true">${escapeHtml(r.author_name.charAt(0))}</span>
+              <div class="community-reply-body">
+                <strong>${escapeHtml(r.author_name)}</strong>
+                <span class="community-thread-meta">${timeAgo(r.created_at)}</span>
+                <p>${textToHtml(r.body)}</p>
+              </div>
+            </div>`).join("") || `<p class="resource-empty">No replies yet. Be the first to respond.</p>`}
+        </div>
+
+        <form class="stepper-form community-form" id="replyForm" novalidate>
+          <h3>Add your response</h3>
+          <label>Your name
+            <input type="text" name="author_name" maxlength="80" placeholder="First name and last initial" required />
+          </label>
+          <label>Your response
+            <textarea name="body" maxlength="4000" rows="4" placeholder="Share your encouragement or experience…" required></textarea>
+          </label>
+          <button class="button primary" type="submit">Post response</button>
+          <p class="form-status" id="replyFormStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>`;
+
+    $("#communityBack", app).addEventListener("click", () => { view = "feed"; renderFeedView(); });
+
+    const form = $("#replyForm", app);
+    const status = $("#replyFormStatus", app);
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      const data = Object.fromEntries(new FormData(form).entries());
+      status.textContent = "Posting…";
+      try {
+        await createReply({
+          thread_id: currentThreadId,
+          author_name: data.author_name.trim(),
+          body: data.body.trim(),
+        });
+        await loadThreads(); // keep feed reply-counts in sync for when they go back
+        renderThreadView();
+      } catch (err) {
+        console.error("[community] failed to post reply", err);
+        status.textContent = "Something went wrong posting that. Please try again.";
+      }
+    });
+  }
+
+  (async () => {
+    app.innerHTML = `<p class="resource-empty">Loading conversations…</p>`;
+    await loadThreads();
+    if (view === "feed") renderFeedView();
+  })();
 }
 renderCommunity();
 
@@ -1185,11 +1407,11 @@ function initShare() {
 }
 initShare();
 
-/* ---------- COMMUNITY (Coming Soon) ----------
-   The community forum is post-launch. The Community page is a styled
-   "Coming Soon" card with an email signup that feeds the same
-   systeme.io pipeline as the other forms (see CONFIG.crm).*/
-handleForm("communityForm", "communityStatus", "You're on the list! We'll let you know the moment the community opens. 💛");
+/* ---------- COMMUNITY EMAIL OPT-IN ----------
+   Optional "email me about new conversations" signup on the (now live)
+   Community page, feeding the same systeme.io pipeline as the other forms
+   (see CONFIG.crm). Separate from the forum itself (see renderCommunity). */
+handleForm("communityForm", "communityStatus", "You're on the list! We'll email you when new conversations start. 💛");
 /* ---------- HEADER / ANNOUNCE / NAV ---------- */
 const header = $("#siteHeader");
 const announceBar = $("#announceBar");
