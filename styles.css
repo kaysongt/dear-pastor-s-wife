@@ -714,6 +714,12 @@ body[data-page="home"] #resources .resource-grid { grid-template-columns: repeat
 .faq details[open] summary::after { transform: rotate(45deg); }
 .faq summary:hover { color: var(--gold); }
 .faq p { color: var(--muted); line-height: 1.8; font-size: 1.05rem; margin-top: 1rem; }
+.faq-actions { display: flex; flex-wrap: wrap; gap: 0.65rem 1.1rem; margin-top: 1rem; }
+.faq-actions a {
+  color: var(--wine); font-size: 0.92rem; font-weight: 800;
+  border-bottom: 2px solid rgba(96, 25, 56, 0.24); transition: border-color 0.2s ease, color 0.2s ease;
+}
+.faq-actions a:hover, .faq-actions a:focus-visible { color: var(--gold-deep); border-color: var(--gold); }
 
 /* ===================== Contact (existing) ===================== */
 .contact { padding: 6rem 0; }
