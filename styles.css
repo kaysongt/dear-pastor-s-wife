@@ -1168,9 +1168,18 @@ h1 {
 .community-notify label { flex: 1 1 140px; }
 .community-notify input {
   width: 100%; padding: 0.8rem 1rem; border-radius: 0.9rem; border: 1px solid transparent;
-  background: rgba(255,255,255,0.95); font: inherit; color: var(--ink);
+  background: #fff; font: inherit; color: var(--ink); caret-color: var(--wine);
+  -webkit-text-fill-color: var(--ink); opacity: 1;
 }
-.community-notify input:focus { outline: 2px solid var(--gold); }
+.community-notify input::placeholder { color: #6f5961; opacity: 1; -webkit-text-fill-color: #6f5961; }
+.community-notify input:focus { outline: 2px solid var(--gold); background: #fff; }
+.community-notify input:-webkit-autofill,
+.community-notify input:-webkit-autofill:hover,
+.community-notify input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--ink);
+  -webkit-box-shadow: 0 0 0 1000px #fff inset;
+  box-shadow: 0 0 0 1000px #fff inset;
+}
 .community-notify .button { flex: 0 0 auto; }
 .community-notify .form-status { flex-basis: 100%; color: #ffe9c7; margin: 0; }
 
