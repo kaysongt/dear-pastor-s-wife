@@ -271,7 +271,7 @@ const EVENTS = [
   },
   {
     slug: "dpw-tea-party-chicago", category: "tea-party", year: 2026,
-    date: "Aug 15, 2026", sort: "2026-08-15",
+    date: "Aug 22, 2026", sort: "2026-08-22",
     title: "DPW Tea Party", location: "Chicago, USA", venue: "Central Chicago (address shared on registration)",
     desc: "An intimate two-hour gathering with icebreakers and table topics, the kind of conversation that quickly feels like a reunion. Free and open to pastors' wives, ministers' wives, and women in Christian leadership.",
     details: "Two hours around a table: icebreakers to open hearts, table topics too good to cut short, and a room that quickly feels like a reunion even among women meeting for the first time. We close praying for one another.",
@@ -318,7 +318,7 @@ const upcomingEvents = () => EVENTS.filter(e => !isPastEvent(e)).sort((a, b) => 
    from `sort` (start) and `endSort`/`sort` (end). All-day DTEND is exclusive,
    so we add one day. Works fully client-side: an .ics data-URI download covers
    Apple Calendar / Outlook, and a template link covers Google Calendar. */
-const icsDate = (iso) => iso.replace(/-/g, "");                     // 2026-08-15 -> 20260815
+const icsDate = (iso) => iso.replace(/-/g, "");                     // 2026-08-22 -> 20260822
 const addDays = (iso, n) => { const d = new Date(iso + "T00:00:00"); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
 const calStart = (e) => e.sort;
 const calEnd = (e) => addDays(e.endSort || e.sort, 1);              // DTEND is exclusive
