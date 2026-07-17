@@ -47,7 +47,7 @@
   --radius: 1.8rem;
 
   /* Typography, swap these two lines when the real font files arrive. */
-  --font-head: var(--font-head), Georgia, "Times New Roman", serif;
+  --font-head: "Fraunces", Georgia, "Times New Roman", serif;
   --font-body: "Jost", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
@@ -809,14 +809,30 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
 }
 
 @media (max-width: 640px) {
-  .announce-bar { padding: 0.6rem 2.2rem; font-size: 0.82rem; }
-  /* "Save the date." drops to its own line on mobile so the event
-     name/date/location isn't crammed together with the call to action.
-     Center it (and the event line) so it lines up with the rest of the
-     bar instead of sitting left-aligned and looking out of place. */
-  .announce-inner .announce-note { flex-basis: 100%; text-align: center; margin: 0.1rem 0; }
-  .announce-inner p { text-align: center; width: 100%; }
+  .announce-bar { padding: 0.7rem 2.5rem 0.7rem 0.9rem; font-size: 0.82rem; }
+  .announce-inner {
+    display: grid; grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.25rem 0.65rem; width: 100%; justify-content: stretch;
+  }
+  /* "Save the date" becomes the mobile label, replacing the redundant
+     "Next up" pill and keeping the event information in one compact block. */
+  .announce-tag { display: none; }
+  .announce-inner .announce-note {
+    grid-column: 1; grid-row: 1 / span 2; align-self: center;
+    margin: 0; padding: 0.3rem 0.55rem; border: 1px solid rgba(184, 136, 42, 0.55);
+    border-radius: 999px; color: #fff; font-size: 0.58rem; font-weight: 900;
+    line-height: 1.15; letter-spacing: 0.08em; text-align: center; text-transform: uppercase;
+  }
+  .announce-inner p {
+    grid-column: 2; width: auto; text-align: left;
+    font-size: 0.78rem; line-height: 1.35;
+  }
+  .announce-inner a {
+    grid-column: 2; justify-self: start; font-size: 0.72rem; line-height: 1.2;
+  }
+  .announce-close { right: 0.75rem; }
   .faq-grid, .reviews, .focus-grid, .resource-grid, .newsletter-inputs, .track-select { grid-template-columns: 1fr; }
+  body[data-page="home"] #resources .resource-grid { grid-template-columns: 1fr; }
   /* Two groups (Explore, Get Involved) sit side by side rather than
      stacking into one very tall vertical list. Left-align the links and
      center the pair under the brand block. */
@@ -840,7 +856,7 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
   .footer-content { grid-template-columns: 1fr; gap: 2rem; }
   .footer-brand { text-align: center; }
   .footer-brand img, .footer-tagline { margin-left: auto; margin-right: auto; }
-  h1 { font-size: clamp(2.2rem, 10.5vw, 4.4rem); overflow-wrap: break-word; hyphens: auto; }
+  h1 { font-size: clamp(2.2rem, 10.5vw, 4.4rem); overflow-wrap: break-word; hyphens: none; }
   .book-card, .youtube-card { padding: 2rem 1.5rem; }
   .book-cover { width: 240px; height: 360px; }
   .book-actions { flex-direction: column; }
@@ -872,6 +888,11 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
 /* ===================== Mobile: picture on top of hero ===================== */
 @media (max-width: 900px) {
   .hero-card { order: -1; }
+  .floating-note {
+    left: 1rem; right: 1rem; width: auto;
+    animation: fadeInUp 0.8s ease 1.2s both;
+  }
+  .story-badge { right: 0; }
 }
 
 /* ============ "Because of you" collapse w/ show-more (mobile) ============ */
@@ -905,6 +926,13 @@ input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.55); }
    but never on the partnership page, its own donate box is already on screen. */
 @media (max-width: 900px) {
   body:not([data-page="partnership"]) .floating-give { display: inline-flex; }
+}
+@media (max-width: 640px) {
+  .floating-give {
+    width: 3rem; height: 3rem; padding: 0; justify-content: center;
+    border-radius: 50%;
+  }
+  .floating-give-label { display: none; }
 }
 
 /* ===================== Film-grain texture (depth) ===================== */
@@ -1246,10 +1274,18 @@ h1 {
 @media (max-width: 900px) {
   .community-layout { grid-template-columns: 1fr; }
   .community-topics { position: static; }
-  .community-topic-list { flex-direction: row; flex-wrap: wrap; }
-  .community-topic { width: auto; }
+  .community-topic-list {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.45rem;
+  }
+  .community-topic { width: 100%; align-items: flex-start; }
   .community-topic .ct-body small { display: none; }
   .community-panel { padding: 1.2rem; }
+}
+@media (max-width: 640px) {
+  .community-topic-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .community-topic { gap: 0.5rem; padding: 0.6rem; }
+  .community-topic .ct-icon { width: 30px; height: 30px; }
+  .community-topic .ct-body strong { font-size: 0.82rem; }
 }
 
 /* ----- Events: featured cards ----- */
@@ -1388,7 +1424,7 @@ h1 {
 /* ----- "However you arrived" routing buttons ----- */
 .arrived { padding: 4.5rem 0 2rem; }
 .arrived-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.1rem; margin-top: 2rem;
 }
 .arrived-card {
@@ -1404,6 +1440,12 @@ h1 {
 .arrived-card p { color: var(--muted); font-size: 0.95rem; flex: 1; }
 .arrived-card .arrived-go { color: var(--wine); font-weight: 800; font-size: 0.9rem; }
 .arrived-card:hover .arrived-go { color: var(--gold-deep); }
+@media (max-width: 900px) {
+  .arrived-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .arrived-grid { grid-template-columns: 1fr; }
+}
 
 /* ----- Partnership page ----- */
 .partner-intro { text-align: center; max-width: 720px; margin: 0 auto 1rem; }

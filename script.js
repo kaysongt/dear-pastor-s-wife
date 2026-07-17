@@ -138,7 +138,7 @@ function buildChrome() {
   // Skipped on the partnership page, where the full donate box is already visible.
   const floatingGive = current === "partnership"
     ? ""
-    : `<a class="floating-give" href="partnership.html#give" aria-label="Give to Dear Pastor's Wife">♥ Give</a>`;
+    : `<a class="floating-give" href="partnership.html#give" aria-label="Give to Dear Pastor's Wife"><span aria-hidden="true">♥</span><span class="floating-give-label">Give</span></a>`;
 
   const topSlot = document.querySelector('[data-chrome="top"]');
   if (topSlot) topSlot.outerHTML = topHtml;
@@ -376,7 +376,7 @@ function updateAnnounceBar() {
   inner.innerHTML = `
     <span class="announce-tag">Next up</span>
     <p><strong>${escapeHtml(next.title)}</strong>, ${escapeHtml(next.date)}${next.location ? " · " + escapeHtml(next.location) : ""}.</p>
-    <span class="announce-note">Save the date.</span>
+    <span class="announce-note">Save the date</span>
     <a href="${eventUrl(next)}">See details →</a>`;
 }
 
@@ -388,10 +388,9 @@ const TIERS = [
   { name: "Legacy Partner", min: 250, monthly: "$250 to $499", annual: "$3,000 to $6,000" },
 ];
 
-/* ---------- COMMUNITY (preview) ----------
-   One community organized by topics (not many small groups). This mock data
-   powers the forum preview shell on community.html; swap it for a real API
-   (topics + threads endpoints) when the backend is ready. */
+/* ---------- COMMUNITY TOPICS ----------
+   One community organized by topics (not many small groups). Threads and
+   replies are loaded from Supabase in the forum section below. */
 const COMMUNITY_TOPICS = [
   { id: "faith",      name: "Faith & Devotion",      icon: "✦", desc: "Prayer, the Word, and staying rooted" },
   { id: "ministry",   name: "Ministry Life",         icon: "✿", desc: "Boundaries, burnout, and leading well" },
@@ -601,7 +600,7 @@ function withEmail(url, email) {
   return `${url}${sep}prefilled_email=${encodeURIComponent(email)}`;
 }
 
-// One-time gift: single fixed-$100 Stripe link (not pay-what-you-want).
+// One-time gift: flexible Stripe link where the giver chooses the amount.
 function oneTimeLink(email) {
   return withEmail(CONFIG.payments.oneTimeUrl, email);
 }

@@ -9,10 +9,13 @@ A static, multi-page website for Dear Pastor's Wife, founded by May Ijisesan. Bu
 | `index.html` | Landing (scrollable hub with "However you arrived" routing + teasers) |
 | `resources.html` | Resource library (searchable, filterable) |
 | `events.html` | Events (conferences, tea parties, retreats) + ways we gather + Summit |
+| `event.html` | Event details and registration |
 | `booking.html` | Bookings (invite May to speak) |
 | `about.html` | About Us (DPW story + founder + book + contact) |
 | `community.html` | Community forum |
 | `partnership.html` | Partnership (warm intro, impact stories, share, partner sign-up → Stripe) |
+
+The article pages use the same shared chrome and editorial layout as the main site.
 
 ## Shared chrome (one source of truth)
 
@@ -30,9 +33,9 @@ top of `script.js`.
 ## Brand identity
 
 - **Logo:** "vessel" mark (inline SVG) + wordmark, defined in `script.js` (`VESSEL_SVG`).
-- **Palette:** purple (primary), off-white surfaces, clay/brown neutrals. All set
+- **Palette:** Tyrian wine (primary), linen surfaces, antique gold, and clay accents. All set
   via CSS variables in `:root` of `styles.css` (the whole site re-skins from there).
-- **Fonts:** Fraunces (display/headings) + Inter (body/UI).
+- **Fonts:** Fraunces (display/headings) + Jost (body/UI).
 
 ## Local preview
 
@@ -41,27 +44,21 @@ python3 -m http.server 4173
 # then open http://localhost:4173
 ```
 
-## Configuration before go-live (`script.js` → `CONFIG`)
+## Live integrations (`script.js` → `CONFIG`)
 
-- **systeme.io (CRM):** set `CONFIG.crm.endpoint` to the systeme.io form/submission
-  endpoint. When set, all form submissions (newsletter, contact, booking, and the
-  partner sign-up) are POSTed there automatically. **Endpoint URL pending from client**,
-  contact capture runs in demo mode (logs to console) until then.
-- **Stripe (payments + ACH):** Live Payment Links are wired in `CONFIG.payments`, but
-  gated behind a master switch: **`CONFIG.payments.live` is `false`**, so every
-  give/donate button stays in the "checkout opens once Stripe is connected" demo state
-  and charges nobody. Flip it to `true` to arm real payments.
-  - `oneTimeUrl` is a "customers choose what to pay" link (covers every one-time gift);
-    `monthly` maps $25/$50/$100/$250 to fixed recurring-subscription links. One-time
-    amounts are chosen on Stripe's page; custom/off-grid monthly amounts snap to the
-    nearest tier link (Stripe shows the real charge before the giver confirms). Payment
-    Links ignore `?amount=`, which is why one-time uses a single pay-what-you-want link.
-  - **Before arming (`live: true`):** replace the truncated **$25/mo** link (currently
-    404s); optionally add **$75/mo** and **$500/mo** links so the donation widget's
-    those buttons charge exactly (they currently snap to $50/$250 for monthly). Enable
-    **Card** and **ACH Direct Debit** in the Stripe Dashboard so bank transfer appears.
+- **systeme.io (CRM):** forms post to the configured newsletter funnel endpoint. The
+  custom `newsletter.dearpastorswife.org` hostname still needs its DNS CNAME before
+  submissions can reach systeme.io; the site displays a direct-email fallback when it
+  cannot connect.
+- **Stripe (payments + ACH):** live Payment Links are enabled. One-time gifts use a
+  customer-chosen amount, and fixed recurring links are configured for every amount
+  offered by the monthly giving interface. Stripe presents the final amount and
+  available payment methods before confirmation.
   - The donation widget lives on `partnership.html` (`#donateBox`); Stripe collects
-    name/email/address at checkout (the old pre-Stripe sign-up form was removed).
+    name, email, and address at checkout.
+- **Supabase (community):** the public forum reads and creates topics, threads, and
+  replies through Supabase. Row Level Security allows public read/insert while blocking
+  client-side updates and deletes.
 
 ### Partner flow (partnership.html)
 
@@ -75,13 +72,8 @@ drops off at the payment step.
 Email is handled by **Google Workspace**. No dev action is required unless DNS/MX
 setup is assigned to us.
 
-## Still pending / placeholders
+## Remaining external setup
 
-- **Social URLs**, Instagram and Facebook are placeholders (`data-pending` + `SOCIAL`
-  in `script.js`). YouTube is live.
-- **Logo file**, `assets/logo.png` is still used for the favicon; the header/footer
-  now use the inline vessel mark.
-- **Community forum**, front-end MVP; threads/replies persist in the visitor's
-  browser (localStorage). Production needs a backend (accounts + moderation).
-
-**Launch deadline: July 29, 2026** (must be live before Summer Blast on July 30).
+- Add the DNS CNAME required by systeme.io for `newsletter.dearpastorswife.org`.
+- Licensed Freight Display Pro and Futura PT files can replace the current Fraunces and
+  Jost web-font stand-ins when the font licenses/files are available.
