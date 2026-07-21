@@ -294,7 +294,7 @@ const EVENTS = [
     desc: "A multi-day, immersive weekend away, with teaching, worship, prayer, and honest table conversations. Women arrive carrying the weight of their call and leave lighter, clearer, and more equipped.",
     details: "From Friday afternoon to Sunday morning, we gather away from the noise: teaching to testimony, worship to prayer, honest table conversations to hands-on workbook sessions. An intimate 25–30 woman experience of renewal.",
     requirements: "Open to women in ministry and Christian leadership. Places are limited to keep the retreat intimate; a deposit may apply and will be confirmed at registration.",
-    status: "soon", art: "clay",
+    status: "open", art: "clay", link: "europe-retreat/", registrationOnly: true,
   },
 ];
 
@@ -504,9 +504,13 @@ function renderFeaturedEvents() {
         <p class="featured-event-date">${e.date} · ${e.location}</p>
         <p class="featured-event-desc">${e.desc}</p>
         <div class="featured-event-action">
-          <span class="tl-status status-${e.status}">${statusLabel[e.status] || ""}</span>
-          <a class="button primary" href="${eventUrl(e)}">${e.status === "open" ? "Register" : "View & save my spot"} →</a>
-          ${calMenuHtml(e)}
+          ${e.registrationOnly ? `
+            <a class="button primary" href="${eventUrl(e)}">Register →</a>
+          ` : `
+            <span class="tl-status status-${e.status}">${statusLabel[e.status] || ""}</span>
+            <a class="button primary" href="${eventUrl(e)}">${e.status === "open" ? "Register" : "View & save my spot"} →</a>
+            ${calMenuHtml(e)}
+          `}
         </div>
       </div>
     </article>
@@ -551,9 +555,13 @@ function renderEvents() {
             <span class="tl-desc">${e.desc}</span>
           </div>
           <div class="tl-action">
-            ${e.guest ? '<span class="tl-status status-guest">Guest speaker</span>' : (statusMap[e.status] || "")}
-            <a class="tl-link" href="${eventUrl(e)}"${linkAttrs}>${linkLabel} →</a>
-            ${calMenuHtml(e, { compact: true })}
+            ${e.registrationOnly ? `
+              <a class="tl-link" href="${eventUrl(e)}">Register →</a>
+            ` : `
+              ${e.guest ? '<span class="tl-status status-guest">Guest speaker</span>' : (statusMap[e.status] || "")}
+              <a class="tl-link" href="${eventUrl(e)}"${linkAttrs}>${linkLabel} →</a>
+              ${calMenuHtml(e, { compact: true })}
+            `}
           </div>
         </div>
       </div>`;
