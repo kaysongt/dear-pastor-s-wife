@@ -240,7 +240,7 @@ const CONFIG = {
 const RESOURCES = [
   { type: "book", status: "current", title: "Dear Pastor's Wife (The Book)", desc: "Biblical wisdom and honest encouragement for women in ministry life.", cta: "Get it on Amazon", link: "https://www.amazon.com/Dear-Pastors-Wife-May-Ijisesan-ebook/dp/B09TQ2G8PJ" },
   { type: "video", status: "current", title: "Weekly Encouragement on YouTube", desc: "New teaching, Q&A, and real talk for ministry women every week.", cta: "Watch on YouTube", link: "https://www.youtube.com/@DearPastorsWife" },
-  { type: "video", status: "current", title: "Leading Without Losing Yourself", desc: "A teaching session on staying rooted while you serve and lead.", cta: "Watch now", link: "https://www.youtube.com/@DearPastorsWife" },
+  { type: "video", status: "current", title: "Leading Without Losing Yourself", desc: "A teaching session on staying rooted while you serve and lead.", cta: "Watch now", link: "https://www.youtube.com/watch?v=BiTuiRxte3w" },
   { type: "video", status: "archived", title: "2024 Conference Replay: Thrive", desc: "The full replay of our first leadership conference for ministry women.", cta: "Watch replay", link: "https://www.youtube.com/@DearPastorsWife" },
   { type: "article", status: "current", title: "You Are Not \"Just a Pastor's Wife\"", desc: "The label \"pastor's wife\" was never meant to shrink you. Discover the two-fold call you've been doubly graced to carry.", cta: "Read the article", link: "not-just-a-pastors-wife.html" },
   { type: "article", status: "current", title: "Occupy Your Place", desc: "Purpose is not discovered in comfort. Here is how I found mine one assignment at a time, and how you can occupy the place God made for you.", cta: "Read the article", link: "occupy-your-place.html" },
@@ -276,7 +276,7 @@ const EVENTS = [
     desc: "An intimate two-hour gathering with icebreakers and table topics, the kind of conversation that quickly feels like a reunion. Free and open to pastors' wives, ministers' wives, and women in Christian leadership.",
     details: "Two hours around a table: icebreakers to open hearts, table topics too good to cut short, and a room that quickly feels like a reunion even among women meeting for the first time. We close praying for one another.",
     requirements: "Completely free. Open to pastors' wives, ministers' wives, and women in Christian leadership. Please register so we can set a place for you.",
-    status: "soon", art: "clay",
+    status: "open", art: "clay",
   },
   {
     slug: "dpw-kingsword-nigeria", category: "conference", year: 2026,
@@ -285,7 +285,7 @@ const EVENTS = [
     desc: "Join us in Nigeria with KingsWord. Firm dates are being confirmed.",
     details: "We're bringing Dear Pastor's Wife to Nigeria in partnership with KingsWord. Firm dates and the full programme are being confirmed, register your interest and we'll be in touch the moment details are set.",
     requirements: "Open to women in ministry and Christian leadership. Register your interest to receive dates, venue, and registration details first.",
-    status: "soon", art: "plum",
+    status: "open", art: "plum",
   },
   {
     slug: "dpw-retreat-uk", category: "retreat", year: 2026,
@@ -376,8 +376,7 @@ function updateAnnounceBar() {
   inner.innerHTML = `
     <span class="announce-tag">Next up</span>
     <p><strong>${escapeHtml(next.title)}</strong>, ${escapeHtml(next.date)}${next.location ? " · " + escapeHtml(next.location) : ""}.</p>
-    <span class="announce-note">Save the date</span>
-    <a href="${eventUrl(next)}">See details →</a>`;
+    <a class="announce-note" href="${eventUrl(next)}">Register →</a>`;
 }
 
 // Fundraising Partnership Program: names + suggested ranges only.
@@ -479,7 +478,6 @@ function renderFeaturedEvents() {
   const wrap = $("#eventFeatured");
   if (!wrap) return;
 
-  const statusLabel = { open: "Registration open", soon: "Save the date", past: "Past event" };
   // Always feature the nearest upcoming event in the active tab (auto fall-off:
   // completed events drop out and the next one rises automatically), except
   // Summer Blast, which is an external guest engagement rather than a DPW
@@ -504,12 +502,10 @@ function renderFeaturedEvents() {
         <p class="featured-event-date">${e.date} · ${e.location}</p>
         <p class="featured-event-desc">${e.desc}</p>
         <div class="featured-event-action">
-          ${e.registrationOnly ? `
+          ${!e.guest ? `
             <a class="button primary" href="${eventUrl(e)}">Register →</a>
           ` : `
-            <span class="tl-status status-${e.status}">${statusLabel[e.status] || ""}</span>
-            <a class="button primary" href="${eventUrl(e)}">${e.status === "open" ? "Register" : "View & save my spot"} →</a>
-            ${calMenuHtml(e)}
+            <a class="button primary" href="${eventUrl(e)}">Event details →</a>
           `}
         </div>
       </div>
@@ -532,7 +528,7 @@ function renderEvents() {
 
   const statusMap = {
     open: '<span class="tl-status status-open">Registration open</span>',
-    soon: '<span class="tl-status status-soon">Save the date</span>',
+    soon: '<span class="tl-status status-open">Registration open</span>',
     past: '<span class="tl-status status-past">Past event</span>',
   };
 
@@ -555,7 +551,7 @@ function renderEvents() {
             <span class="tl-desc">${e.desc}</span>
           </div>
           <div class="tl-action">
-            ${e.registrationOnly ? `
+            ${!e.guest ? `
               <a class="tl-link" href="${eventUrl(e)}">Register →</a>
             ` : `
               ${e.guest ? '<span class="tl-status status-guest">Guest speaker</span>' : (statusMap[e.status] || "")}
@@ -1000,7 +996,7 @@ function renderEventDetail() {
 
   document.title = `${e.title} | Dear Pastor's Wife`;
   const past = isPastEvent(e);
-  const statusLabel = { open: "Registration open", soon: "Save the date", past: "Past event" };
+  const statusLabel = { open: "Registration open", soon: "Registration open", past: "Past event" };
   const cat = EVENT_CAT_LABEL[e.category] || "";
   const closed = past;
   // Guest engagements are hosted elsewhere: no on-site registration, just a
@@ -1039,8 +1035,8 @@ function renderEventDetail() {
               <a class="button primary" href="${escapeHtml(e.link)}" target="_blank" rel="noopener">Register on the host's site →</a>
               <a class="button ghost" href="events.html">Back to all events</a>
             ` : `
-              <h3>${e.status === "open" ? "Register" : "Save my spot"}</h3>
-              <p class="give-sub">${e.status === "open" ? "Complete the steps below to register. It only takes a minute." : "Register your interest and we'll send details and confirm your place."}</p>
+              <h3>Register</h3>
+              <p class="give-sub">Complete the steps below to register. It only takes a minute.</p>
               <form id="eventRegForm" class="stepper-form" novalidate>
                 <fieldset class="form-step" data-step-label="About you">
                   <div class="field-row">
@@ -1062,7 +1058,7 @@ function renderEventDetail() {
                   <label><span>Anything we should know? (optional)</span><textarea name="notes" rows="3" placeholder="Dietary needs, accessibility, questions…"></textarea></label>
                   <label class="check-row"><input type="checkbox" name="consent" required /> <span>Please keep me updated about this event and DPW resources.</span></label>
                 </fieldset>
-                <button class="button primary" type="submit" hidden>${e.status === "open" ? "Complete registration" : "Save my spot"}</button>
+                <button class="button primary" type="submit" hidden>Complete registration</button>
                 <p class="form-status" id="eventRegStatus" role="status" aria-live="polite"></p>
               </form>
             `}
@@ -1397,7 +1393,7 @@ function initShare() {
     btn.addEventListener("click", async () => {
       const shareData = {
         title: "Dear Pastor's Wife",
-        text: "Partner with Dear Pastor's Wife to keep resources free for women in ministry the world over.",
+        text: "Partner with Dear Pastor's Wife to keep resources free for women in ministry around the world.",
         url: btn.dataset.share || window.location.href,
       };
       const label = btn.querySelector(".share-label");
