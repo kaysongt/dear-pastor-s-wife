@@ -232,6 +232,11 @@ const CONFIG = {
     url: "https://emjunhmlifqvgspmtoha.supabase.co",
     key: "sb_publishable_KkPGPZ_LTWjKf6c6bop1Mw_YSSgq1As",
   },
+  registration: {
+    // Public Cloudflare Turnstile site key. Leave blank until the protected
+    // Supabase Edge Function and its secrets are deployed and verified.
+    turnstileSiteKey: "",
+  },
 };
 
 /* ---------- DATA ---------- */
@@ -767,7 +772,7 @@ function renderTiers() {
 async function sendToCrm(formId, data) {
   if (!CONFIG.crm.endpoint) {
     // Demo mode: no CRM endpoint configured yet.
-    console.log(`[${formId}] submission (demo, no CRM endpoint set)`, data);
+    console.log(`[${formId}] submission skipped because no CRM endpoint is configured`);
     return true;
   }
   const payload = {
@@ -794,10 +799,10 @@ async function sendToCrm(formId, data) {
       headers: { "Content-Type": "text/plain" },
       body: JSON.stringify(payload),
     });
-    console.log(`[${formId}] contact sent to systeme.io CRM`, { form: formId, ...data });
+    console.log(`[${formId}] contact sent to systeme.io CRM`);
     return true;
-  } catch (err) {
-    console.error(`[${formId}] CRM submission failed`, err);
+  } catch {
+    console.error(`[${formId}] CRM submission failed`);
     return false;
   }
 }
@@ -994,6 +999,11 @@ function renderEventDetail() {
     return;
   }
 
+  if (e.registrationOnly) {
+    window.location.replace(e.link);
+    return;
+  }
+
   document.title = `${e.title} | Dear Pastor's Wife`;
   const past = isPastEvent(e);
   const statusLabel = { open: "Registration open", soon: "Registration open", past: "Past event" };
@@ -1038,6 +1048,7 @@ function renderEventDetail() {
               <h3>Register</h3>
               <p class="give-sub">Complete the steps below to register. It only takes a minute.</p>
               <form id="eventRegForm" class="stepper-form" novalidate>
+                <label class="form-honeypot" aria-hidden="true"><span>Website</span><input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
                 <fieldset class="form-step" data-step-label="About you">
                   <div class="field-row">
                     <label><span>First name</span><input type="text" name="firstName" required autocomplete="given-name" /></label>
@@ -1057,8 +1068,11 @@ function renderEventDetail() {
                 <fieldset class="form-step" data-step-label="Confirm" hidden>
                   <label><span>Anything we should know? (optional)</span><textarea name="notes" rows="3" placeholder="Dietary needs, accessibility, questions…"></textarea></label>
                   <label class="check-row"><input type="checkbox" name="consent" required /> <span>Please keep me updated about this event and DPW resources.</span></label>
+                  ${CONFIG.registration.turnstileSiteKey ? `
+                    <div class="cf-turnstile" data-sitekey="${escapeHtml(CONFIG.registration.turnstileSiteKey)}" data-action="event_registration"></div>
+                  ` : `<p class="form-status">Online registration setup is finishing. Please email connect@dearpastorswife.org for now.</p>`}
                 </fieldset>
-                <button class="button primary" type="submit" hidden>Complete registration</button>
+                <button class="button primary" type="submit" hidden${CONFIG.registration.turnstileSiteKey ? "" : " disabled"}>Complete registration</button>
                 <p class="form-status" id="eventRegStatus" role="status" aria-live="polite"></p>
               </form>
             `}
@@ -1072,6 +1086,7 @@ function renderEventDetail() {
   const form = $("#eventRegForm");
   initStepper(form);
   const status = $("#eventRegStatus");
+  const submissionId = window.crypto?.randomUUID?.();
   form.addEventListener("submit", async (ev) => {
     ev.preventDefault();
     if (!form.checkValidity()) { form.reportValidity(); return; }
@@ -1079,14 +1094,31 @@ function renderEventDetail() {
     data.event = e.title;
     data.eventSlug = e.slug;
     if (status) status.textContent = "Sending…";
-    const ok = await sendToCrm("eventRegistration", data);
-    if (ok) {
+    const submitButton = form.querySelector('button[type="submit"]');
+    if (submitButton) submitButton.disabled = true;
+    try {
+      if (!submissionId || !window.DPWEventRegistration) {
+        throw new Error("Registration storage is unavailable");
+      }
+      await window.DPWEventRegistration.submitRegistration({
+        supabaseUrl: CONFIG.community.url,
+        anonKey: CONFIG.community.key,
+        eventSlug: e.slug,
+        submissionId,
+        turnstileToken: form.querySelector('[name="cf-turnstile-response"]')?.value || "",
+        data,
+      });
+      // The private registration ledger is authoritative. CRM contact sync is
+      // secondary and cannot change an already stored registration.
+      void sendToCrm("eventRegistration", data).catch(() => {});
       $("#eventRegCard").innerHTML = `
         <h3>You're registered! 🎉</h3>
         <p class="give-sub">Thank you, ${escapeHtml(data.firstName)}. We've saved your details for <strong>${escapeHtml(e.title)}</strong> and will email you at ${escapeHtml(data.email)} with everything you need.</p>
         <a class="button ghost" href="events.html">Back to all events</a>`;
-    } else if (status) {
-      status.textContent = "Something went wrong. Please email connect@dearpastorswife.org.";
+    } catch {
+      if (status) status.textContent = "We couldn't save your registration. Please try again or email connect@dearpastorswife.org.";
+      if (submitButton) submitButton.disabled = false;
+      if (window.turnstile) window.turnstile.reset();
     }
   });
 }

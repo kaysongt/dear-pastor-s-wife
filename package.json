@@ -1,0 +1,7 @@
+{
+  "name": "dear-pastors-wife-site",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  }
+}

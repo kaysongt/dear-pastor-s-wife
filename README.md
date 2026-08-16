@@ -67,6 +67,13 @@ records them to the CRM **first**, and only then redirects to Stripe for payment
 (see `initPartnerForm()` in `script.js`). This keeps the contact even if someone
 drops off at the payment step.
 
+## Event registrations
+
+- The UK retreat uses its existing Google Form.
+- The Chicago and Nigeria forms call a Turnstile-protected, rate-limited Supabase Edge Function; browsers have no direct registration-table access.
+- Apply the migration, set the function secrets, deploy the Edge Function, and configure the public Turnstile site key before merging the browser code.
+- Viewing, filtering, export, privacy, and activation steps are documented in [`docs/event-registrations.md`](docs/event-registrations.md).
+
 ## Email
 
 Email is handled by **Google Workspace**. No dev action is required unless DNS/MX
