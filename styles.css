@@ -1743,3 +1743,11 @@ body[data-page="partnership"] .partner-photo img { height: clamp(340px, 46vw, 48
 @media (max-width: 640px) {
   .stepper-form .field-row { grid-template-columns: 1fr; }
 }
+/* Bot trap: real visitors never interact with this field. */
+.form-honeypot {
+  position: absolute !important;
+  left: -10000px !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+}
