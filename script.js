@@ -183,6 +183,10 @@ const CONFIG = {
     // in the friendly "checkout opens once Stripe is connected" demo state and
     // charge nobody. Flip to true to arm real payments.
     live: true,
+    // Publishable key for the embedded Buy Buttons (the same key already used
+    // by the giving widgets in index.html / partnership.html). Publishable
+    // keys are safe to expose client-side.
+    publishableKey: "pk_live_51JHhvaFlOkA0eubSqNNsAxYMXTo0gZxV04HbPk1BYm8a1fWHmeuOVcQezCG1MFrrUHGJvCEZj0XZmMJ04H0l0p5V00qcwN7Rfn",
     oneTimeUrl: "https://buy.stripe.com/14A3cvdeg87v346aCN6Vq0e",
     monthly: {
       25:   "https://buy.stripe.com/dRmbJ15LO2Nb3463al6Vq08",
@@ -222,6 +226,22 @@ const CONFIG = {
     // The opt-in page's submit-button entity id, sent as entityId so the
     // submission matches what the hosted page itself would send.
     optinEntityId: "a2e4377a-139b-4e1a-b728-b12ec7121a6a",
+    // Per-event opt-in override, keyed by event slug. A campaign with its own
+    // systeme.io funnel lands its registrants there (already tagged, already
+    // on that funnel's automation) instead of in the general newsletter list.
+    // Empty value = fall back to the newsletter opt-in above.
+    //   1. systeme.io > Funnels > New funnel > "Build an audience" > Opt-in
+    //   2. Open the opt-in page, copy the submit button's entity id
+    //   3. Paste it here against the event's slug
+    eventOptins: {
+      "dpw-retreat-uk": "",
+    },
+  },
+  tracking: {
+    // Meta (Facebook) Pixel. Paste the pixel id from Meta Events Manager >
+    // Data sources > your pixel; it sits directly under the pixel name.
+    // While this is empty NOTHING loads from Meta and no events are sent.
+    metaPixelId: "1597132631815713",
   },
   // Community forum backend (Supabase). Publishable key is safe to expose
   // client-side — access is enforced by the table's Row Level Security
@@ -233,6 +253,66 @@ const CONFIG = {
     key: "sb_publishable_KkPGPZ_LTWjKf6c6bop1Mw_YSSgq1As",
   },
 };
+
+/* ---------- TRACKING (GA4 + Meta Pixel) ----------
+   GA4 is loaded per-page from each HTML <head> (G-41DSKG7815). The Meta Pixel
+   loads from here instead, so it ships with the shared script rather than
+   being pasted into every page's head. Both paths no-op safely: the pixel
+   never loads until CONFIG.tracking.metaPixelId is filled in, and track()
+   only calls the tools that actually exist on the page.
+
+   Conversion funnel for a paid event:
+     ViewContent      registration page opened
+     InitiateCheckout registrant started filling the form
+     Lead             details captured into the systeme.io CRM
+     Purchase         fired on retreat-thank-you.html, which Stripe must be
+                      told to use as its post-payment confirmation page
+                      (Dashboard - Payment Link / Buy Button - After payment). */
+function initMetaPixel() {
+  const id = CONFIG.tracking.metaPixelId;
+  if (!id || window.fbq) return;
+  // Meta's standard bootstrap, unminified so it stays readable/reviewable.
+  const n = window.fbq = function () {
+    n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+  };
+  window._fbq = window._fbq || n;
+  n.push = n; n.loaded = true; n.version = "2.0"; n.queue = [];
+  const s = document.createElement("script");
+  s.async = true;
+  s.src = "https://connect.facebook.net/en_US/fbevents.js";
+  document.head.appendChild(s);
+  window.fbq("init", id);
+  window.fbq("track", "PageView");
+}
+initMetaPixel();
+
+// Fire one conversion event to every analytics tool present on the page.
+// `params` uses Meta's vocabulary (content_name, value, currency); GA4
+// accepts the same object for custom events, so one call covers both.
+function track(eventName, params = {}) {
+  if (typeof window.fbq === "function") window.fbq("track", eventName, params);
+  if (typeof window.gtag === "function") window.gtag("event", eventName, params);
+  console.log(`[track] ${eventName}`, params);
+}
+
+// Stripe's Buy Button element is only needed on pages that actually show one,
+// so it's injected on demand rather than loaded site-wide.
+function loadStripeBuyButton() {
+  if (document.querySelector('script[src*="js.stripe.com/v3/buy-button.js"]')) return;
+  const s = document.createElement("script");
+  s.async = true;
+  s.src = "https://js.stripe.com/v3/buy-button.js";
+  document.head.appendChild(s);
+}
+
+// Short, human-readable reference tying a site registration to its Stripe
+// payment. Sent to Stripe as client-reference-id, so a payment in the Stripe
+// Dashboard can be matched back to the person who filled in the form.
+function registrationRef(slug) {
+  const stamp = Date.now().toString(36).toUpperCase().slice(-5);
+  const rand = Math.random().toString(36).toUpperCase().slice(2, 5);
+  return `${slug.replace(/[^a-z0-9]+/gi, "-")}-${stamp}${rand}`;
+}
 
 /* ---------- DATA ---------- */
 
@@ -293,8 +373,20 @@ const EVENTS = [
     title: "DPW Retreat", location: "United Kingdom", venue: "Countryside venue, UK (shared on registration)",
     desc: "A multi-day, immersive weekend away, with teaching, worship, prayer, and honest table conversations. Women arrive carrying the weight of their call and leave lighter, clearer, and more equipped.",
     details: "From Friday afternoon to Sunday morning, we gather away from the noise: teaching to testimony, worship to prayer, honest table conversations to hands-on workbook sessions. An intimate 25–30 woman experience of renewal.",
-    requirements: "Open to women in ministry and Christian leadership. Places are limited to keep the retreat intimate; a deposit may apply and will be confirmed at registration.",
-    status: "open", art: "clay", link: "europe-retreat/", registrationOnly: true,
+    requirements: "Open to women in ministry and Christian leadership. Places are limited to keep the retreat intimate, so your place is confirmed once the retreat fee is paid at checkout.",
+    status: "open", art: "clay",
+    // Paid event. Registration is captured on-site (details to the systeme.io
+    // CRM first), then handed to Stripe. `buyButtonId` renders the embedded
+    // Buy Button; `link` is the same product's Payment Link, kept as the
+    // fallback for anyone whose browser blocks the embed.
+    payment: {
+      buyButtonId: "buy_btn_1U8Oe7FlOkA0eubSq2rrsySi",
+      link: "https://buy.stripe.com/4gw14lcD544t0h29AE",
+      // Price of the Buy Button product ("UK Pastors’ Wives Retreat"), so Meta
+      // and GA4 report revenue against the Purchase event on the thank-you
+      // page. Keep in step with the price in the Stripe Dashboard.
+      amount: 300, currency: "gbp",
+    },
   },
 ];
 
@@ -764,23 +856,34 @@ function renderTiers() {
 // name + email are what lands in the CRM; extra fields a form collects
 // (newsletter track, booking message, event slug, …) are logged locally for
 // now and will need the systeme.io API (server-side) to be stored per-contact.
-async function sendToCrm(formId, data) {
+async function sendToCrm(formId, data, opts = {}) {
   if (!CONFIG.crm.endpoint) {
     // Demo mode: no CRM endpoint configured yet.
     console.log(`[${formId}] submission (demo, no CRM endpoint set)`, data);
     return true;
   }
+  // A campaign can route to its own systeme.io opt-in page (see
+  // CONFIG.crm.eventOptins) so its registrants land tagged in the CRM
+  // instead of mixed into the general newsletter list.
+  const entityId = opts.optinEntityId || CONFIG.crm.optinEntityId;
+  const fields = {
+    first_name: { value: data.firstName || data.name || "" },
+    email: { value: data.email || "" },
+  };
+  // systeme.io stores only the fields its opt-in page actually defines and
+  // ignores the rest, so sending these is harmless today and starts
+  // capturing automatically the moment those fields are added to the page.
+  if (data.lastName) fields.last_name = { value: data.lastName };
+  if (data.phone) fields.phone = { value: data.phone };
+  if (data.country) fields.country = { value: data.country };
   const payload = {
     optin: {
-      fields: {
-        first_name: { value: data.firstName || data.name || "" },
-        email: { value: data.email || "" },
-      },
+      fields,
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
       popupId: null,
       isDesktop: !window.matchMedia("(max-width: 900px)").matches,
       surveysResults: [],
-      entityId: CONFIG.crm.optinEntityId,
+      entityId,
       checkBoxIds: [],
     },
   };
@@ -794,7 +897,7 @@ async function sendToCrm(formId, data) {
       headers: { "Content-Type": "text/plain" },
       body: JSON.stringify(payload),
     });
-    console.log(`[${formId}] contact sent to systeme.io CRM`, { form: formId, ...data });
+    console.log(`[${formId}] contact sent to systeme.io CRM`, { form: formId, entityId, ...data });
     return true;
   } catch (err) {
     console.error(`[${formId}] CRM submission failed`, err);
@@ -1002,6 +1105,11 @@ function renderEventDetail() {
   // Guest engagements are hosted elsewhere: no on-site registration, just a
   // link out to the host's own page.
   const external = !closed && (e.guest || isExternal(e.link));
+  // A paid event carries a `payment` block; payment is only ever offered
+  // when the master payments switch is armed.
+  const pay = e.payment || null;
+  const paid = !!(pay && pay.buyButtonId && CONFIG.payments.live === true);
+  const regRef = registrationRef(e.slug);
 
   root.innerHTML = `
     <section class="event-page section-shell page-section">
@@ -1035,8 +1143,10 @@ function renderEventDetail() {
               <a class="button primary" href="${escapeHtml(e.link)}" target="_blank" rel="noopener">Register on the host's site →</a>
               <a class="button ghost" href="events.html">Back to all events</a>
             ` : `
-              <h3>Register</h3>
-              <p class="give-sub">Complete the steps below to register. It only takes a minute.</p>
+              <h3>${paid ? "Reserve your place" : "Register"}</h3>
+              <p class="give-sub">${paid
+                ? "Three short steps, then secure checkout. Your details are saved before payment, so nothing is lost if you step away."
+                : "Complete the steps below to register. It only takes a minute."}</p>
               <form id="eventRegForm" class="stepper-form" novalidate>
                 <fieldset class="form-step" data-step-label="About you">
                   <div class="field-row">
@@ -1057,8 +1167,9 @@ function renderEventDetail() {
                 <fieldset class="form-step" data-step-label="Confirm" hidden>
                   <label><span>Anything we should know? (optional)</span><textarea name="notes" rows="3" placeholder="Dietary needs, accessibility, questions…"></textarea></label>
                   <label class="check-row"><input type="checkbox" name="consent" required /> <span>Please keep me updated about this event and DPW resources.</span></label>
+                  ${paid ? `<p class="reg-note">✦ Next: secure checkout for the full retreat cost. Card, Apple Pay, and Google Pay accepted.</p>` : ""}
                 </fieldset>
-                <button class="button primary" type="submit" hidden>Complete registration</button>
+                <button class="button primary" type="submit" hidden>${paid ? "Continue to secure checkout →" : "Complete registration"}</button>
                 <p class="form-status" id="eventRegStatus" role="status" aria-live="polite"></p>
               </form>
             `}
@@ -1069,28 +1180,130 @@ function renderEventDetail() {
 
   if (closed || external) return;
 
+  // Someone landed on a live registration page: the top of the funnel.
+  track("ViewContent", {
+    content_name: e.title,
+    content_category: EVENT_CAT_LABEL[e.category] || e.category,
+    content_ids: [e.slug],
+  });
+
   const form = $("#eventRegForm");
   initStepper(form);
   const status = $("#eventRegStatus");
+
+  // Fire InitiateCheckout once, the first time she actually starts typing,
+  // so the metric counts real intent rather than every page view.
+  let started = false;
+  form.addEventListener("input", () => {
+    if (started) return;
+    started = true;
+    track("InitiateCheckout", { content_name: e.title, content_ids: [e.slug] });
+  }, { once: false });
+
   form.addEventListener("submit", async (ev) => {
     ev.preventDefault();
     if (!form.checkValidity()) { form.reportValidity(); return; }
     const data = Object.fromEntries(new FormData(form).entries());
     data.event = e.title;
     data.eventSlug = e.slug;
-    if (status) status.textContent = "Sending…";
-    const ok = await sendToCrm("eventRegistration", data);
-    if (ok) {
+    data.registrationRef = regRef;
+
+    const submitBtn = form.querySelector('[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+    if (status) status.textContent = "Saving your details…";
+
+    // Record the registrant in the CRM FIRST, so we keep the contact even if
+    // she drops off at the payment step. A paid event routes to its own
+    // systeme.io opt-in page when one is configured.
+    const ok = await sendToCrm("eventRegistration", data, {
+      optinEntityId: CONFIG.crm.eventOptins[e.slug],
+    });
+
+    if (!ok) {
+      if (submitBtn) submitBtn.disabled = false;
+      if (status) status.textContent = "Something went wrong. Please email connect@dearpastorswife.org.";
+      return;
+    }
+
+    track("Lead", {
+      content_name: e.title,
+      content_ids: [e.slug],
+      registration_ref: regRef,
+    });
+
+    if (!paid) {
       $("#eventRegCard").innerHTML = `
         <h3>You're registered! 🎉</h3>
         <p class="give-sub">Thank you, ${escapeHtml(data.firstName)}. We've saved your details for <strong>${escapeHtml(e.title)}</strong> and will email you at ${escapeHtml(data.email)} with everything you need.</p>
         <a class="button ghost" href="events.html">Back to all events</a>`;
-    } else if (status) {
-      status.textContent = "Something went wrong. Please email connect@dearpastorswife.org.";
+      return;
     }
+
+    // Paid event: hand off to Stripe without leaving the page. The Buy Button
+    // carries her email (so checkout is prefilled) and the registration
+    // reference (so the payment can be matched back to this registration).
+    loadStripeBuyButton();
+    $("#eventRegCard").innerHTML = `
+      <div class="reg-pay">
+        <p class="eyebrow">Last step</p>
+        <h3>Almost there, ${escapeHtml(data.firstName)}.</h3>
+        <p class="give-sub">Your details are saved for <strong>${escapeHtml(e.title)}</strong>. Complete payment below to confirm your place. This covers the full retreat cost, with nothing further to pay.</p>
+        <div class="reg-pay-box">
+          <stripe-buy-button
+            buy-button-id="${escapeHtml(pay.buyButtonId)}"
+            publishable-key="${escapeHtml(CONFIG.payments.publishableKey)}"
+            customer-email="${escapeHtml(data.email)}"
+            client-reference-id="${escapeHtml(regRef)}"
+          ></stripe-buy-button>
+        </div>
+        ${pay.link ? `<p class="reg-pay-alt">Checkout not loading? <a href="${escapeHtml(withEmail(pay.link, data.email))}" target="_blank" rel="noopener">Open secure checkout in a new tab →</a></p>` : ""}
+        <p class="reg-pay-ref">Registration reference <strong>${escapeHtml(regRef)}</strong> — keep this if you need to reach us about your place.</p>
+      </div>`;
   });
 }
 renderEventDetail();
+
+/* ---------- POST-PAYMENT CONFIRMATION (retreat-thank-you.html) ----------
+   Stripe is told to send the payer here once the charge succeeds (Dashboard >
+   the Buy Button or Payment Link > "After payment" > redirect), which makes
+   this the one place a client-side Purchase event can honestly fire — the
+   checkout itself happens on Stripe's domain, where our pixel can't reach.
+   Stripe appends ?session_id={CHECKOUT_SESSION_ID}, and that rides along as
+   the transaction id so a reported conversion traces back to a real payment. */
+function initThankYou() {
+  const card = $("#thanksCard");
+  if (!card) return;
+
+  const e = findEvent(card.dataset.event || "");
+  const mark = $("[data-vessel]", card);
+  if (mark) mark.innerHTML = VESSEL_SVG;
+
+  if (e) {
+    document.title = `Your place is confirmed | ${e.title} | Dear Pastor's Wife`;
+    const lead = $("#thanksLead");
+    if (lead) {
+      lead.innerHTML = `Thank you. Your payment came through and your place at <strong>${escapeHtml(e.title)}</strong> in ${escapeHtml(e.location)}, ${escapeHtml(e.date)}, is secured.`;
+    }
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const purchase = {
+    content_name: e ? e.title : (card.dataset.event || "Retreat"),
+    content_ids: [card.dataset.event || ""],
+    content_type: "product",
+    transaction_id: params.get("session_id") || "",
+  };
+  // Set payment.amount / payment.currency on the event to report revenue
+  // against this conversion. Without them the conversion still counts, it
+  // just carries no value — better than reporting a guessed number.
+  const pay = e && e.payment;
+  if (pay && pay.amount) {
+    purchase.value = pay.amount;
+    purchase.currency = (pay.currency || "usd").toUpperCase();
+  }
+  track("Purchase", purchase);
+}
+initThankYou();
 
 /* ---------- COMMUNITY FORUM (community.html) ----------
    Live forum backed by Supabase (see CONFIG.community). Public read + public
