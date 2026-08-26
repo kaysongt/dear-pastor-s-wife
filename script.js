@@ -236,6 +236,14 @@ const CONFIG = {
     eventOptins: {
       "dpw-retreat-uk": "",
     },
+    // Opt-in for registrants who have actually PAID, keyed by event slug.
+    // Registration alone lands a contact in eventOptins above; this one fires
+    // from the thank-you page after Stripe confirms the charge, so the two
+    // lists together separate "registered" from "paid" — the gap between them
+    // is who still needs a nudge to complete payment. Empty value = skip.
+    eventPaidOptins: {
+      "dpw-retreat-uk": "",
+    },
   },
   tracking: {
     // Meta (Facebook) Pixel. Paste the pixel id from Meta Events Manager >
@@ -289,10 +297,36 @@ initMetaPixel();
 // Fire one conversion event to every analytics tool present on the page.
 // `params` uses Meta's vocabulary (content_name, value, currency); GA4
 // accepts the same object for custom events, so one call covers both.
-function track(eventName, params = {}) {
-  if (typeof window.fbq === "function") window.fbq("track", eventName, params);
+// `opts.eventID` is Meta's deduplication key: if she refreshes the thank-you
+// page, or the same purchase ever also arrives server-side, Meta collapses the
+// repeats into one conversion instead of counting them twice and overstating
+// the campaign's return. Stripe's checkout session id is a natural key here —
+// one per completed payment.
+function track(eventName, params = {}, opts = {}) {
+  if (typeof window.fbq === "function") {
+    if (opts.eventID) window.fbq("track", eventName, params, { eventID: opts.eventID });
+    else window.fbq("track", eventName, params);
+  }
   if (typeof window.gtag === "function") window.gtag("event", eventName, params);
   console.log(`[track] ${eventName}`, params);
+}
+
+// Re-init the pixel with who she is, so Meta can match the conversion to a
+// real person instead of a cookie. Values are sent raw and hashed in the
+// browser by fbevents.js — nothing identifying leaves in the clear. This
+// matters most on a low-volume campaign, where a handful of unmatched
+// conversions is the difference between usable reporting and noise.
+function identifyForMeta(person) {
+  const id = CONFIG.tracking.metaPixelId;
+  if (!id || typeof window.fbq !== "function" || !person) return;
+  const match = {};
+  if (person.email) match.em = String(person.email).trim().toLowerCase();
+  if (person.firstName) match.fn = String(person.firstName).trim().toLowerCase();
+  if (person.lastName) match.ln = String(person.lastName).trim().toLowerCase();
+  if (person.phone) match.ph = String(person.phone).replace(/[^0-9]/g, "");
+  if (person.country) match.country = String(person.country).trim().toLowerCase();
+  if (!Object.keys(match).length) return;
+  window.fbq("init", id, match);
 }
 
 // Stripe's Buy Button element is only needed on pages that actually show one,
@@ -312,6 +346,39 @@ function registrationRef(slug) {
   const stamp = Date.now().toString(36).toUpperCase().slice(-5);
   const rand = Math.random().toString(36).toUpperCase().slice(2, 5);
   return `${slug.replace(/[^a-z0-9]+/gi, "-")}-${stamp}${rand}`;
+}
+
+/* Checkout happens on Stripe's domain, so the payer arrives back at the
+   thank-you page as an anonymous page view carrying nothing but a session id.
+   Her details are stashed here on the way out and read back on the way in,
+   which is what lets the Purchase event identify her and lets the paid-opt-in
+   fire. Same origin both ways, so this survives the round trip; it does not
+   survive her paying on a different device, which is an acceptable miss.
+   Every access is guarded — private windows and blocked site data throw. */
+const PENDING_REG_KEY = "dpw:pendingRegistration";
+const PENDING_REG_TTL = 6 * 60 * 60 * 1000; // Stale after six hours.
+
+function stashRegistration(data) {
+  try {
+    localStorage.setItem(PENDING_REG_KEY, JSON.stringify({ ...data, ts: Date.now() }));
+  } catch (_) { /* No storage available: Purchase still fires, just unmatched. */ }
+}
+
+function takeRegistration(slug) {
+  let raw = null;
+  try {
+    raw = localStorage.getItem(PENDING_REG_KEY);
+    localStorage.removeItem(PENDING_REG_KEY);
+  } catch (_) { return null; }
+  if (!raw) return null;
+  try {
+    const saved = JSON.parse(raw);
+    // Only honour a fresh stash for the event actually being confirmed, so a
+    // stale or unrelated registration can't attach itself to this purchase.
+    if (!saved || saved.eventSlug !== slug) return null;
+    if (!saved.ts || Date.now() - saved.ts > PENDING_REG_TTL) return null;
+    return saved;
+  } catch (_) { return null; }
 }
 
 /* ---------- DATA ---------- */
@@ -1191,15 +1258,6 @@ function renderEventDetail() {
   initStepper(form);
   const status = $("#eventRegStatus");
 
-  // Fire InitiateCheckout once, the first time she actually starts typing,
-  // so the metric counts real intent rather than every page view.
-  let started = false;
-  form.addEventListener("input", () => {
-    if (started) return;
-    started = true;
-    track("InitiateCheckout", { content_name: e.title, content_ids: [e.slug] });
-  }, { once: false });
-
   form.addEventListener("submit", async (ev) => {
     ev.preventDefault();
     if (!form.checkValidity()) { form.reportValidity(); return; }
@@ -1242,6 +1300,12 @@ function renderEventDetail() {
     // Paid event: hand off to Stripe without leaving the page. The Buy Button
     // carries her email (so checkout is prefilled) and the registration
     // reference (so the payment can be matched back to this registration).
+    // `pay.link` is the same product's Payment Link, kept as the fallback for
+    // anyone whose browser blocks the embed.
+    //
+    // Stash her details first: from here she leaves for Stripe's domain, and
+    // this is what lets the thank-you page know who came back.
+    stashRegistration(data);
     loadStripeBuyButton();
     $("#eventRegCard").innerHTML = `
       <div class="reg-pay">
@@ -1259,6 +1323,17 @@ function renderEventDetail() {
         ${pay.link ? `<p class="reg-pay-alt">Checkout not loading? <a href="${escapeHtml(withEmail(pay.link, data.email))}" target="_blank" rel="noopener">Open secure checkout in a new tab →</a></p>` : ""}
         <p class="reg-pay-ref">Registration reference <strong>${escapeHtml(regRef)}</strong> — keep this if you need to reach us about your place.</p>
       </div>`;
+
+    // Checkout is now in front of her. The embed is a Stripe iframe, so there
+    // is no click of ours to listen for — presenting it is the honest moment
+    // InitiateCheckout fires.
+    track("InitiateCheckout", {
+      content_name: e.title,
+      content_ids: [e.slug],
+      value: pay.amount || undefined,
+      currency: pay.amount ? (pay.currency || "usd").toUpperCase() : undefined,
+      registration_ref: regRef,
+    });
   });
 }
 renderEventDetail();
@@ -1274,22 +1349,37 @@ function initThankYou() {
   const card = $("#thanksCard");
   if (!card) return;
 
-  const e = findEvent(card.dataset.event || "");
+  const slug = card.dataset.event || "";
+  const e = findEvent(slug);
   const mark = $("[data-vessel]", card);
   if (mark) mark.innerHTML = VESSEL_SVG;
+
+  // Who just paid, recovered from the registration she completed minutes ago.
+  // Null whenever the round trip broke (different device, cleared storage), in
+  // which case everything below still runs, just anonymously.
+  const person = takeRegistration(slug);
 
   if (e) {
     document.title = `Your place is confirmed | ${e.title} | Dear Pastor's Wife`;
     const lead = $("#thanksLead");
     if (lead) {
-      lead.innerHTML = `Thank you. Your payment came through and your place at <strong>${escapeHtml(e.title)}</strong> in ${escapeHtml(e.location)}, ${escapeHtml(e.date)}, is secured.`;
+      const hello = person && person.firstName ? `Thank you, ${escapeHtml(person.firstName)}.` : "Thank you.";
+      lead.innerHTML = `${hello} Your payment came through and your place at <strong>${escapeHtml(e.title)}</strong> in ${escapeHtml(e.location)}, ${escapeHtml(e.date)}, is secured.`;
     }
+  }
+
+  // Mark her as PAID in the CRM, on a separate opt-in from the registration
+  // one. Whoever sits in the registration list but not this one is someone who
+  // filled in the form and never finished paying — the follow-up list.
+  const paidOptin = CONFIG.crm.eventPaidOptins && CONFIG.crm.eventPaidOptins[slug];
+  if (person && paidOptin) {
+    sendToCrm("eventPayment", person, { optinEntityId: paidOptin });
   }
 
   const params = new URLSearchParams(window.location.search);
   const purchase = {
-    content_name: e ? e.title : (card.dataset.event || "Retreat"),
-    content_ids: [card.dataset.event || ""],
+    content_name: e ? e.title : (slug || "Retreat"),
+    content_ids: [slug],
     content_type: "product",
     transaction_id: params.get("session_id") || "",
   };
@@ -1301,7 +1391,10 @@ function initThankYou() {
     purchase.value = pay.amount;
     purchase.currency = (pay.currency || "usd").toUpperCase();
   }
-  track("Purchase", purchase);
+  if (person && person.registrationRef) purchase.registration_ref = person.registrationRef;
+  // Identify before tracking, so the Purchase carries her details with it.
+  identifyForMeta(person);
+  track("Purchase", purchase, { eventID: params.get("session_id") || "" });
 }
 initThankYou();
 
