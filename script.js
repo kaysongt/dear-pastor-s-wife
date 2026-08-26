@@ -1283,6 +1283,13 @@ function renderEventDetail() {
       return;
     }
 
+    // She has just handed over her name, email and phone, so identify her
+    // before the conversion events rather than only at Purchase. Lead is the
+    // event a small campaign has to optimise on (there will never be enough
+    // £300 purchases to train against), and its match quality is what decides
+    // how well Meta can find more women like her.
+    identifyForMeta(data);
+
     track("Lead", {
       content_name: e.title,
       content_ids: [e.slug],
