@@ -263,7 +263,7 @@ const CONFIG = {
 };
 
 /* ---------- TRACKING (GA4 + Meta Pixel) ----------
-   GA4 is loaded per-page from each HTML <head> (G-41DSKG7815). The Meta Pixel
+   GA4 is loaded per-page from each HTML <head> (G-QS9WC3KM1J). The Meta Pixel
    loads from here instead, so it ships with the shared script rather than
    being pasted into every page's head. Both paths no-op safely: the pixel
    never loads until CONFIG.tracking.metaPixelId is filled in, and track()

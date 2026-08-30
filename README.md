@@ -97,7 +97,7 @@ under the old short URL still work.
 
 ### Analytics & conversion tracking
 
-GA4 (`G-41DSKG7815`) is loaded per-page from each HTML `<head>`. The **Meta Pixel**
+GA4 (`G-QS9WC3KM1J`) is loaded per-page from each HTML `<head>`. The **Meta Pixel**
 loads from `script.js` instead, so it ships once rather than being pasted into
 every page. `track()` fires each conversion to whichever tools are present:
 
