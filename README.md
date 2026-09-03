@@ -97,16 +97,22 @@ under the old short URL still work.
 
 ### Analytics & conversion tracking
 
-GA4 (`G-QS9WC3KM1J`) is loaded per-page from each HTML `<head>`. The **Meta Pixel**
-loads from `script.js` instead, so it ships once rather than being pasted into
-every page. `track()` fires each conversion to whichever tools are present:
+GA4 (`G-QS9WC3KM1J`) and the Google Ads tag (`AW-18426236503`) are loaded
+per-page from each HTML `<head>`. The **Meta Pixel** loads from `script.js`
+instead, so it ships once rather than being pasted into every page. `track()`
+fires Meta + GA4 conversions to whichever tools are present. Google Ads uses
+its own `conversion` event — the GA4 `Purchase` is not the Ads conversion.
 
 | Event | Fires when |
 | --- | --- |
 | `ViewContent` | a live registration page is opened |
 | `InitiateCheckout` | she starts filling the form (first keystroke, once) |
 | `Lead` | her details reach the systeme.io CRM |
-| `Purchase` | `retreat-thank-you.html` loads after a completed payment |
+| `Purchase` | `retreat-thank-you.html` loads after a completed payment (Meta + GA4) |
+| Google Ads `conversion` (`AW-18426236503/VwT9CIeJ3e0cENEcqNJE`) | same moment as `Purchase` on the thank-you page only, value £300 |
+
+A thank-you refresh is collapsed by Stripe's `session_id`: Meta uses it as
+`eventID`, GA4 and Google Ads use it as `transaction_id`.
 
 **Nothing loads from Meta and no events are sent until `CONFIG.tracking.metaPixelId`
 is filled in** — the site is safe to ship with it blank.
@@ -124,7 +130,7 @@ setup is assigned to us.
 - In the Stripe Dashboard, set the retreat Buy Button **and** its Payment Link to
   redirect after payment to
   `https://dearpastorswife.org/retreat-thank-you.html?session_id={CHECKOUT_SESSION_ID}`
-  — without this the `Purchase` conversion never fires.
+  — without this Meta/GA4 `Purchase` and the Google Ads conversion never fire.
 - Optional: give the UK retreat its own systeme.io opt-in funnel and paste the
   entity id into `CONFIG.crm.eventOptins["dpw-retreat-uk"]` so its registrants land
   tagged instead of in the general newsletter list.

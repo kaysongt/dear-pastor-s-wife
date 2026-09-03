@@ -250,6 +250,11 @@ const CONFIG = {
     // Data sources > your pixel; it sits directly under the pixel name.
     // While this is empty NOTHING loads from Meta and no events are sent.
     metaPixelId: "1597132631815713",
+    // Google Ads conversion action "DPW Retreat Registration"
+    // (account 819-983-3770). The AW- tag is configured in each page
+    // <head> next to GA4; this send_to is the conversion event itself
+    // and is only fired on retreat-thank-you.html.
+    googleAdsConversion: "AW-18426236503/VwT9CIeJ3e0cENEcqNJE",
   },
   // Community forum backend (Supabase). Publishable key is safe to expose
   // client-side — access is enforced by the table's Row Level Security
@@ -262,12 +267,13 @@ const CONFIG = {
   },
 };
 
-/* ---------- TRACKING (GA4 + Meta Pixel) ----------
-   GA4 is loaded per-page from each HTML <head> (G-QS9WC3KM1J). The Meta Pixel
-   loads from here instead, so it ships with the shared script rather than
-   being pasted into every page's head. Both paths no-op safely: the pixel
-   never loads until CONFIG.tracking.metaPixelId is filled in, and track()
-   only calls the tools that actually exist on the page.
+/* ---------- TRACKING (GA4 + Google Ads + Meta Pixel) ----------
+   GA4 (G-QS9WC3KM1J) and the Google Ads tag (AW-18426236503) are loaded
+   per-page from each HTML <head>. The Meta Pixel loads from here instead,
+   so it ships with the shared script rather than being pasted into every
+   page's head. All paths no-op safely: the pixel never loads until
+   CONFIG.tracking.metaPixelId is filled in, and track() only calls the
+   tools that actually exist on the page.
 
    Conversion funnel for a paid event:
      ViewContent      registration page opened
@@ -275,7 +281,9 @@ const CONFIG = {
      Lead             details captured into the systeme.io CRM
      Purchase         fired on retreat-thank-you.html, which Stripe must be
                       told to use as its post-payment confirmation page
-                      (Dashboard - Payment Link / Buy Button - After payment). */
+                      (Dashboard - Payment Link / Buy Button - After payment).
+                      Meta Pixel + GA4 Purchase fire here. Google Ads uses
+                      its own conversion event (not the GA4 Purchase). */
 function initMetaPixel() {
   const id = CONFIG.tracking.metaPixelId;
   if (!id || window.fbq) return;
@@ -309,6 +317,21 @@ function track(eventName, params = {}, opts = {}) {
   }
   if (typeof window.gtag === "function") window.gtag("event", eventName, params);
   console.log(`[track] ${eventName}`, params);
+}
+
+// Google Ads needs its own `conversion` event — the GA4 Purchase that
+// track() sends is not the Ads conversion. Fired only from
+// retreat-thank-you.html, at the same moment as Purchase. transaction_id
+// is Stripe's checkout session id, which is how Ads (and GA4 / Meta)
+// collapse a thank-you refresh into one conversion.
+function fireGoogleAdsConversion({ value, currency, transactionId }) {
+  if (typeof window.gtag !== "function") return;
+  const sendTo = CONFIG.tracking.googleAdsConversion;
+  if (!sendTo) return;
+  const payload = { send_to: sendTo, value, currency };
+  if (transactionId) payload.transaction_id = transactionId;
+  window.gtag("event", "conversion", payload);
+  console.log("[track] Google Ads conversion", payload);
 }
 
 // Re-init the pixel with who she is, so Meta can match the conversion to a
@@ -449,9 +472,9 @@ const EVENTS = [
     payment: {
       buyButtonId: "buy_btn_1U8Oe7FlOkA0eubSq2rrsySi",
       link: "https://buy.stripe.com/4gw14lcD544t0h29AE",
-      // Price of the Buy Button product ("UK Pastors’ Wives Retreat"), so Meta
-      // and GA4 report revenue against the Purchase event on the thank-you
-      // page. Keep in step with the price in the Stripe Dashboard.
+      // Price of the Buy Button product ("UK Pastors’ Wives Retreat"), so Meta,
+      // GA4, and Google Ads report revenue against the thank-you conversion.
+      // Keep in step with the price in the Stripe Dashboard.
       amount: 300, currency: "gbp",
     },
   },
@@ -1401,7 +1424,13 @@ function initThankYou() {
   if (person && person.registrationRef) purchase.registration_ref = person.registrationRef;
   // Identify before tracking, so the Purchase carries her details with it.
   identifyForMeta(person);
-  track("Purchase", purchase, { eventID: params.get("session_id") || "" });
+  const sessionId = params.get("session_id") || "";
+  track("Purchase", purchase, { eventID: sessionId });
+  fireGoogleAdsConversion({
+    value: purchase.value != null ? purchase.value : 300,
+    currency: purchase.currency || "GBP",
+    transactionId: sessionId,
+  });
 }
 initThankYou();
 
