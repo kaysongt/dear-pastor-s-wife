@@ -233,8 +233,16 @@ const CONFIG = {
     //   1. systeme.io > Funnels > New funnel > "Build an audience" > Opt-in
     //   2. Open the opt-in page, copy the submit button's entity id
     //   3. Paste it here against the event's slug
+    //   4. Paste that funnel's public opt-in URL into eventEndpoints below
     eventOptins: {
-      "dpw-retreat-uk": "",
+      "dpw-retreat-uk": "8216066e-16b6-4404-9196-bfa66aee71c7",
+    },
+    // Per-event funnel hosts, keyed by the same slug as eventOptins. Each
+    // funnel lives on its own systeme.io (or custom) domain; posting an
+    // event's entityId to the newsletter endpoint will not land the contact
+    // in that funnel. Missing / empty = use `endpoint` above.
+    eventEndpoints: {
+      "dpw-retreat-uk": "https://svg.systeme.io/9d871f1f/",
     },
     // Opt-in for registrants who have actually PAID, keyed by event slug.
     // Registration alone lands a contact in eventOptins above; this one fires
@@ -953,9 +961,10 @@ async function sendToCrm(formId, data, opts = {}) {
     return true;
   }
   // A campaign can route to its own systeme.io opt-in page (see
-  // CONFIG.crm.eventOptins) so its registrants land tagged in the CRM
-  // instead of mixed into the general newsletter list.
+  // CONFIG.crm.eventOptins / eventEndpoints) so its registrants land tagged
+  // in that funnel instead of mixed into the general newsletter list.
   const entityId = opts.optinEntityId || CONFIG.crm.optinEntityId;
+  const endpoint = opts.endpoint || CONFIG.crm.endpoint;
   const fields = {
     first_name: { value: data.firstName || data.name || "" },
     email: { value: data.email || "" },
@@ -981,13 +990,13 @@ async function sendToCrm(formId, data, opts = {}) {
     // mode "no-cors": systeme.io sends no CORS headers, so the response is
     // opaque, but the submission itself lands. The body stays text/plain so
     // the browser doesn't require a preflight the endpoint won't answer.
-    await fetch(CONFIG.crm.endpoint, {
+    await fetch(endpoint, {
       method: "POST",
       mode: "no-cors",
       headers: { "Content-Type": "text/plain" },
       body: JSON.stringify(payload),
     });
-    console.log(`[${formId}] contact sent to systeme.io CRM`, { form: formId, entityId, ...data });
+    console.log(`[${formId}] contact sent to systeme.io CRM`, { form: formId, entityId, endpoint, ...data });
     return true;
   } catch (err) {
     console.error(`[${formId}] CRM submission failed`, err);
@@ -1298,6 +1307,7 @@ function renderEventDetail() {
     // systeme.io opt-in page when one is configured.
     const ok = await sendToCrm("eventRegistration", data, {
       optinEntityId: CONFIG.crm.eventOptins[e.slug],
+      endpoint: CONFIG.crm.eventEndpoints && CONFIG.crm.eventEndpoints[e.slug],
     });
 
     if (!ok) {
