@@ -46,11 +46,17 @@ npx --yes serve -l 4173
 
 ## Live integrations (`script.js` → `CONFIG`)
 
-- **systeme.io (CRM):** forms post to the configured newsletter funnel endpoint at
-  `newsletter.dearpastorswife.org`. The DNS CNAME is in place and the host resolves,
-  so submissions reach systeme.io; the site still shows a direct-email fallback if a
-  request fails. Registration for a paid event stops at the error rather than moving
-  on to payment, so the contact is never lost.
+- **systeme.io (CRM):** newsletter and other general forms post to
+  `newsletter.dearpastorswife.org` with the default opt-in entity. Per-event
+  registrations can use a dedicated funnel via `CONFIG.crm.eventOptins` (submit
+  button entity id) and `CONFIG.crm.eventEndpoints` (that funnel's public opt-in
+  URL) — both are required, because posting an event entity id to the newsletter
+  domain will not land the contact in the event funnel. The UK retreat
+  (`dpw-retreat-uk`) posts to `https://svg.systeme.io/9d871f1f/` (funnel
+  "DPW UK-Retreat", step "Retreat Registrations (from site)"). The site still
+  shows a direct-email fallback if a request fails. Registration for a paid event
+  stops at the error rather than moving on to payment, so the contact is never
+  lost.
 - **Stripe (payments + ACH):** live Payment Links are enabled. One-time gifts use a
   customer-chosen amount, and fixed recurring links are configured for every amount
   offered by the monthly giving interface. Stripe presents the final amount and
@@ -78,8 +84,9 @@ partner flow:
 
 1. **On-site multi-step form** on `event.html?slug=dpw-retreat-uk` collects name,
    email, phone, location, and ministry role.
-2. **systeme.io** receives the contact *before* payment, so a registrant who
-   abandons checkout is still in the CRM and reachable.
+2. **systeme.io** receives the contact *before* payment on the UK-retreat funnel
+   (not the newsletter list), so a registrant who abandons checkout is still in
+   that funnel's Leads tab and reachable.
 3. **Stripe Buy Button** is then rendered in place of the form, pre-filled with her
    email and stamped with a registration reference (`client-reference-id`) so a
    payment in the Stripe Dashboard maps back to the person who registered. The
@@ -131,8 +138,9 @@ setup is assigned to us.
   redirect after payment to
   `https://dearpastorswife.org/retreat-thank-you.html?session_id={CHECKOUT_SESSION_ID}`
   — without this Meta/GA4 `Purchase` and the Google Ads conversion never fire.
-- Optional: give the UK retreat its own systeme.io opt-in funnel and paste the
-  entity id into `CONFIG.crm.eventOptins["dpw-retreat-uk"]` so its registrants land
-  tagged instead of in the general newsletter list.
+- To give another event its own systeme.io funnel, set both
+  `CONFIG.crm.eventOptins[slug]` (the opt-in page's submit-button entity id) and
+  `CONFIG.crm.eventEndpoints[slug]` (that funnel's public opt-in URL). Leaving
+  either empty falls back to the newsletter endpoint + entity.
 - Licensed Freight Display Pro and Futura PT files can replace the current Fraunces and
   Jost web-font stand-ins when the font licenses/files are available.
