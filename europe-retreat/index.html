@@ -19,13 +19,19 @@
        the systeme.io CRM, then Stripe checkout), so the URL is kept alive as
        a redirect rather than retired, and every previously shared link still
        lands in the right place. -->
-  <meta http-equiv="refresh" content="0; url=../event.html?slug=dpw-retreat-uk" />
+  <noscript><meta http-equiv="refresh" content="0; url=../event.html?slug=dpw-retreat-uk" /></noscript>
   <link rel="canonical" href="https://dearpastorswife.org/event.html?slug=dpw-retreat-uk" />
   <title>UK Retreat Registration | Dear Pastor's Wife</title>
 </head>
 <body>
   <p>Opening UK retreat registration...</p>
   <p><a href="../event.html?slug=dpw-retreat-uk">Continue to the registration page</a></p>
-  <script>window.location.replace("../event.html?slug=dpw-retreat-uk");</script>
+  <script>
+    const destination = new URL("../event.html", window.location.href);
+    destination.search = window.location.search;
+    destination.searchParams.set("slug", "dpw-retreat-uk");
+    destination.hash = window.location.hash;
+    window.location.replace(destination.href);
+  </script>
 </body>
 </html>

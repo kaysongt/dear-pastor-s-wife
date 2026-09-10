@@ -323,7 +323,17 @@ function track(eventName, params = {}, opts = {}) {
     if (opts.eventID) window.fbq("track", eventName, params, { eventID: opts.eventID });
     else window.fbq("track", eventName, params);
   }
-  if (typeof window.gtag === "function") window.gtag("event", eventName, params);
+  if (typeof window.gtag === "function") {
+    const names = { Purchase: "purchase", Lead: "generate_lead", InitiateCheckout: "begin_checkout", ViewContent: "view_item" };
+    const gaParams = { ...params, send_to: "G-QS9WC3KM1J" };
+    if (params.content_ids && eventName !== "Lead") {
+      gaParams.items = params.content_ids.map(id => ({
+        item_id: id, item_name: params.content_name, quantity: 1,
+        ...(params.value != null ? { price: params.value } : {}),
+      }));
+    }
+    window.gtag("event", names[eventName] || eventName, gaParams);
+  }
   console.log(`[track] ${eventName}`, params);
 }
 
@@ -792,6 +802,12 @@ function withEmail(url, email) {
   if (!email) return url;
   const sep = url.includes("?") ? "&" : "?";
   return `${url}${sep}prefilled_email=${encodeURIComponent(email)}`;
+}
+
+function retreatCheckoutLink(url, email, reference) {
+  const checkout = new URL(withEmail(url, email));
+  checkout.searchParams.set("client_reference_id", reference);
+  return checkout.href;
 }
 
 // One-time gift: flexible Stripe link where the giver chooses the amount.
@@ -1360,7 +1376,7 @@ function renderEventDetail() {
             client-reference-id="${escapeHtml(regRef)}"
           ></stripe-buy-button>
         </div>
-        ${pay.link ? `<p class="reg-pay-alt">Checkout not loading? <a href="${escapeHtml(withEmail(pay.link, data.email))}" target="_blank" rel="noopener">Open secure checkout in a new tab →</a></p>` : ""}
+        ${pay.link ? `<p class="reg-pay-alt">Checkout not loading? <a href="${escapeHtml(retreatCheckoutLink(pay.link, data.email, regRef))}" target="_blank" rel="noopener">Open secure checkout in a new tab →</a></p>` : ""}
         <p class="reg-pay-ref">Registration reference <strong>${escapeHtml(regRef)}</strong> — keep this if you need to reach us about your place.</p>
       </div>`;
 
@@ -1394,6 +1410,22 @@ function initThankYou() {
   const mark = $("[data-vessel]", card);
   if (mark) mark.innerHTML = VESSEL_SVG;
 
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get("session_id") || "";
+  // A direct visit is not a purchase. This checks the return URL's shape;
+  // payment status itself must be verified by Stripe on a server/webhook.
+  if (!/^cs_live_[A-Za-z0-9]+$/.test(sessionId)) {
+    document.title = "Retreat registration | Dear Pastor's Wife";
+    $("h1", card).textContent = "Looking for your registration?";
+    $(".eyebrow", card).textContent = "Retreat registration";
+    $("#thanksLead").textContent = "This page needs the confirmation link from Stripe. If you have paid, check your Stripe receipt or contact us for help. Otherwise, return to the retreat page to register.";
+    $(".thanks-next", card).hidden = true;
+    return;
+  }
+  $("h1", card).textContent = "Thank you for registering.";
+  $(".eyebrow", card).textContent = "Checkout complete";
+  $(".thanks-next", card).hidden = false;
+
   // Who just paid, recovered from the registration she completed minutes ago.
   // Null whenever the round trip broke (different device, cleared storage), in
   // which case everything below still runs, just anonymously.
@@ -1404,7 +1436,7 @@ function initThankYou() {
     const lead = $("#thanksLead");
     if (lead) {
       const hello = person && person.firstName ? `Thank you, ${escapeHtml(person.firstName)}.` : "Thank you.";
-      lead.innerHTML = `${hello} Your payment came through and your place at <strong>${escapeHtml(e.title)}</strong> in ${escapeHtml(e.location)}, ${escapeHtml(e.date)}, is secured.`;
+      lead.innerHTML = `${hello} You've returned from checkout for <strong>${escapeHtml(e.title)}</strong> in ${escapeHtml(e.location)}, ${escapeHtml(e.date)}. Your Stripe receipt confirms your payment.`;
     }
   }
 
@@ -1416,7 +1448,6 @@ function initThankYou() {
     sendToCrm("eventPayment", person, { optinEntityId: paidOptin });
   }
 
-  const params = new URLSearchParams(window.location.search);
   const purchase = {
     content_name: e ? e.title : (slug || "Retreat"),
     content_ids: [slug],
@@ -1434,7 +1465,6 @@ function initThankYou() {
   if (person && person.registrationRef) purchase.registration_ref = person.registrationRef;
   // Identify before tracking, so the Purchase carries her details with it.
   identifyForMeta(person);
-  const sessionId = params.get("session_id") || "";
   track("Purchase", purchase, { eventID: sessionId });
   fireGoogleAdsConversion({
     value: purchase.value != null ? purchase.value : 300,
