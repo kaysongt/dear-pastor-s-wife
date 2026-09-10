@@ -116,7 +116,7 @@ its own `conversion` event — the GA4 `Purchase` is not the Ads conversion.
 | `InitiateCheckout` | she starts filling the form (first keystroke, once) |
 | `Lead` | her details reach the systeme.io CRM |
 | `Purchase` | `retreat-thank-you.html` loads after a completed payment (Meta + GA4) |
-| Google Ads `conversion` (`AW-18426236503/VwT9CIeJ3e0cENEcqNJE`) | same moment as `Purchase` on the thank-you page only, value £300 |
+| Google Ads `conversion` (`AW-18426236503/VWT9CIej3e0cENecqNJE`) | same moment as `Purchase` on the thank-you page only, value £300 |
 
 A thank-you refresh is collapsed by Stripe's `session_id`: Meta uses it as
 `eventID`, GA4 and Google Ads use it as `transaction_id`.

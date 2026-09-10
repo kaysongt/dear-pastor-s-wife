@@ -262,7 +262,7 @@ const CONFIG = {
     // (account 819-983-3770). The AW- tag is configured in each page
     // <head> next to GA4; this send_to is the conversion event itself
     // and is only fired on retreat-thank-you.html.
-    googleAdsConversion: "AW-18426236503/VwT9CIeJ3e0cENEcqNJE",
+    googleAdsConversion: "AW-18426236503/VWT9CIej3e0cENecqNJE",
   },
   // Community forum backend (Supabase). Publishable key is safe to expose
   // client-side — access is enforced by the table's Row Level Security
