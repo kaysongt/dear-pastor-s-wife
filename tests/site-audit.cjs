@@ -7,12 +7,19 @@ const { JSDOM } = require('jsdom');
 const root = path.resolve(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'script.js'), 'utf8');
 const errors = [];
-function page(file, query = '', failCrm = false) {
+function page(file, query = '', failCrm = false, now = null) {
   const dom = new JSDOM(fs.readFileSync(path.join(root, file), 'utf8'), {
     url: `https://dearpastorswife.org/${file}${query}`, runScripts: 'outside-only',
     pretendToBeVisual: true,
   });
   const w = dom.window;
+  if (now) {
+    const NativeDate = w.Date;
+    w.Date = class extends NativeDate {
+      constructor(...args) { super(...(args.length ? args : [now])); }
+      static now() { return new NativeDate(now).getTime(); }
+    };
+  }
   const events = [], requests = [];
   w.matchMedia = q => ({ matches: q.includes('reduced-motion'), addEventListener() {}, removeEventListener() {} });
   w.IntersectionObserver = class { observe() {} disconnect() {} };
@@ -59,8 +66,8 @@ async function main() {
   assert.equal(ads[2].transaction_id, ga[2].transaction_id);
   assert.equal(ads[2].currency, 'GBP');
   purchase.dom.window.close();
-  for (const failure of [false, true]) {
-    const p = page('event.html', '?slug=dpw-retreat-uk', failure);
+  for (const [failure, now] of [[false, '2026-09-30T22:59:00Z'], [false, '2026-09-30T23:01:00Z'], [true, '2026-09-11T12:00:00Z']]) {
+    const p = page('event.html', '?slug=dpw-retreat-uk', failure, now);
     const form = p.w.document.querySelector('#eventRegForm');
     assert.ok(form);
     form.querySelector('.stepper-next').click();
@@ -81,6 +88,17 @@ async function main() {
       const fallback = new URL(p.w.document.querySelector('.reg-pay-alt a').href);
       assert.equal(fallback.searchParams.get('client_reference_id'), embed.getAttribute('client-reference-id'));
       assert.equal(fallback.searchParams.get('prefilled_email'), 'local@example.test');
+      const installment = p.w.document.querySelector('a[href*="fZufZha24evT34626h6Vq0i"]');
+      const londonToday = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/London', year:'numeric', month:'2-digit', day:'2-digit' }).format(new Date(now));
+      if (londonToday <= '2026-09-30') {
+        assert.ok(installment, 'installment checkout offered before deposit deadline');
+        const installmentUrl = new URL(installment.href);
+        assert.equal(installmentUrl.searchParams.get('prefilled_email'), 'local@example.test');
+        assert.equal(installmentUrl.searchParams.get('client_reference_id'), embed.getAttribute('client-reference-id'));
+        assert.match(p.w.document.querySelector('.reg-pay').textContent, /remaining £150 is not charged automatically/);
+      } else {
+        assert.equal(installment, null, 'expired deposit offer hidden');
+      }
       assert.equal(p.requests[0].url, 'https://svg.systeme.io/9d871f1f/');
       assert.ok(p.events.some(e => e[1] === 'begin_checkout'));
       assert.equal(p.events.some(e => e[1] === 'purchase'), false);

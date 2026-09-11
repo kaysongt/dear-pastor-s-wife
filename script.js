@@ -481,7 +481,7 @@ const EVENTS = [
     title: "DPW Retreat", location: "United Kingdom", venue: "Countryside venue, UK (shared on registration)",
     desc: "A multi-day, immersive weekend away, with teaching, worship, prayer, and honest table conversations. Women arrive carrying the weight of their call and leave lighter, clearer, and more equipped.",
     details: "From Friday afternoon to Sunday morning, we gather away from the noise: teaching to testimony, worship to prayer, honest table conversations to hands-on workbook sessions. An intimate 25–30 woman experience of renewal.",
-    requirements: "Open to women in ministry and Christian leadership. Places are limited to keep the retreat intimate, so your place is confirmed once the retreat fee is paid at checkout.",
+    requirements: "Open to women in ministry and Christian leadership. The retreat fee is £300. You can pay in full or pay £150 by 30 September 2026 and the remaining £150 by 9 October 2026. The UK accounts team verifies payments, then DPW emails your confirmation and next steps.",
     status: "open", art: "clay",
     // Paid event. Registration is captured on-site (details to the systeme.io
     // CRM first), then handed to Stripe. `buyButtonId` renders the embedded
@@ -490,6 +490,8 @@ const EVENTS = [
     payment: {
       buyButtonId: "buy_btn_1U8Oe7FlOkA0eubSq2rrsySi",
       link: "https://buy.stripe.com/4gw14lcD544t0h29AE",
+      installmentLink: "https://buy.stripe.com/fZufZha24evT34626h6Vq0i",
+      installmentDeadline: "2026-09-30",
       // Price of the Buy Button product ("UK Pastors’ Wives Retreat"), so Meta,
       // GA4, and Google Ads report revenue against the thank-you conversion.
       // Keep in step with the price in the Stripe Dashboard.
@@ -1282,7 +1284,7 @@ function renderEventDetail() {
                 <fieldset class="form-step" data-step-label="Confirm" hidden>
                   <label><span>Anything we should know? (optional)</span><textarea name="notes" rows="3" placeholder="Dietary needs, accessibility, questions…"></textarea></label>
                   <label class="check-row"><input type="checkbox" name="consent" required /> <span>Please keep me updated about this event and DPW resources.</span></label>
-                  ${paid ? `<p class="reg-note">✦ Next: secure checkout for the full retreat cost. Card, Apple Pay, and Google Pay accepted.</p>` : ""}
+                  ${paid ? `<p class="reg-note">✦ Next: choose your payment option. Card, Apple Pay, and Google Pay accepted. The UK accounts team verifies your payment before DPW sends confirmation.</p>` : ""}
                 </fieldset>
                 <button class="button primary" type="submit" hidden>${paid ? "Continue to secure checkout →" : "Complete registration"}</button>
                 <p class="form-status" id="eventRegStatus" role="status" aria-live="polite"></p>
@@ -1367,7 +1369,8 @@ function renderEventDetail() {
       <div class="reg-pay">
         <p class="eyebrow">Last step</p>
         <h3>Almost there, ${escapeHtml(data.firstName)}.</h3>
-        <p class="give-sub">Your details are saved for <strong>${escapeHtml(e.title)}</strong>. Complete payment below to confirm your place. This covers the full retreat cost, with nothing further to pay.</p>
+        <p class="give-sub">Your details are saved for <strong>${escapeHtml(e.title)}</strong>. Choose your payment below. The UK accounts team will verify it, then DPW will email your confirmation and next steps.</p>
+        <h4>Pay in full — £300</h4>
         <div class="reg-pay-box">
           <stripe-buy-button
             buy-button-id="${escapeHtml(pay.buyButtonId)}"
@@ -1377,6 +1380,14 @@ function renderEventDetail() {
           ></stripe-buy-button>
         </div>
         ${pay.link ? `<p class="reg-pay-alt">Checkout not loading? <a href="${escapeHtml(retreatCheckoutLink(pay.link, data.email, regRef))}" target="_blank" rel="noopener">Open secure checkout in a new tab →</a></p>` : ""}
+        ${pay.installmentLink && new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/London", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()) <= pay.installmentDeadline ? `
+          <div class="reg-pay-box">
+            <h4>Pay in two installments</h4>
+            <p>£150 by 30 September 2026, then £150 by 9 October 2026.</p>
+            <a class="button primary" href="${escapeHtml(retreatCheckoutLink(pay.installmentLink, data.email, regRef))}" target="_blank" rel="noopener">Pay first installment — £150 →</a>
+            <p class="reg-note">The remaining £150 is not charged automatically. Use the same registration email for both payments. DPW will provide the next steps after payment verification.</p>
+          </div>` : ""}
+        <p class="reg-note">Already paid, or prefer bank transfer or PayPal? Contact <a href="mailto:payments@dearpastorswife.org">payments@dearpastorswife.org</a> before paying again.</p>
         <p class="reg-pay-ref">Registration reference <strong>${escapeHtml(regRef)}</strong> — keep this if you need to reach us about your place.</p>
       </div>`;
 
