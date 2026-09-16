@@ -426,6 +426,7 @@ function takeRegistration(slug) {
 
 // Resource library. type: book | download | video | article. status: current | archived.
 const RESOURCES = [
+  { type: "book", status: "current", title: "The Alchemy of Worth", desc: "A 30-day devotional for women in ministry. Explore Scripture, reflection and practical steps for breaking the cycle of shame.", cta: "Explore the devotional", link: "the-alchemy-of-worth.html" },
   { type: "book", status: "current", title: "Dear Pastor's Wife (The Book)", desc: "Biblical wisdom and honest encouragement for women in ministry life.", cta: "Get it on Amazon", link: "https://www.amazon.com/Dear-Pastors-Wife-May-Ijisesan-ebook/dp/B09TQ2G8PJ" },
   { type: "video", status: "current", title: "Weekly Encouragement on YouTube", desc: "New teaching, Q&A, and real talk for ministry women every week.", cta: "Watch on YouTube", link: "https://www.youtube.com/@DearPastorsWife" },
   { type: "video", status: "current", title: "Leading Without Losing Yourself", desc: "A teaching session on staying rooted while you serve and lead.", cta: "Watch now", link: "https://www.youtube.com/watch?v=BiTuiRxte3w" },
