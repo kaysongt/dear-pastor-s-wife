@@ -346,7 +346,7 @@ h3 { font-size: clamp(1.4rem, 2.2vw, 2.1rem); letter-spacing: -0.005em; }
    sizing the two cards to fill the row. Scoped to body[data-page="home"]
    specifically, not just #resources, since resources.html's full
    library section reuses that same id for its (much longer) grid. */
-body[data-page="home"] #resources .resource-grid { grid-template-columns: repeat(3, 1fr); margin: 0 auto; }
+body[data-page="home"] #resources .resource-grid { grid-template-columns: repeat(2, 1fr); margin: 0 auto; }
 .resource-card {
   display: flex; flex-direction: column; padding: 1.8rem;
   border-radius: 1.6rem; border: 1px solid rgba(184, 136, 42, 0.22);
@@ -1789,3 +1789,15 @@ body[data-page="partnership"] .partner-photo img { height: clamp(340px, 46vw, 48
 @media (max-width: 640px) {
   .stepper-form .field-row { grid-template-columns: 1fr; }
 }
+
+/* Homepage devotional feature: scoped to avoid affecting other resource cards. */
+.home-devotional { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: center; gap: clamp(1.5rem, 3vw, 3rem); padding: clamp(1rem, 2.5vw, 2rem); margin-bottom: 1.5rem; border: 1px solid var(--line); border-radius: 1.5rem; background: var(--paper); }
+.home-devotional-image { display: block; min-width: 0; border-radius: 1rem; overflow: hidden; }
+.home-devotional-image img { display: block; width: 100%; height: auto; }
+.home-devotional-copy { min-width: 0; }
+.home-devotional-copy h3 { font-size: clamp(1.9rem, 3vw, 3rem); line-height: 1.12; }
+.home-devotional-copy > p { line-height: 1.65; }
+.home-devotional-subtitle { color: var(--wine); font-weight: 600; }
+.home-devotional-format { color: var(--muted); font-size: .9rem; }
+.home-devotional-copy .button { margin-top: .5rem; max-width: 100%; }
+@media (max-width: 800px) { .home-devotional { grid-template-columns: minmax(0, 1fr); } }
