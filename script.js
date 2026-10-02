@@ -1255,7 +1255,7 @@ function renderEventDetail() {
             ${e.status === "full" ? `
               <h3>Registration full</h3>
               <p class="give-sub">All places for the Europe Retreat have been filled. We'd love to keep you informed about future DPW events.</p>
-              <form id="futureEventsForm">
+              <form id="futureEventsForm" class="stepper-form">
                 <label><span>First name</span><input type="text" name="firstName" required autocomplete="given-name" /></label>
                 <label><span>Email</span><input type="email" name="email" required autocomplete="email" placeholder="you@example.com" /></label>
                 <label class="check-row"><input type="checkbox" name="consent" required /> <span>I'd like to receive emails about future DPW events and news. I can unsubscribe at any time.</span></label>
