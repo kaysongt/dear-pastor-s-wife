@@ -7,7 +7,7 @@ const { JSDOM } = require('jsdom');
 const root = path.resolve(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'script.js'), 'utf8');
 const errors = [];
-function page(file, query = '', failCrm = false, now = null) {
+function page(file, query = '', failCrm = false, now = null, openRetreatFixture = false) {
   const dom = new JSDOM(fs.readFileSync(path.join(root, file), 'utf8'), {
     url: `https://dearpastorswife.org/${file}${query}`, runScripts: 'outside-only',
     pretendToBeVisual: true,
@@ -33,7 +33,7 @@ function page(file, query = '', failCrm = false, now = null) {
     return { ok: true, json: async () => [] };
   };
   w.addEventListener('error', e => errors.push(e.error));
-  w.eval(source);
+  w.eval(openRetreatFixture ? source.replace('status: "full", art: "clay"', 'status: "open", art: "clay"') : source);
   return { dom, w, events, requests };
 }
 async function main() {
@@ -67,7 +67,7 @@ async function main() {
   assert.equal(ads[2].currency, 'GBP');
   purchase.dom.window.close();
   for (const [failure, now] of [[false, '2026-09-30T22:59:00Z'], [false, '2026-09-30T23:01:00Z'], [true, '2026-09-11T12:00:00Z']]) {
-    const p = page('event.html', '?slug=dpw-retreat-uk', failure, now);
+    const p = page('event.html', '?slug=dpw-retreat-uk', failure, now, true);
     const form = p.w.document.querySelector('#eventRegForm');
     assert.ok(form);
     form.querySelector('.stepper-next').click();
@@ -103,6 +103,26 @@ async function main() {
       assert.ok(p.events.some(e => e[1] === 'begin_checkout'));
       assert.equal(p.events.some(e => e[1] === 'purchase'), false);
     }
+    p.dom.window.close();
+  }
+  for (const failure of [false, true]) {
+    const p = page('event.html', '?slug=dpw-retreat-uk', failure, '2026-10-02T12:00:00Z');
+    assert.equal(p.w.document.querySelector('#eventRegForm'), null);
+    assert.equal(p.w.document.querySelector('stripe-buy-button'), null);
+    assert.equal(p.w.document.querySelector('a[href*="buy.stripe.com"]'), null);
+    const form = p.w.document.querySelector('#futureEventsForm');
+    assert.ok(form);
+    form.dispatchEvent(new p.w.Event('submit', { bubbles:true, cancelable:true }));
+    assert.equal(p.requests.length, 0, 'empty signup must not reach CRM');
+    form.elements.firstName.value = 'Local';
+    form.elements.email.value = 'local@example.test';
+    form.elements.consent.checked = true;
+    form.dispatchEvent(new p.w.Event('submit', { bubbles:true, cancelable:true }));
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(p.requests[0].url, 'https://newsletter.dearpastorswife.org/');
+    assert.equal(JSON.parse(p.requests[0].options.body).optin.entityId, 'a2e4377a-139b-4e1a-b728-b12ec7121a6a');
+    assert.match(p.w.document.querySelector('#futureEventsStatus').textContent, failure ? /Something went wrong/ : /Thank you/);
+    assert.equal(p.events.some(e => e[1] === 'begin_checkout'), false);
     p.dom.window.close();
   }
   const redirect = fs.readFileSync(path.join(root, 'europe-retreat/index.html'), 'utf8');

@@ -483,8 +483,8 @@ const EVENTS = [
     title: "DPW Retreat", location: "United Kingdom", venue: "Countryside venue, UK (shared on registration)",
     desc: "A multi-day, immersive weekend away, with teaching, worship, prayer, and honest table conversations. Women arrive carrying the weight of their call and leave lighter, clearer, and more equipped.",
     details: "From Friday afternoon to Sunday morning, we gather away from the noise: teaching to testimony, worship to prayer, honest table conversations to hands-on workbook sessions. An intimate 25–30 woman experience of renewal.",
-    requirements: "Open to women in ministry and Christian leadership. The retreat fee is £300. You can pay in full or pay £150 by 30 September 2026 and the remaining £150 by 9 October 2026. The UK accounts team verifies payments, then DPW emails your confirmation and next steps.",
-    status: "open", art: "clay",
+    requirements: "This retreat is now full. Join our mailing list to hear about future DPW retreats and events. Already registered? Contact payments@dearpastorswife.org for help with your remaining payment or confirmation.",
+    status: "full", art: "clay",
     // Paid event. Registration is captured on-site (details to the systeme.io
     // CRM first), then handed to Stripe. `buyButtonId` renders the embedded
     // Buy Button; `link` is the same product's Payment Link, kept as the
@@ -580,7 +580,7 @@ function updateAnnounceBar() {
   inner.innerHTML = `
     <span class="announce-tag">Next up</span>
     <p><strong>${escapeHtml(next.title)}</strong>, ${escapeHtml(next.date)}${next.location ? " · " + escapeHtml(next.location) : ""}.</p>
-    <a class="announce-note" href="${eventUrl(next)}">Register →</a>`;
+    <a class="announce-note" href="${eventUrl(next)}">${next.status === "full" ? "Registration full · Stay informed" : "Register"} →</a>`;
 }
 
 // Fundraising Partnership Program: names + suggested ranges only.
@@ -707,7 +707,7 @@ function renderFeaturedEvents() {
         <p class="featured-event-desc">${e.desc}</p>
         <div class="featured-event-action">
           ${!e.guest ? `
-            <a class="button primary" href="${eventUrl(e)}">Register →</a>
+            <a class="button primary" href="${eventUrl(e)}">${e.status === "full" ? "Registration full · Stay informed" : "Register"} →</a>
           ` : `
             <a class="button primary" href="${eventUrl(e)}">Event details →</a>
           `}
@@ -756,7 +756,7 @@ function renderEvents() {
           </div>
           <div class="tl-action">
             ${!e.guest ? `
-              <a class="tl-link" href="${eventUrl(e)}">Register →</a>
+              <a class="tl-link" href="${eventUrl(e)}">${e.status === "full" ? "Registration full · Stay informed" : "Register"} →</a>
             ` : `
               ${e.guest ? '<span class="tl-status status-guest">Guest speaker</span>' : (statusMap[e.status] || "")}
               <a class="tl-link" href="${eventUrl(e)}"${linkAttrs}>${linkLabel} →</a>
@@ -1218,7 +1218,7 @@ function renderEventDetail() {
 
   document.title = `${e.title} | Dear Pastor's Wife`;
   const past = isPastEvent(e);
-  const statusLabel = { open: "Registration open", soon: "Registration open", past: "Past event" };
+  const statusLabel = { open: "Registration open", soon: "Registration open", full: "Registration full", past: "Past event" };
   const cat = EVENT_CAT_LABEL[e.category] || "";
   const closed = past;
   // Guest engagements are hosted elsewhere: no on-site registration, just a
@@ -1252,7 +1252,18 @@ function renderEventDetail() {
 
         <aside class="event-page-side">
           <div class="event-reg-card" id="eventRegCard">
-            ${closed ? `
+            ${e.status === "full" ? `
+              <h3>Registration full</h3>
+              <p class="give-sub">All places for the Europe Retreat have been filled. We'd love to keep you informed about future DPW events.</p>
+              <form id="futureEventsForm">
+                <label><span>First name</span><input type="text" name="firstName" required autocomplete="given-name" /></label>
+                <label><span>Email</span><input type="email" name="email" required autocomplete="email" placeholder="you@example.com" /></label>
+                <label class="check-row"><input type="checkbox" name="consent" required /> <span>I'd like to receive emails about future DPW events and news. I can unsubscribe at any time.</span></label>
+                <button class="button primary" type="submit">Keep me informed</button>
+                <p class="form-status" id="futureEventsStatus" role="status" aria-live="polite"></p>
+              </form>
+              <p class="reg-note">Joining this list does not reserve a place at this retreat.</p>
+            ` : closed ? `
               <h3>This event has ended</h3>
               <p class="give-sub">Thank you to everyone who joined us. Explore what's coming up next.</p>
               <a class="button primary" href="events.html">See upcoming events</a>
@@ -1297,6 +1308,10 @@ function renderEventDetail() {
       </div>
     </section>`;
 
+  if (e.status === "full") {
+    handleForm("futureEventsForm", "futureEventsStatus", "Thank you for joining our mailing list. Look out for news about future DPW events.");
+    return;
+  }
   if (closed || external) return;
 
   // Someone landed on a live registration page: the top of the funnel.
