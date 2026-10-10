@@ -478,7 +478,7 @@ const EVENTS = [
     status: "open", art: "plum",
   },
   {
-    slug: "dpw-retreat-uk", category: "retreat", year: 2026,
+    slug: "dpw-retreat-uk", category: "retreat", year: 2026, archived: true,
     date: "Oct 9 to 11, 2026", sort: "2026-10-09", endSort: "2026-10-11",
     title: "DPW Retreat", location: "United Kingdom", venue: "Countryside venue, UK (shared on registration)",
     desc: "A multi-day, immersive weekend away, with teaching, worship, prayer, and honest table conversations. Women arrive carrying the weight of their call and leave lighter, clearer, and more equipped.",
@@ -515,7 +515,7 @@ const isPastEvent = (e) => eventEndISO(e) < todayISO();
 const eventUrl = (e) => e.link || `event.html?slug=${encodeURIComponent(e.slug)}`;
 const isExternal = (url) => /^https?:\/\//.test(url || "");
 const findEvent = (slug) => EVENTS.find(e => e.slug === slug);
-const upcomingEvents = () => EVENTS.filter(e => !isPastEvent(e)).sort((a, b) => a.sort.localeCompare(b.sort));
+const upcomingEvents = () => EVENTS.filter(e => !e.archived && !isPastEvent(e)).sort((a, b) => a.sort.localeCompare(b.sort));
 
 /* ---------- ADD TO CALENDAR ----------
    Events are all-day (no set times yet), so we build all-day calendar entries
@@ -576,7 +576,10 @@ function updateAnnounceBar() {
   const inner = bar && bar.querySelector(".announce-inner");
   if (!inner) return;
   const next = upcomingEvents().filter(e => !e.guest)[0];
-  if (!next) { bar.classList.add("hidden"); return; }
+  if (!next) {
+    inner.innerHTML = `<span class="announce-tag">Stay informed</span><p>Be the first to hear about future DPW events.</p><a class="announce-note" href="stay-informed.html">Join our mailing list →</a>`;
+    return;
+  }
   const underway = next.sort <= todayISO();
   inner.innerHTML = `
     <span class="announce-tag">${underway ? "Happening now" : "Next up"}</span>
@@ -689,7 +692,7 @@ function renderFeaturedEvents() {
   // event to headline. When it would be the nearest match (on "All" and
   // "Conferences"), the next-closest qualifying event steps up instead.
   const nearest = EVENTS
-    .filter(e => !isPastEvent(e) && e.slug !== "summer-blast" &&
+    .filter(e => !e.archived && !isPastEvent(e) && e.slug !== "summer-blast" &&
       (activeEventFilter === "all" || e.category === activeEventFilter))
     .sort((a, b) => a.sort.localeCompare(b.sort))[0];
   const list = nearest ? [nearest] : [];
@@ -726,7 +729,7 @@ function renderEvents() {
   const empty = $("#eventEmpty");
 
   const list = EVENTS
-    .filter(e => !isPastEvent(e) && (activeEventFilter === "all" || e.category === activeEventFilter))
+    .filter(e => !e.archived && !isPastEvent(e) && (activeEventFilter === "all" || e.category === activeEventFilter))
     .sort((a, b) => a.sort.localeCompare(b.sort));
 
   if (empty) empty.hidden = list.length !== 0;
@@ -1047,6 +1050,7 @@ function handleForm(formId, statusId, successMsg) {
 }
 
 handleForm("newsletterForm", "newsletterStatus", "You're in! Watch your inbox for a welcome note. 💛");
+handleForm("stayInformedForm", "stayInformedStatus", "Thank you for joining our mailing list. Look out for news about future DPW events.");
 handleForm("contactForm", "contactStatus", "Thank you. Your message is on its way and we'll be in touch soon.");
 handleForm("bookingForm", "bookingStatus", "Thank you! Your booking request is in and the team will follow up by email.");
 
@@ -1203,6 +1207,11 @@ function renderEventDetail() {
 
   const slug = new URLSearchParams(window.location.search).get("slug");
   const e = slug ? findEvent(slug) : null;
+
+  if (e && e.archived) {
+    window.location.replace("stay-informed.html");
+    return;
+  }
 
   if (!e) {
     root.innerHTML = `

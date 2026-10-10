@@ -33,7 +33,7 @@ function page(file, query = '', failCrm = false, now = null, openRetreatFixture 
     return { ok: true, json: async () => [] };
   };
   w.addEventListener('error', e => errors.push(e.error));
-  w.eval(openRetreatFixture ? source.replace('status: "full", art: "clay"', 'status: "open", art: "clay"') : source);
+  w.eval(openRetreatFixture ? source.replace('archived: true', 'archived: false').replace('status: "full", art: "clay"', 'status: "open", art: "clay"') : source);
   return { dom, w, events, requests };
 }
 async function main() {
@@ -106,11 +106,11 @@ async function main() {
     p.dom.window.close();
   }
   for (const failure of [false, true]) {
-    const p = page('event.html', '?slug=dpw-retreat-uk', failure, '2026-10-02T12:00:00Z');
+    const p = page('stay-informed.html', '', failure, '2026-10-10T12:00:00Z');
     assert.equal(p.w.document.querySelector('#eventRegForm'), null);
     assert.equal(p.w.document.querySelector('stripe-buy-button'), null);
     assert.equal(p.w.document.querySelector('a[href*="buy.stripe.com"]'), null);
-    const form = p.w.document.querySelector('#futureEventsForm');
+    const form = p.w.document.querySelector('#stayInformedForm');
     assert.ok(form);
     form.dispatchEvent(new p.w.Event('submit', { bubbles:true, cancelable:true }));
     assert.equal(p.requests.length, 0, 'empty signup must not reach CRM');
@@ -121,8 +121,15 @@ async function main() {
     await new Promise(resolve => setImmediate(resolve));
     assert.equal(p.requests[0].url, 'https://newsletter.dearpastorswife.org/');
     assert.equal(JSON.parse(p.requests[0].options.body).optin.entityId, 'a2e4377a-139b-4e1a-b728-b12ec7121a6a');
-    assert.match(p.w.document.querySelector('#futureEventsStatus').textContent, failure ? /Something went wrong/ : /Thank you/);
+    assert.match(p.w.document.querySelector('#stayInformedStatus').textContent, failure ? /Something went wrong/ : /Thank you/);
     assert.equal(p.events.some(e => e[1] === 'begin_checkout'), false);
+    p.dom.window.close();
+  }
+  for (const file of ['index.html', 'events.html']) {
+    const p = page(file, '', false, '2026-10-10T12:00:00Z');
+    assert.doesNotMatch(p.w.document.querySelector('#eventTimeline').textContent, /DPW Retreat/);
+    assert.match(p.w.document.querySelector('#announceBar').textContent, /Stay informed/);
+    assert.ok(p.w.document.querySelector('a[href="stay-informed.html"]'));
     p.dom.window.close();
   }
   const redirect = fs.readFileSync(path.join(root, 'europe-retreat/index.html'), 'utf8');
@@ -130,7 +137,8 @@ async function main() {
   let destination;
   vm.runInNewContext(redirectScript, { URL, window:{location:{href:'https://dearpastorswife.org/europe-retreat/?gclid=sample&utm_source=google',search:'?gclid=sample&utm_source=google',hash:'#register',replace:u=>destination=new URL(u)}} });
   assert.equal(destination.searchParams.get('gclid'), 'sample');
-  assert.equal(destination.searchParams.get('slug'), 'dpw-retreat-uk');
+  assert.equal(destination.pathname, '/stay-informed.html');
+  assert.equal(destination.searchParams.get('slug'), null);
   assert.equal(destination.hash, '#register');
   assert.deepEqual(errors, []);
   console.log(`PASS: ${pages} pages, internal file targets, registration validation, CRM failure recovery, checkout handoff, purchase guards, analytics payloads, and attribution redirect. No live submissions.`);
