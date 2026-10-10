@@ -577,10 +577,11 @@ function updateAnnounceBar() {
   if (!inner) return;
   const next = upcomingEvents().filter(e => !e.guest)[0];
   if (!next) { bar.classList.add("hidden"); return; }
+  const underway = next.sort <= todayISO();
   inner.innerHTML = `
-    <span class="announce-tag">Next up</span>
+    <span class="announce-tag">${underway ? "Happening now" : "Next up"}</span>
     <p><strong>${escapeHtml(next.title)}</strong>, ${escapeHtml(next.date)}${next.location ? " · " + escapeHtml(next.location) : ""}.</p>
-    <a class="announce-note" href="${eventUrl(next)}">${next.status === "full" ? "Registration full · Stay informed" : "Register"} →</a>`;
+    <a class="announce-note" href="${eventUrl(next)}">${underway ? "Stay informed about future events" : next.status === "full" ? "Registration full · Stay informed" : "Register"} →</a>`;
 }
 
 // Fundraising Partnership Program: names + suggested ranges only.
