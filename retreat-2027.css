@@ -1,0 +1,12 @@
+.retreat27-hero{display:grid;grid-template-columns:1fr 1.1fr;max-width:1440px;margin:auto;align-items:center;gap:3rem;padding:4rem 5%}
+.retreat27-intro h1{font-family:Fraunces,serif;font-size:clamp(2.7rem,4.5vw,5rem);line-height:1.08;margin:1rem 0 1.5rem;color:#601938}
+.retreat27-intro>p{max-width:36rem}.retreat27-hero figure,.retreat27-gallery figure{margin:0}
+.retreat27-hero img{width:100%;height:560px;object-fit:cover;border-radius:180px 180px 24px 24px}
+.retreat27-note,figcaption{font-size:.9rem;line-height:1.6;color:#665b5e;margin-top:1rem}
+.retreat27-gallery{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem}
+.retreat27-gallery img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:20px}
+.retreat27-registration{background:#eee4dc}.retreat27-prices{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin:2rem 0 3rem}
+.retreat27-prices article{background:#fffaf4;padding:2rem;border:1px solid #dbc8bd;border-radius:20px}.retreat27-prices article:first-child{border-top:5px solid #b8882a}
+.retreat27-prices h3{font:600 clamp(1.8rem,3vw,3rem) Fraunces,serif;color:#601938;margin:.8rem 0}
+.retreat27-signup{display:grid;grid-template-columns:1fr 1fr;gap:3rem;background:#fffaf4;border-radius:24px;padding:2.5rem}.retreat27-signup a{overflow-wrap:anywhere;text-decoration:underline}
+@media(max-width:800px){.retreat27-hero{grid-template-columns:1fr;padding:2rem 6%;gap:2rem}.retreat27-hero img{height:auto;aspect-ratio:4/3;border-radius:80px 80px 20px 20px}.retreat27-prices,.retreat27-signup{grid-template-columns:1fr}.retreat27-signup{padding:1.5rem;gap:1.5rem}.retreat27-gallery{gap:.8rem}.retreat27-gallery img{aspect-ratio:4/5}}
