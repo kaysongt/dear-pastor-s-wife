@@ -11,3 +11,15 @@
 .retreat27-signup{display:grid;grid-template-columns:1fr 1fr;gap:3rem;background:#fffaf4;border-radius:24px;padding:2.5rem}.retreat27-signup a{overflow-wrap:anywhere;text-decoration:underline}
 .retreat27-booking{max-width:48rem;margin:0 auto 3rem;text-align:center}.retreat27-booking h2{font-family:Fraunces,serif;color:#601938}.retreat27-booking .button{margin:.75rem 0}.retreat27-booking .retreat27-note a{text-decoration:underline}
 @media(max-width:800px){.retreat27-hero{grid-template-columns:1fr;padding:2rem 6%;gap:2rem}.retreat27-hero img{height:auto;aspect-ratio:4/3;border-radius:80px 80px 20px 20px}.retreat27-prices,.retreat27-signup{grid-template-columns:1fr}.retreat27-signup{padding:1.5rem;gap:1.5rem}.retreat27-gallery{gap:.8rem}.retreat27-gallery img{aspect-ratio:4/5}}
+/* Keep the recap easy to browse without cropping faces or moving automatically. */
+.retreat27-hero img{height:auto;aspect-ratio:auto;border-radius:24px}
+.retreat27-gallery{display:flex;gap:1.25rem;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 0 1rem;scrollbar-color:#906379 #eee4dc}
+.retreat27-gallery figure{flex:0 0 72%;scroll-snap-align:start;background:#eee4dc;border-radius:20px;overflow:hidden}
+.retreat27-gallery img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:contain;border-radius:0}
+.retreat27-gallery:focus-visible{outline:3px solid #601938;outline-offset:5px}
+.retreat27-gallery-controls{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem}
+.retreat27-gallery-controls .retreat27-note{margin:0}
+.retreat27-gallery-controls button{min-width:48px;min-height:48px;padding:.5rem 1rem}
+.retreat27-gallery-controls button:disabled{opacity:.35;cursor:default}
+.retreat27-gallery-controls button[hidden]{display:none}
+@media(max-width:800px){.retreat27-gallery figure{flex-basis:92%}.retreat27-gallery{gap:.75rem}.retreat27-gallery-controls .button{padding:.5rem .75rem}}
