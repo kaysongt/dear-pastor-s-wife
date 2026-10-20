@@ -7,6 +7,7 @@
 .retreat27-gallery img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:20px}
 .retreat27-registration{background:#eee4dc}.retreat27-prices{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;margin:2rem auto 3rem;max-width:56rem}
 .retreat27-prices article{background:#fffaf4;padding:2rem;border:1px solid #dbc8bd;border-radius:20px}.retreat27-prices article:first-child{border-top:5px solid #b8882a}
+.retreat27-prices article:only-child{grid-column:1/-1;justify-self:center;width:100%;max-width:28rem}
 .retreat27-prices h3{font:600 clamp(1.8rem,3vw,3rem) Fraunces,serif;color:#601938;margin:.8rem 0}
 .retreat27-signup{display:grid;grid-template-columns:1fr 1fr;gap:3rem;background:#fffaf4;border-radius:24px;padding:2.5rem}.retreat27-signup a{overflow-wrap:anywhere;text-decoration:underline}
 .retreat27-booking{max-width:48rem;margin:0 auto 3rem;text-align:center}.retreat27-booking h2{font-family:Fraunces,serif;color:#601938}.retreat27-booking .button{margin:.75rem 0}.retreat27-booking .retreat27-note a{text-decoration:underline}
